@@ -1,4 +1,4 @@
-![Sheets — fast, private, AI-powered sheets, right in your browser](./docs/sheets-hero.svg)
+![Sheets — fast, private, AI-powered sheets, right in your browser](./docs/sheets-banner.svg)
 
 # Sheets
 
