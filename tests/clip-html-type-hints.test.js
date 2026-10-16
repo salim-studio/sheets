@@ -38,7 +38,7 @@ describe('type hints in copied HTML', () => {
   it('names the text itself in x:str when the display reads differently, and reads it back', () => {
     const html = cellsToHtml([['a  b']], [[{ v: '  a  b' }]], null, [['  a  b']]);
     expect(new DOMParser().parseFromString(html, 'text/html').querySelector('td').getAttribute('x:str')).toBe('  a  b');
-    const external = html.replace(/ data-spreadsheet-(cells|values)="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-(cells|values)="[^"]*"/g, '');
     expect(parseHtmlClipboard(external).rows[0][0].text).toBe('a  b');
     const { cell } = rowsPaste(external);
     expect(cell(0, 0)).toEqual({ v: '  a  b', f: null, s: { wrap: false, valign: 'middle' } });
@@ -48,7 +48,7 @@ describe('type hints in copied HTML', () => {
   it('round-trips text and formatted numbers through the markup alone', () => {
     const cells = [[{ v: '00123', s: { fmt: 'text' } }, { v: 1234.5678, s: { fmt: 'number', dec: 2 } }, { v: 0.5, s: { fmt: 'percent', dec: 0 } }, { v: 1500, s: { fmt: 'currency', cur: 'EUR' } }]];
     const html = cellsToHtml([['00123', '1,234.57', '50%', '€1,500.00']], cells, null, [['00123', 1234.5678, 0.5, 1500]]);
-    const { parsed, cell } = rowsPaste(html.replace(/ data-spreadsheet-(cells|values)="[^"]*"/g, ''));
+    const { parsed, cell } = rowsPaste(html.replace(/ data-sheets-(cells|values)="[^"]*"/g, ''));
     expect(parsed.cells).toBeUndefined();
     expect(cell(0, 0)).toEqual({ v: '00123', f: null, s: { fmt: 'text', wrap: false, valign: 'middle' } });
     expect(cell(0, 1)).toEqual({ v: 1234.5678, f: null, s: { fmt: 'number', dec: 2, group: true, wrap: false, valign: 'middle' } });

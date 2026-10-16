@@ -10,7 +10,7 @@ afterEach(() => { delete globalThis.puter; });
 // followed at once moved the (still empty) history first, and the snapshot then landed under
 // the old name, where the next document of that name inherited it.
 it('lands the snapshot of a save under the new name when a rename follows at once', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'x');
   // Hold the snapshot's write until after the rename has been asked for.
   const write = puter.fs.write.bind(puter.fs);
@@ -21,16 +21,16 @@ it('lands the snapshot of a save under the new name when a rename follows at onc
   const renamed = doc.rename('Plan');
   setTimeout(release, 20);
   expect(await renamed).toBeNull();
-  expect(doc.path).toBe('Spreadsheets/Plan.xlsx');
+  expect(doc.path).toBe('Sheets/Plan.xlsx');
   expect(await listVersions(doc.file)).toHaveLength(1);
-  expect(await listVersions('Spreadsheets/Budget.xlsx')).toEqual([]); // nothing left under the old name
+  expect(await listVersions('Sheets/Budget.xlsx')).toEqual([]); // nothing left under the old name
   doc.destroy();
 });
 
 it('renames without waiting when no snapshot is in flight', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
-  await puter.fs.write('Spreadsheets/Budget.xlsx', new Blob(['x']));
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
+  await puter.fs.write('Sheets/Budget.xlsx', new Blob(['x']));
   expect(await doc.rename('Plan')).toBeNull();
-  expect(doc.path).toBe('Spreadsheets/Plan.xlsx');
+  expect(doc.path).toBe('Sheets/Plan.xlsx');
   doc.destroy();
 });

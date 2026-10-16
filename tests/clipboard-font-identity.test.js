@@ -12,7 +12,7 @@ const keys = [...FONTS.map(([key]) => key), ...families.map(name => fontKeyFor(n
 const cells = keys.map((font, i) => ({ v: `Sample ${i}`, f: null, s: { font, size: 14, bold: i % 2 === 0, italic: i % 3 === 0 } }));
 const texts = [cells.map(c => c.v)];
 const doc = html => new DOMParser().parseFromString(html, 'text/html');
-const external = html => html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+const external = html => html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
 
 it('writes one safely quoted requested family for every named preset and imported font', () => {
   const html = cellsToHtml(texts, [cells]);

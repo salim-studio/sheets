@@ -46,7 +46,7 @@ it('preserves power paths, edits and shifted copies through native XLSX records'
 
 it('retains external HTML numeric operands for distinct square and POWER paths', () => {
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

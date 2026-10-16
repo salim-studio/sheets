@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(rows) {
-  const doc = new Doc({ name: 'Sort', path: 'Spreadsheets/Sort.xlsx' });
+  const doc = new Doc({ name: 'Sort', path: 'Sheets/Sort.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   rows.forEach((row, r) => row.forEach((v, c) => wb.setInput(id, r, c, String(v))));

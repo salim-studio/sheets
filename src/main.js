@@ -8,7 +8,7 @@ import { session } from './lib/session.js';
 import * as P from './lib/puter.js';
 import { Doc } from './lib/doc.js';
 import { sampleWorkbook } from './core/sample.js';
-import { isSpreadsheetFile } from './core/filetypes.js';
+import { isSheetsFile } from './core/filetypes.js';
 import { templateById } from './core/templates.js';
 import { rememberRecent, forgetRecent } from './lib/recent.js';
 import { errorView, signInView } from './views/gate.js';
@@ -26,7 +26,7 @@ let launchedPath = null;
 
 /* ---------- Routing ---------- */
 
-/** The spreadsheet list. Opening the app lands in a new sheet instead. */
+/** The sheets list. Opening the app lands in a new sheet instead. */
 export const HOME = '#/home';
 
 function parseHash() {
@@ -69,8 +69,8 @@ export function leaveWithoutSessionDialog({ kept = true } = {}) {
   return new Promise((resolve) => {
     const content = el('div', {},
       el('p.modal-text', {}, kept
-        ? 'This spreadsheet is not saved to Puter yet. Sign in to save it to your own cloud, or leave: your edits stay on this device, and can be recovered from Unsaved spreadsheets on the home screen.'
-        : 'This spreadsheet is not saved anywhere yet, and this browser could not keep a copy of it either. Sign in to Puter to save it to your own cloud, or leave and lose it.'),
+        ? 'This sheet is not saved to Puter yet. Sign in to save it to your own cloud, or leave: your edits stay on this device, and can be recovered from Unsaved sheets on the home screen.'
+        : 'This sheet is not saved anywhere yet, and this browser could not keep a copy of it either. Sign in to Puter to save it to your own cloud, or leave and lose it.'),
       el('div.row.row-end', { style: { flexWrap: 'wrap' } },
         el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Keep editing'),
         el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, 'Leave without saving'),
@@ -81,10 +81,10 @@ export function leaveWithoutSessionDialog({ kept = true } = {}) {
 
 /** A cloud file was asked for without a session: offer the sign-in, or a new sheet. */
 function mountSignInGate(requestedHash) {
-  document.title = 'Spreadsheet';
+  document.title = 'Sheets';
   mount('gate', { el: signInView({
-    title: 'Sign in to open this spreadsheet',
-    message: 'Spreadsheets live in your own Puter cloud. Sign in to open this one, or start a new spreadsheet without an account.',
+    title: 'Sign in to open this sheet',
+    message: 'Sheets are saved in your own cloud. Sign in to open this one, or start a new sheet without an account.',
     onSignIn: async () => { if (await session.signIn() && location.hash === requestedHash) route(); },
     onSkip: () => go('#/'),
   }) });
@@ -178,7 +178,7 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
       // A recovered draft has no file yet: the address must not keep naming the document that was open before.
       history.replaceState(null, '', '#/new');
       try { openEditor(Doc.fromDraft(draftKey)); }
-      catch (e) { toast(e?.message || 'Could not recover the spreadsheet', { icon: 'alert', duration: 5000 }); go(HOME); }
+      catch (e) { toast(e?.message || 'Could not recover the sheets', { icon: 'alert', duration: 5000 }); go(HOME); }
       return;
     }
     // Device imports share the route queue: a navigation during a slow read
@@ -198,8 +198,8 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
     }
     if (r === 'home') {
       mount('home', homeView(nav));
-      document.title = 'Spreadsheet';
-      P.setWindowTitle('Spreadsheet');
+      document.title = 'Sheets';
+      P.setWindowTitle('Sheets');
       return;
     }
     // A new workbook starts as the options say: its font, how many sheets, its view and calculation.
@@ -244,7 +244,7 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
       return;
     }
     if (r === 'file') {
-      // A shared spreadsheet's link names the file by its id: whoever follows it finds it at the
+      // A shared sheets's link names the file by its id: whoever follows it finds it at the
       // address their own drive shows for it (a shared one's masked path), and opens it there.
       showLoading();
       let found;
@@ -262,7 +262,7 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
         }
       }
       if (!found?.path || found.is_dir || P.inTrash(found.path)) {
-        toast('That spreadsheet does not exist, or has not been shared with you', { icon: 'alert', duration: 5000 });
+        toast('That sheets does not exist, or has not been shared with you', { icon: 'alert', duration: 5000 });
         go(HOME);
         return;
       }
@@ -274,10 +274,10 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
     try {
       const doc = await Doc.fromPath(path);
       if (!doc.path) {
-        // The file is gone, but edits made to it here never reached Puter: they open as a new spreadsheet.
+        // The file is gone, but edits made to it here never reached Puter: they open as a new sheet.
         forgetRecent(path);
         history.replaceState(null, '', '#/new');
-        toast('That file no longer exists. Unsaved changes kept on this device were opened as a new spreadsheet', { icon: 'info', duration: 6000 });
+        toast('That file no longer exists. Unsaved changes kept on this device were opened as a new sheet', { icon: 'info', duration: 6000 });
       } else if (!P.samePath(doc.path, path)) forgetRecent(path); // the file was found where the drive keeps it now
       // A file its owner shares for editing together opens as the shared workbook, which may be ahead of the file.
       const shared = doc.path ? await roomForFile(doc.file) : null;
@@ -289,7 +289,7 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
           return;
         } catch (e) {
           console.warn('The shared workbook could not be opened; opening the file instead', e);
-          toast('This spreadsheet is shared for editing together, but the shared copy could not be reached. Opening the file', { icon: 'info', duration: 5000 });
+          toast('This sheet is shared for editing together, but the shared copy could not be reached. Opening the file', { icon: 'info', duration: 5000 });
         }
       }
       openEditor(doc, range);
@@ -360,31 +360,31 @@ function closeWindow() {
 /**
  * Files on the drive handed to the app by the Puter desktop: the one it was
  * launched with (double-click, "Open with"), or those dragged onto the window.
- * A spreadsheet opens where it lives, so that its edits go back to it; an
+ * A sheets opens where it lives, so that its edits go back to it; an
  * image goes on the open sheet, as one dropped from the device does.
  */
 function openDriveItems(items) {
   const item = items.find((it) => it?.path && !P.isDirItem(it));
   if (!item) {
-    if (items.some((it) => P.isDirItem(it))) toast('Cannot open a folder. Drop a spreadsheet (.xlsx, .csv, .ods, …)', { icon: 'info', duration: 3200 });
+    if (items.some((it) => P.isDirItem(it))) toast('Cannot open a folder. Drop a sheets (.xlsx, .csv, .ods, …)', { icon: 'info', duration: 3200 });
     return;
   }
   const name = item.name || P.displayName(item.path);
-  const spreadsheet = isSpreadsheetFile(name);
+  const sheets = isSheetsFile(name);
   if (!booted) {
-    // Before the app is up only a spreadsheet can wait: it becomes the first screen.
-    if (spreadsheet) launchedPath = item.path;
-    else toast(`Cannot open ${name}. Open a spreadsheet (.xlsx, .csv, .ods, …)`, { icon: 'info', duration: 4000 });
+    // Before the app is up only a sheets can wait: it becomes the first screen.
+    if (sheets) launchedPath = item.path;
+    else toast(`Cannot open ${name}. Open a sheets (.xlsx, .csv, .ods, …)`, { icon: 'info', duration: 4000 });
     return;
   }
   // The drop is a deliberate move on the app itself and outranks whatever is over it.
   closeMenu();
   closeAllModals();
-  if (spreadsheet) { nav.openPath(item.path); return; }
+  if (sheets) { nav.openPath(item.path); return; }
   const type = imageType(name);
   const view = current?.view;
   if (!type || !view?.acceptDrop) {
-    toast(`Cannot open ${name}. Drop a spreadsheet (.xlsx, .csv, .ods, …)${view?.acceptDrop ? ' or an image' : ''}`, { icon: 'info', duration: 3200 });
+    toast(`Cannot open ${name}. Drop a sheets (.xlsx, .csv, .ods, …)${view?.acceptDrop ? ' or an image' : ''}`, { icon: 'info', duration: 3200 });
     return;
   }
   P.readFile(item.path).then((bytes) => {
@@ -471,15 +471,15 @@ function setupFileDrop() {
   });
 }
 
-/** The open spreadsheet takes a dropped file first: an image belongs on the sheet. */
+/** The open sheets takes a dropped file first: an image belongs on the sheet. */
 function openDroppedFile(file, where = {}) {
   if (!booted) { droppedFile = file; return; }
   // The drop is a deliberate move on the app itself and outranks whatever is over it.
   closeMenu();
   closeAllModals();
   if (current?.view.acceptDrop) { current.view.acceptDrop(file, where); return; }
-  if (isSpreadsheetFile(file.name)) route({ file });
-  else toast(`Cannot open ${file.name}. Drop a spreadsheet (.xlsx, .csv, .ods, …)`, { icon: 'info', duration: 3200 });
+  if (isSheetsFile(file.name)) route({ file });
+  else toast(`Cannot open ${file.name}. Drop a sheets (.xlsx, .csv, .ods, …)`, { icon: 'info', duration: 3200 });
 }
 
 function setupOfflineBanner() {

@@ -1,5 +1,5 @@
 /**
- * Formulas that reach outside the spreadsheet the moment they are shown: the
+ * Formulas that reach outside the sheets the moment they are shown: the
  * workbook's external providers (IMPORT*, the AI, translation) under every name
  * they answer to, and IMAGE with anything but an inline picture. A file from
  * elsewhere, or a paste from a web page, could send the sheet's contents

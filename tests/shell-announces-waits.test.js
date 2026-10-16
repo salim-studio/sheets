@@ -13,8 +13,8 @@ import { session } from '../src/lib/session.js';
 
 let sdk, view;
 const files = [
-  { path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 2 },
-  { path: 'Spreadsheets/Plan.xlsx', name: 'Plan.xlsx', size: 14, modified: 1 },
+  { path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 2 },
+  { path: 'Sheets/Plan.xlsx', name: 'Plan.xlsx', size: 14, modified: 1 },
 ];
 
 beforeEach(() => {
@@ -51,11 +51,11 @@ it('marks the home list busy while it loads and says what arrived', async () => 
   const list = view.el.querySelector('.file-list');
   const status = view.el.querySelector('[role="status"]');
   expect(list.getAttribute('aria-busy')).toBe('true');
-  expect(status.textContent).toBe('Loading your spreadsheets…');
+  expect(status.textContent).toBe('Loading your sheets…');
   release();
   await tick(20);
   expect(list.hasAttribute('aria-busy')).toBe(false);
-  expect(status.textContent).toBe('2 spreadsheets');
+  expect(status.textContent).toBe('2 sheets');
 });
 
 it('says how a search narrowed the list, and when it matched nothing', async () => {
@@ -67,13 +67,13 @@ it('says how a search narrowed the list, and when it matched nothing', async () 
   const search = view.el.querySelector('.home-search');
   search.value = 'plan';
   search.dispatchEvent(new Event('input'));
-  expect(status.textContent).toBe('1 spreadsheet containing "plan"');
+  expect(status.textContent).toBe('1 sheets containing "plan"');
   search.value = 'zzz';
   search.dispatchEvent(new Event('input'));
-  expect(status.textContent).toBe('No spreadsheet names contain "zzz"');
+  expect(status.textContent).toBe('No sheets names contain "zzz"');
   search.value = 'ZZZ';
   search.dispatchEvent(new Event('input'));
-  expect(status.textContent).toBe('No spreadsheet names contain "ZZZ"');
+  expect(status.textContent).toBe('No sheets names contain "ZZZ"');
 });
 
 it('announces a failed load through the same line', async () => {

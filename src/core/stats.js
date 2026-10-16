@@ -32,7 +32,7 @@ export function columnStats(wb, sheetId, col, range, { topN = 8, bucketCount = 1
     if (isError(v)) { errors++; continue; }
     if (typeof v === 'number') nums.push(v);
     else if (typeof v === 'string') textCount++;
-    // The number 1, the text "1" and TRUE are three different values, as in every spreadsheet's distinct count.
+    // The number 1, the text "1" and TRUE are three different values, as in every sheets's distinct count.
     const key = typeof v === 'string' ? `s:${v.trim().toLowerCase()}` : `${typeof v}:${String(v)}`;
     const entry = freq.get(key) || { value: wb.getDisplay(sheetId, r, col), count: 0 };
     entry.count++;

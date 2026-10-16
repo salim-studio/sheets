@@ -38,7 +38,7 @@ async function goTo(text) {
 const active = () => view.el.querySelector('.grid-viewport').getAttribute('aria-activedescendant');
 
 it('goes to named ranges, tables and other sheets from the focus-mode dialog', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   const second = wb.addSheet('Second').id;

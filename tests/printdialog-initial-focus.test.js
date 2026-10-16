@@ -26,7 +26,7 @@ function open({ sheets = 1, area = null } = {}) {
   const wb = new Workbook();
   for (let i = 1; i < sheets; i++) wb.addSheet(`Sheet ${i + 1}`);
   wb.setInput(wb.activeSheetId, 0, 0, 'x');
-  if (area) store.set(accountStorageKey('spreadsheet:print'), JSON.stringify({ area }));
+  if (area) store.set(accountStorageKey('sheets:print'), JSON.stringify({ area }));
   const ctx = { wb, sheetId: () => wb.activeSheetId, selection: () => S.single(0, 0), range: () => ({ r1: 0, c1: 0, r2: 0, c2: 0 }), grid: { focus() {} }, doc: { name: 'Budget' } };
   return openPrintDialog(ctx).panel;
 }

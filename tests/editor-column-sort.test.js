@@ -6,7 +6,7 @@ import { parseRange } from '../src/core/cell.js';
 import * as notifications from '../src/ui/toast.js';
 
 // Sorting with a whole column selected (the column header's menu) sorted that
-// column alone, tearing the rows apart, header included. Like a spreadsheet's
+// column alone, tearing the rows apart, header included. Like a sheets's
 // column menu it now sorts the sheet's rows by that column, keeping a header
 // row in place.
 function memoryStorage() {
@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(prep = null) {
-  const doc = new Doc({ name: 'Sort', path: 'Spreadsheets/Sort.xlsx' });
+  const doc = new Doc({ name: 'Sort', path: 'Sheets/Sort.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (const [r, a, b] of [[0, 'Name', 'Qty'], [1, 'b', '2'], [2, 'a', '1'], [3, 'c', '3']]) { wb.setInput(id, r, 0, a); wb.setInput(id, r, 1, b); }

@@ -27,7 +27,7 @@ beforeEach(() => {
 afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('removes every change listener it added to the workbook when destroyed', async () => {
-  const doc = new Doc({ name: 'Leak', path: 'Spreadsheets/Leak.xlsx' });
+  const doc = new Doc({ name: 'Leak', path: 'Sheets/Leak.xlsx' });
   const { wb } = doc;
   const added = new Set();
   const removed = new Set();

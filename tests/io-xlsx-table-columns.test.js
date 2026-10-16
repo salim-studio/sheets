@@ -134,7 +134,7 @@ it('copies displayed edge styles into interoperable HTML and pastes them as cell
   const wb = book();
   const html = cellsToHtml([['Entry']], [[wb.getCell(wb.activeSheetId, 3, 3)]], [[look(wb, 3, 3)]]);
   expect(html).toContain('font-weight:bold'); expect(html).toContain('#99ccff');
-  const rows = parseHtmlClipboard(html.replace(/ data-spreadsheet-\w+="[^"]*"/g, '')).rows;
+  const rows = parseHtmlClipboard(html.replace(/ data-sheets-\w+="[^"]*"/g, '')).rows;
   const pasted = cellsFromHtmlRows(rows, () => ({}));
   expect(pasted[0].cell.s).toMatchObject({ bold: true, bg: '#99ccff', brBorder: { bs: 'thin', bc: '#aa0000' } });
 });

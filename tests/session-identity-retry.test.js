@@ -32,7 +32,7 @@ it('keeps asking who is signed in after a failed look-up, then moves the records
   expect(session.signedIn).toBe(true);
   expect(isAccountScope(storageScope())).toBe(false);
 
-  const doc = new Doc({ name: 'Plan', path: 'Spreadsheets/Plan.xlsx' });
+  const doc = new Doc({ name: 'Plan', path: 'Sheets/Plan.xlsx' });
   // This test follows unsaved drafts across an identity retry. A completed autosave correctly
   // removes that draft; whether SheetJS has loaded yet must not decide the test's outcome.
   vi.spyOn(doc, 'save').mockResolvedValue(false);
@@ -48,7 +48,7 @@ it('keeps asking who is signed in after a failed look-up, then moves the records
   expect(loadDraft(throwaway)).toBeNull();
   expect(doc.draftKey).toContain(encodeURIComponent('uuid:u-7'));
   expect(loadDraft(doc.draftKey)?.workbook.sheets[0].cells['0,0'].v).toBe('typed before the account was known');
-  expect(listDrafts().map((d) => d.path)).toEqual(['Spreadsheets/Plan.xlsx']);
+  expect(listDrafts().map((d) => d.path)).toEqual(['Sheets/Plan.xlsx']);
 
   // Drafting carries on under the account, and the retries stop.
   doc.wb.setInput(doc.wb.activeSheetId, 1, 0, 'after');

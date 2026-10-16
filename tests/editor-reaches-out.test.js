@@ -5,7 +5,7 @@ import { FUNCTIONS } from '../src/core/formula/functions.js';
 import { upperName } from '../src/core/formula/tokenizer.js';
 import { Workbook } from '../src/core/workbook.js';
 
-// The paste-time scan for formulas that reach outside the spreadsheet named
+// The paste-time scan for formulas that reach outside the sheets named
 // TRANSLATE but not its GOOGLETRANSLATE alias, so a pasted =GOOGLETRANSLATE(...)
 // went live in a trusted document without asking. The scan the editor pastes
 // through is now the one shared with the document's open-time check.

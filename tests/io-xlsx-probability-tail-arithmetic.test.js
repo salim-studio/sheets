@@ -44,7 +44,7 @@ it('preserves tail formulas, errors, edits and shifted copies across metadata-fr
 it('uses externally pasted numeric values in underflow and power-path calculations', () => {
   const values = [[5e307], [4e-308], [1e-154]];
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

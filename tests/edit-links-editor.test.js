@@ -30,7 +30,7 @@ afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; v
 const toastSpy = () => vi.spyOn(notifications, 'toast');
 
 async function mount({ links = true, startup = 'ask' } = {}) {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   const wb = doc.wb;
   if (links) {
     wb.replaceWith({ ...wb.toJSON(), linkStartup: startup, externalWorkbooks: { version: 1, books: [{ target: 'Prices.xlsx', sheets: [{ name: 'Rates', cells: { '0,0': 5 } }], names: [] }] } });

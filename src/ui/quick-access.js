@@ -19,7 +19,7 @@ const MENU_COMMANDS = new Set(['functionMenu', 'cellStylesMenu', 'shapesMenu', '
 
 /** The commands offered with a tick in the customize menu, for adding or removing at once. */
 const COMMON = [
-  ['new', 'New Spreadsheet'], ['open', 'Open'], ['save', 'Save'], ['print', 'Print'], ['spelling', 'Spelling'],
+  ['new', 'New Sheets'], ['open', 'Open'], ['save', 'Save'], ['print', 'Print'], ['spelling', 'Spelling'],
   ['undo', 'Undo'], ['redo', 'Redo'], [commandId('sort', 'asc'), 'Sort Ascending'], [commandId('sort', 'desc'), 'Sort Descending'],
   ['find', 'Find'], ['insertChart', 'Insert Chart'], ['filter', 'Filter'],
 ];

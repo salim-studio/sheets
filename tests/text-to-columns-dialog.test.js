@@ -78,7 +78,7 @@ describe('the dialog', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount(cells) {
-    const doc = new Doc({ name: 'Split', path: 'Spreadsheets/Split.xlsx' });
+    const doc = new Doc({ name: 'Split', path: 'Sheets/Split.xlsx' });
     const wb = doc.wb, id = wb.activeSheetId;
     for (const [r, c, text] of cells) wb.setInput(id, r, c, text);
     wb.clearHistory();

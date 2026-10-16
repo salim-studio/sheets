@@ -31,7 +31,7 @@ async function signIn(uuid, username = uuid) {
 }
 
 function documentWithDraft(text) {
-  const doc = new Doc({ path: 'Spreadsheets/Private.xlsx', name: 'Private' });
+  const doc = new Doc({ path: 'Sheets/Private.xlsx', name: 'Private' });
   docs.push(doc);
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, text);
   expect(doc.writeDraft()).toBe(true);
@@ -67,9 +67,9 @@ describe('account isolation for local document data', () => {
   });
 
   it('does not adopt legacy data with an unknown owner or reveal data when identity lookup fails', async () => {
-    localStorage.setItem('spreadsheet:recent', JSON.stringify([{ path: '/old/Secret.xlsx', name: 'Secret' }]));
+    localStorage.setItem('sheets:recent', JSON.stringify([{ path: '/old/Secret.xlsx', name: 'Secret' }]));
     const legacy = JSON.stringify({ name: 'Legacy', savedAt: Date.now(), workbook: {} });
-    localStorage.setItem('spreadsheet:draft:Spreadsheets/Private.xlsx', legacy);
+    localStorage.setItem('sheets:draft:Sheets/Private.xlsx', legacy);
     await signIn('alice');
     expect(recentFiles()).toEqual([]);
     expect(listDrafts()).toEqual([]);
@@ -78,6 +78,6 @@ describe('account isolation for local document data', () => {
     await signIn(null);
     expect(recentFiles()).toEqual([]);
     expect(listDrafts()).toEqual([]);
-    expect(localStorage.getItem('spreadsheet:draft:Spreadsheets/Private.xlsx')).toBe(legacy);
+    expect(localStorage.getItem('sheets:draft:Sheets/Private.xlsx')).toBe(legacy);
   });
 });

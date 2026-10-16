@@ -22,7 +22,7 @@ const A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
 const C = 'http://schemas.openxmlformats.org/drawingml/2006/chart';
 const C15 = 'http://schemas.microsoft.com/office/drawing/2012/chart';
 const R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/';
-const XDR = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing';
+const XDR = 'http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing';
 const HEADER = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
 const emu = px => Math.round(px * 9525);
 const pictureRectAttrs = rect => Object.fromEntries(Object.entries(rect || {}).map(([k, v]) => [k, Math.round(v * 100000)]));

@@ -50,7 +50,7 @@ it('retains raw values through edit/undo, external HTML and metadata-free XLSX',
     wb.setInput(id, r, 1, `=A${r + 1}*2`);
     expect(wb.getDisplay(id, r, 0)).toBe(display);
     const html = cellsToHtml([[display]], [[wb.getCell(id, r, 0)]], null, [[value]])
-      .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+      .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const cell = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(value);
     expect(cell.s?.code || 'General').toBe(code);

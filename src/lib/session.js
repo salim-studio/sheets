@@ -5,7 +5,7 @@
  *
  * Nobody has to sign in to work: the grid runs in the browser and Puter is
  * where files are saved, so a sign-in is asked for at the first action that
- * needs the cloud (saving, opening a file, listing the spreadsheets). Until
+ * needs the cloud (saving, opening a file, listing the sheets). Until
  * init() has asked the SDK the state is 'unknown' and nothing is gated.
  * Settings live in puter.kv for an account and in this browser otherwise, which
  * also keeps a copy of the account's for a boot that cannot reach the store;

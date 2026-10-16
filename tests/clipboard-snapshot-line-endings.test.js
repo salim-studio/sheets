@@ -47,13 +47,13 @@ it('does not overwrite incompatible explicit values with altered snapshot data',
   // Even a well-shaped payload must agree with the explicit typed value.
   for (const stored of ['other\rtext', 'a\r\nb!', '\r', 12, true, {error:'#N/A'}]) {
     const doc = documentOf(cellsToHtml([['a\r\nb']], null, null, [['a\r\nb']]));
-    doc.querySelector('table').setAttribute('data-spreadsheet-values', JSON.stringify([[stored]]));
+    doc.querySelector('table').setAttribute('data-sheets-values', JSON.stringify([[stored]]));
     expect(hasClipboardSnapshot(doc.querySelector('table'))).toBe(true);
     expect(valuesOf(parseHtmlClipboard(doc.documentElement.outerHTML)), String(stored)).toEqual(['a\nb']);
   }
   for (const [actual,stored] of [[7,'7\r'], [false,'FALSE\r'], ['new','old\r']]) {
     const doc = documentOf(cellsToHtml([[String(actual)]], null, null, [[actual]]));
-    doc.querySelector('table').setAttribute('data-spreadsheet-values', JSON.stringify([[stored]]));
+    doc.querySelector('table').setAttribute('data-sheets-values', JSON.stringify([[stored]]));
     expect(parseHtmlClipboard(doc.documentElement.outerHTML).rows[0][0].value).toBe(actual);
   }
 });
@@ -80,7 +80,7 @@ it('retains recovered line endings through edit, undo, copying and metadata-free
   wb.setInput(id,0,0,'edited'); wb.undo();
   const html = cellsToHtml([[text]], [[wb.getCell(id,0,0)]], null, [[wb.getValue(id,0,0)]]);
   expect(parseHtmlClipboard(serialize(html)).cells[0][0].v).toBe(text);
-  const foreign = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const foreign = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(valuesOf(parseHtmlClipboard(serialize(foreign)))).toEqual([text]);
   const blob = await workbookToXlsx(wb);
   const bytes = await new Promise((resolve,reject) => {

@@ -6,7 +6,7 @@ const attr = (xml, name) => xlsxText(xml?.match(new RegExp(`\\s${name}=(?:"([^"]
 const text = (xml, name) => xlsxText(elements(xml, name)[0]?.replace(/^<[^>]+>|<\/[^>]+>$/g, '') || '').trim();
 const flag = value => value != null && !/^(?:false|f|0)$/i.test(value);
 const REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/';
-const XDR = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing';
+const XDR = 'http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing';
 
 // Serialization keeps subpixel offsets until the final EMU conversion. The
 // interactive drag helper intentionally snaps to pixels and is unsuitable here.

@@ -69,7 +69,7 @@ it('preserves alignment through edit/undo, outgoing HTML and metadata-free XLSX'
   wb.undo();
   expect(wb.getValue(id, 0, 0)).toBe(12.5);
   const html = cellsToHtml([['12.5', '12.5', '12.5']], [cells], null, [[12.5, 12.5, 12.5]])
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(parse(html).map(c => c.s?.align)).toEqual(aligns);
   const blob = await workbookToXlsx(wb);
   const data = await new Promise(resolve => {

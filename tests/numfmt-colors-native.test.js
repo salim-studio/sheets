@@ -90,7 +90,7 @@ it('keeps the base font color and live format in external HTML and metadata-free
   const cell = { v: 123, f: null, s: { fmt: 'custom', code: '[Color56]0', color: '#123456' } };
   wb.setCells(id, [{ r: 0, c: 0, cell }]);
   const html = cellsToHtml([['123']], [[cell]], null, [[123]], null, { colorPalette: palette })
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(html).toContain(`color="${native.indexed[63]}" style="mso-ignore:color"`);
   const restored = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
   expect(restored.v).toBe(123);

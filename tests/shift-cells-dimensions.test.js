@@ -54,7 +54,7 @@ it('keeps the blank end of a shifted table visible', () => {
   expect(wb.tableById(id, 'table').range.r2).toBe(100);
 });
 
-it.each(['down', 'right'])('refuses to push notes beyond the spreadsheet format boundary when shifting %s', (direction) => {
+it.each(['down', 'right'])('refuses to push notes beyond the sheets format boundary when shifting %s', (direction) => {
   const r = direction === 'down' ? MAX_ROW : 0;
   const c = direction === 'right' ? MAX_COL : 0;
   const wb = new Workbook({ sheets: [{ name: 'Edge', rows: r + 1, cols: c + 1, notes: { [`${r},${c}`]: 'Keep' } }] });

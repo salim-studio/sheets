@@ -20,7 +20,7 @@ it('keeps exact value snapshots beyond the formula-metadata size limit', { timeo
 
   it.each(['[[1,2]]', '[[1],[2]]', '[[{"toString":null}]]', '[[{"error":{}}]]', '[[1e400]]', '{invalid'])
     ('ignores a malformed optional value snapshot: %s', (snapshot) => {
-      const parsed = parseHtmlClipboard(stampClipboardHtml(`<table data-spreadsheet-cells='[[{"v":10}]]' data-spreadsheet-values='${snapshot}'><tr><td>10</td></tr></table>`));
+      const parsed = parseHtmlClipboard(stampClipboardHtml(`<table data-sheets-cells='[[{"v":10}]]' data-sheets-values='${snapshot}'><tr><td>10</td></tr></table>`));
       expect(parsed.cells).toEqual([[{ v: 10 }]]);
       expect(parsed.values).toBeUndefined();
     });
@@ -63,7 +63,7 @@ it('keeps exact value snapshots beyond the formula-metadata size limit', { timeo
     { v: 10, s: 'currency' },
     { v: 10, s: { cur: { toString: null } } },
   ])('falls back to visible text for malformed embedded cell content: %j', (cell) => {
-    const parsed = parseHtmlClipboard(stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify([[cell]])}'><tr><td>Visible value</td></tr></table>`));
+    const parsed = parseHtmlClipboard(stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify([[cell]])}'><tr><td>Visible value</td></tr></table>`));
     expect(parsed.cells).toBeUndefined();
     const cells = cellsFromHtmlRows(parsed.rows).map(({ i, j, cell: value }) => ({ r: i, c: j, cell: value }));
     const wb = new Workbook();
@@ -85,7 +85,7 @@ it('keeps exact value snapshots beyond the formula-metadata size limit', { timeo
     [[]],
     [['Value']],
   ])('falls back to visible table cells for malformed embedded data %#', (...cells) => {
-    const html = stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'><tr><td>Visible value</td></tr></table>`);
+    const html = stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'><tr><td>Visible value</td></tr></table>`);
     const parsed = parseHtmlClipboard(html);
     expect(parsed.cells).toBeUndefined();
     expect(parsed.rows).toEqual([[{ text: 'Visible value', style: undefined }]]);
@@ -129,7 +129,7 @@ it('keeps exact value snapshots beyond the formula-metadata size limit', { timeo
     const html = cellsToHtml([['Item', '$1,500.00'], ['', '$1,500.00']], cells);
     expect(html).toContain('<td style="vertical-align:middle;font-weight:bold;background-color:#eeeeee;white-space:nowrap">Item</td>');
     expect(html).toContain('<td style="vertical-align:middle;white-space:nowrap">$1,500.00</td>');
-    expect(html).toContain('data-spreadsheet-cells=');
+    expect(html).toContain('data-sheets-cells=');
     const back = parseHtmlClipboard(html);
     expect(back.cells).toEqual(cells);
   });
@@ -190,7 +190,7 @@ describe('conditional looks in copied HTML', () => {
     expect(html).toContain('background-color:#ff0000');
     expect(html).toContain('color:#ffffff');
     expect(html).toContain('font-weight:bold');
-    expect(html).toContain('data-spreadsheet-cells=');
+    expect(html).toContain('data-sheets-cells=');
     expect(html).not.toContain('ff0000&quot;'); // the embedded cells carry only the real style
     expect(cellsToHtml([['5']], cells)).not.toContain('background-color');
   });

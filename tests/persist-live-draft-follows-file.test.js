@@ -11,11 +11,11 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
-const MOVED = 'Spreadsheets/Q3.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
+const MOVED = 'Sheets/Q3.xlsx';
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 /** Every draft record in this browser, by its address (the account prefix aside) and first cell. */
-const records = () => localStorage.keys().filter((k) => k.includes(':draft')).map((k) => [k.replace(/^.*?(Spreadsheets\/|new:)/, '$1').replace(/:[0-9a-f]{32}$/, ''), text(loadDraft(k))]).sort();
+const records = () => localStorage.keys().filter((k) => k.includes(':draft')).map((k) => [k.replace(/^.*?(Sheets\/|new:)/, '$1').replace(/:[0-9a-f]{32}$/, ''), text(loadDraft(k))]).sort();
 const unsaved = () => listDrafts().filter((d) => d.path === null).map((d) => [d.name, text(loadDraft(d.key))]).sort();
 
 function book(value) {
@@ -39,7 +39,7 @@ async function closedUndecided({ withUid = true } = {}) {
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'meanwhile');
   expect(doc.writeDraft()).toBe(true);
   doc.destroy();
-  expect(records()).toEqual([['Spreadsheets/Budget.xlsx', 'recovered edits'], ['Spreadsheets/Budget.xlsx:live', 'meanwhile']]);
+  expect(records()).toEqual([['Sheets/Budget.xlsx', 'recovered edits'], ['Sheets/Budget.xlsx:live', 'meanwhile']]);
   return uid;
 }
 
@@ -47,7 +47,7 @@ async function closedUndecided({ withUid = true } = {}) {
 // one along: the edits made beside it while it awaited a decision, the newest and never saved, stayed
 // under the old address, offered nowhere and listed nowhere, while the older draft was offered as the
 // latest. Now both follow, and the later edits are offered, as they are when the file is reopened where it was.
-it('offers the edits made beside an undecided draft when the file is opened under the name a rename elsewhere gave it, and keeps the draft as an unsaved spreadsheet', async () => {
+it('offers the edits made beside an undecided draft when the file is opened under the name a rename elsewhere gave it, and keeps the draft as an unsaved sheet', async () => {
   await closedUndecided();
   await puter.fs.rename(PATH, 'Q3.xlsx');
   const doc = await Doc.fromPath(MOVED);
@@ -80,14 +80,14 @@ it('follows the file by the edits kept beside a draft that does not name it, and
 
 it('takes the edits kept beside a draft along when the file is opened by another spelling of its address', async () => {
   const bytes = await Doc.blank().toXlsxBlob();
-  const absolute = '/nj/AppData/app/Spreadsheets/Budget.xlsx';
+  const absolute = '/nj/AppData/app/Sheets/Budget.xlsx';
   mock.fs.set(absolute, { blob: bytes, size: bytes.size, modified: 1 });
-  mock.fs.set('/nj/AppData/app/Spreadsheets/.keep', { blob: new Blob(['']), size: 0, modified: 1 });
+  mock.fs.set('/nj/AppData/app/Sheets/.keep', { blob: new Blob(['']), size: 0, modified: 1 });
   expect(saveDraft(draftKey(PATH), book('recovered edits'), 'Budget', 'rev-old')).toBe(true);
   expect(saveDraft(liveDraftKey(draftKey(PATH)), book('meanwhile'), 'Budget', 'rev-live')).toBe(true);
   // The drive answers for the relative address with the absolute one it keeps.
   const stat = puter.fs.stat.bind(puter.fs);
-  puter.fs.stat = async (p) => stat(p === PATH ? absolute : p === 'Spreadsheets' ? '/nj/AppData/app/Spreadsheets' : p);
+  puter.fs.stat = async (p) => stat(p === PATH ? absolute : p === 'Sheets' ? '/nj/AppData/app/Sheets' : p);
   const read = puter.fs.read.bind(puter.fs);
   puter.fs.read = async (p) => read(p === PATH ? absolute : p);
   const doc = await Doc.fromPath(PATH);

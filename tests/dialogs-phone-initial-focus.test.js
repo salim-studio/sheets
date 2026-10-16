@@ -43,8 +43,8 @@ const dialogs = [
   ['Insert text box', ({ wb, id }) => openTextBoxDialog({ wb, sheetId: () => id, active: () => ({ r: 0, c: 0 }), grid: grid() }, {}), 'Text'],
   ['Data validation for a dropdown', ({ wb, id }) => openValidationManager({ wb, sheetId: () => id, range: () => range, grid: grid() }, { type: 'list' }), 'List options'],
   ['Write a formula with AI', ({ wb, id }) => openAiDialog({ wb, sheetId: () => id, active: () => ({ r: 0, c: 0 }), range: () => range, grid: grid() }, { mode: 'write' }), 'What should the formula calculate?'],
-  // Rename spreadsheet, Save a copy, Rename sheet, Go to, Split text, Import from URL: one prompt for all of them.
-  ['A text prompt', () => promptDialog({ title: 'Rename spreadsheet', label: 'Name', value: 'Budget' }), 'Name'],
+  // Rename sheets, Save a copy, Rename sheet, Go to, Split text, Import from URL: one prompt for all of them.
+  ['A text prompt', () => promptDialog({ title: 'Rename sheets', label: 'Name', value: 'Budget' }), 'Name'],
 ];
 
 describe('on a phone', () => {

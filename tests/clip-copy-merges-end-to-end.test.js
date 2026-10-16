@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(prep) {
-  const doc = new Doc({ name: 'Copy', path: 'Spreadsheets/Copy.xlsx' });
+  const doc = new Doc({ name: 'Copy', path: 'Sheets/Copy.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   prep(wb, id);

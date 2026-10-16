@@ -25,7 +25,7 @@ it.each([
     expect(wb.colWidth(sheet.id, 2)).toBe(pixels);
     expect(wb.styleAt(sheet.id, 0, 1).font).toBe(key);
     const html = cellsToHtml([['Planner']], [[wb.getCell(sheet.id, 0, 1)]], [[wb.styleAt(sheet.id, 0, 1)]]);
-    const rows = parseHtmlClipboard(html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '')).rows;
+    const rows = parseHtmlClipboard(html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '')).rows;
     expect(cellsFromHtmlRows(rows)[0].cell.s.font).toBe(key);
     const saved = await workbookToXlsx(wb);
     const bytes = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(saved); });

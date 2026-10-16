@@ -9,14 +9,14 @@ it.each(IMPORT_EXTENSIONS)('retains the supported %s filename from a URL', (ext)
   }
 });
 
-it('routes a FODS URL through the spreadsheet reader and preserves sheets, values, and formulas', async () => {
+it('routes a FODS URL through the sheets reader and preserves sheets, values, and formulas', async () => {
   const bytes = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
     <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
       xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
       xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
       xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2"
-      office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-      <office:body><office:spreadsheet>
+      office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+      <office:body><office:sheets>
         <table:table table:name="Values">
           <table:table-row><table:table-cell office:value-type="float" office:value="42"/></table:table-row>
           <table:table-row><table:table-cell table:formula="of:=[.A1]+3" office:value-type="float" office:value="45"/></table:table-row>
@@ -24,7 +24,7 @@ it('routes a FODS URL through the spreadsheet reader and preserves sheets, value
         <table:table table:name="Notes">
           <table:table-row><table:table-cell office:value-type="string"><text:p>Report</text:p></table:table-cell></table:table-row>
         </table:table>
-      </office:spreadsheet></office:body>
+      </office:sheets></office:body>
     </office:document>`);
   const direct = await workbookFromFile(bytes, 'Report.fods');
   expect(direct.sheets.map((sheet) => sheet.name)).toEqual(['Values', 'Notes']);

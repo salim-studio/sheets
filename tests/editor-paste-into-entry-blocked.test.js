@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { editorView } from '../src/views/editor.js';
 import { Doc } from '../src/lib/doc.js';
 
-// A formula pasted onto the grid that reaches outside the spreadsheet (IMPORTDATA, IMAGE from the
+// A formula pasted onto the grid that reaches outside the sheets (IMPORTDATA, IMAGE from the
 // web, AI) is put through a question first: the document is marked as holding outside content and
 // the formula lands #BLOCKED! with the notice bar. A formula pasted into the in-cell editor (F2,
 // Ctrl+V, Enter) or into the formula bar went round that gate: the paste event returned early
@@ -44,7 +44,7 @@ const paste = (field, text) => {
 };
 
 async function mount() {
-  const doc = new Doc({ name: 'Trusted', path: 'Spreadsheets/Trusted.xlsx' });
+  const doc = new Doc({ name: 'Trusted', path: 'Sheets/Trusted.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'secret');

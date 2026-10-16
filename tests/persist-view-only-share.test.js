@@ -3,7 +3,7 @@ import { Doc, VIEW_ONLY } from '../src/lib/doc.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 import { installMockPuter } from './helpers/mock-puter.js';
 
-// A spreadsheet shared with the user only to view took every edit as an autosave Puter refused, said
+// A sheets shared with the user only to view took every edit as an autosave Puter refused, said
 // "Forbidden", and sent the whole book again at growing intervals for as long as the tab stayed open.
 beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => {
@@ -22,7 +22,7 @@ async function openDocument() {
   return doc;
 }
 
-it('says why a view-only spreadsheet is not saved, and does not keep trying', async () => {
+it('says why a view-only sheets is not saved, and does not keep trying', async () => {
   const doc = await openDocument();
   doc.viewOnly = true;
   const write = puter.fs.write;
@@ -46,7 +46,7 @@ it('says why a view-only spreadsheet is not saved, and does not keep trying', as
   } finally { doc.destroy(); }
 });
 
-it('keeps trying a spreadsheet the user may edit', async () => {
+it('keeps trying a sheets the user may edit', async () => {
   const doc = await openDocument();
   const write = puter.fs.write;
   const attempts = [];
@@ -63,7 +63,7 @@ it('keeps trying a spreadsheet the user may edit', async () => {
   } finally { doc.destroy(); }
 });
 
-it('saves a copy of a view-only spreadsheet as the user’s own, which saves as usual', async () => {
+it('saves a copy of a view-only sheets as the user’s own, which saves as usual', async () => {
   const doc = await openDocument();
   doc.viewOnly = true;
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'mine');

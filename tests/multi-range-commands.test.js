@@ -37,7 +37,7 @@ const ROW = Math.round(DEFAULT_ROW_HEIGHT); // a default row on screen at 100%
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open(cells) {
-  const doc = new Doc({ name: 'Ranges', path: 'Spreadsheets/Ranges.xlsx' });
+  const doc = new Doc({ name: 'Ranges', path: 'Sheets/Ranges.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   for (const [r, c, text] of cells) wb.setInput(id, r, c, text);

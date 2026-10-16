@@ -83,7 +83,7 @@ describe('a format code longer than the 255-character limit', () => {
     expect(excel[0].style?.code).toBeUndefined();
     expect(excel[0].style?.fmt).toBeUndefined();
     expect(excel[1].style).toMatchObject({ fmt: 'number', dec: 2 });
-    const own = (code) => parseHtmlClipboard(stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify([[{ v: 1, f: null, s: { fmt: 'custom', code, bold: true } }]])}'><tr><td>1</td></tr></table>`)).cells[0][0];
+    const own = (code) => parseHtmlClipboard(stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify([[{ v: 1, f: null, s: { fmt: 'custom', code, bold: true } }]])}'><tr><td>1</td></tr></table>`)).cells[0][0];
     expect(own(LONG).s).toEqual({ bold: true });
     expect(own(LONGEST).s).toEqual({ fmt: 'custom', code: LONGEST, bold: true });
     // Pasted, the cells show at once.

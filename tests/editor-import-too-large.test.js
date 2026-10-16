@@ -32,7 +32,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Imports', path: 'Spreadsheets/Imports.xlsx' });
+  const doc = new Doc({ name: 'Imports', path: 'Sheets/Imports.xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await vi.advanceTimersByTimeAsync(1);

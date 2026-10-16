@@ -7,7 +7,7 @@ import { EMAIL_WORKER_URL } from '/src/lib/mail.js';
 
 const puter = window.puter;
 if (puter) {
-  const STORE = 'spreadsheet-mock-outbox';
+  const STORE = 'sheets-mock-outbox';
   const mailbox = (() => { try { return JSON.parse(sessionStorage.getItem(STORE)) || []; } catch { return []; } })();
   window.__mailbox = mailbox;
   const data = new Map();

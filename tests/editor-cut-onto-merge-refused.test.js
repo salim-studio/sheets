@@ -35,7 +35,7 @@ const clipboardEvent = (type) => {
 };
 
 async function mount() {
-  const doc = new Doc({ name: 'Cut', path: 'Spreadsheets/Cut.xlsx' });
+  const doc = new Doc({ name: 'Cut', path: 'Sheets/Cut.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '1');

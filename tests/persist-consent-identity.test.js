@@ -11,7 +11,7 @@ beforeAll(async () => { await workbookToXlsx(new Workbook()); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); });
 afterEach(() => { delete globalThis.puter; });
 
-const consentKey = (path) => `${accountStorageKey('spreadsheet:external')}${path}`;
+const consentKey = (path) => `${accountStorageKey('sheets:external')}${path}`;
 /** A file at `path`; placed again, it is another file with an id of its own. */
 async function place(path) {
   const blob = await workbookToXlsx(new Workbook());
@@ -32,7 +32,7 @@ it('does not trust a different file that took the place of an allowed one', asyn
   expect(await opensTrusted(path)).toBe(true);
   await place(path);
   expect(await opensTrusted(path)).toBe(false);
-  expect(await puter.kv.get(`spreadsheet:external:v1:${mock.fs.get(path).uid}`)).toBeNull();
+  expect(await puter.kv.get(`sheets:external:v1:${mock.fs.get(path).uid}`)).toBeNull();
 });
 
 it('honours the record this browser kept when the store cannot be reached, for the same file only', async () => {
@@ -46,9 +46,9 @@ it('honours the record this browser kept when the store cannot be reached, for t
 });
 
 it('keeps honouring a blocking record kept by path alone, but asks again before trusting on such a record', async () => {
-  await place('Spreadsheets/Mine.xlsx');
-  localStorage.setItem(consentKey('Spreadsheets/Mine.xlsx'), '0'); // from before file ids were kept
-  expect(await opensTrusted('Spreadsheets/Mine.xlsx')).toBe(false);
+  await place('Sheets/Mine.xlsx');
+  localStorage.setItem(consentKey('Sheets/Mine.xlsx'), '0'); // from before file ids were kept
+  expect(await opensTrusted('Sheets/Mine.xlsx')).toBe(false);
   await place('Desktop/Other.xlsx');
   localStorage.setItem(consentKey('Desktop/Other.xlsx'), '1');
   expect(await opensTrusted('Desktop/Other.xlsx')).toBe(false);

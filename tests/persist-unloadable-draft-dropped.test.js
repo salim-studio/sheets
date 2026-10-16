@@ -17,7 +17,7 @@ const put = (key, workbook) => localStorage.setItem(key, JSON.stringify(record(w
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 
 // A record was readable once it had a non-empty sheet list and a name: one holding a null sheet, or
-// a sheet without cells, was parked and listed as an unsaved spreadsheet, and recovering it failed in
+// a sheet without cells, was parked and listed as an unsaved sheet, and recovering it failed in
 // the workbook's loader every time, with a raw error and the record left in place.
 it('reads a draft only when every sheet is an object with a cells map', () => {
   const good = new Workbook();
@@ -30,29 +30,29 @@ it('reads a draft only when every sheet is an object with a cells map', () => {
 });
 
 it('neither parks nor gives way to a record with a null sheet', () => {
-  const garbage = draftKey('Spreadsheets/Garbage.xlsx');
+  const garbage = draftKey('Sheets/Garbage.xlsx');
   put(garbage, { sheets: [null] });
   expect(parkDraft(garbage)).toBeNull();
   expect(loadDraft(garbage)).not.toBeNull(); // left where it is, for its own file's open to drop
-  const from = draftKey('Spreadsheets/A.xlsx');
+  const from = draftKey('Sheets/A.xlsx');
   const a = new Workbook();
   a.setInput(a.activeSheetId, 0, 0, 'A');
   expect(saveDraft(from, a, 'A', 'rev-a')).toBe(true);
   moveDraft(from, garbage);
   expect(text(loadDraft(garbage))).toBe('A');
-  expect(listDrafts().map((d) => d.path)).toEqual(['Spreadsheets/Garbage.xlsx']);
+  expect(listDrafts().map((d) => d.path)).toEqual(['Sheets/Garbage.xlsx']);
 });
 
-it('drops an unsaved spreadsheet whose record cannot be read or loaded, with an error the route can show', () => {
+it('drops an unsaved sheet whose record cannot be read or loaded, with an error the route can show', () => {
   const nullSheet = draftKey(null, 'Plan', undefined, 'one');
   put(nullSheet, { sheets: [null] });
-  expect(() => Doc.fromDraft(nullSheet)).toThrow('Could not read the unsaved spreadsheet');
+  expect(() => Doc.fromDraft(nullSheet)).toThrow('Could not read the unsaved sheets');
   expect(loadDraft(nullSheet)).toBeNull();
   // Readable by its shape, but the workbook's loader refuses it.
   const badMerges = draftKey(null, 'Plan', undefined, 'two');
   put(badMerges, { sheets: [{ cells: {}, merges: 5 }] });
   expect(() => new Workbook({ sheets: [{ cells: {}, merges: 5 }] })).toThrow();
-  expect(() => Doc.fromDraft(badMerges)).toThrow('Could not read the unsaved spreadsheet');
+  expect(() => Doc.fromDraft(badMerges)).toThrow('Could not read the unsaved sheets');
   expect(loadDraft(badMerges)).toBeNull();
   expect(listDrafts()).toEqual([]);
   // A missing record is reported as before.
@@ -60,7 +60,7 @@ it('drops an unsaved spreadsheet whose record cannot be read or loaded, with an 
 });
 
 it('reports a lost file as missing when the draft kept for it cannot be loaded, dropping that draft', async () => {
-  const path = 'Spreadsheets/Gone.xlsx';
+  const path = 'Sheets/Gone.xlsx';
   put(draftKey(path), { sheets: [{ cells: {}, merges: 5 }] });
   await expect(Doc.fromPath(path)).rejects.toMatchObject({ code: 'subject_does_not_exist' });
   expect(loadDraft(draftKey(path))).toBeNull();

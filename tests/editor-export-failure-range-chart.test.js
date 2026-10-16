@@ -41,7 +41,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const menuItem = (test) => [...document.querySelectorAll('.menu-item')].find((n) => test(n.querySelector('.menu-label')?.textContent || ''));
 
 async function mount() {
-  const doc = new Doc({ name: 'Report', path: 'Spreadsheets/Report.xlsx' });
+  const doc = new Doc({ name: 'Report', path: 'Sheets/Report.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   [['Item', 'Qty'], ['a', '1'], ['b', '2']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

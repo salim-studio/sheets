@@ -24,7 +24,7 @@ it('still writes an explicit save and an automatic save of edits', async () => {
   const documentWrites = () => mock.calls.filter(([op, p]) => op === 'write' && !p.includes('/.versions/')).map(([, p]) => p);
   const blank = Doc.blank();
   await blank.save();
-  expect(documentWrites()).toEqual(['Spreadsheets/Untitled spreadsheet.xlsx']);
+  expect(documentWrites()).toEqual(['Sheets/Untitled sheets.xlsx']);
   const edited = Doc.blank();
   edited.wb.setInput(edited.wb.activeSheetId, 0, 0, 'hello');
   await edited.save({ auto: true });

@@ -215,7 +215,7 @@ it('inserts a symbol from Insert ▸ Symbol into the active cell, and remembers 
   expect(editor.value ?? editor.textContent).toBe('€');
   editor.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); await flush();
   expect(wb.getValue(id, 0, 2)).toBe('€');
-  expect(JSON.parse(localStorage.getItem('spreadsheet:recent-symbols'))[0]).toBe('€');
+  expect(JSON.parse(localStorage.getItem('sheets:recent-symbols'))[0]).toBe('€');
 });
 
 it('keeps watched cells in the Watch Window, current as they change, and saves the list with the workbook', async () => {

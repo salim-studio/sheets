@@ -53,7 +53,7 @@ it('preserves negative serials and sign rules through edits, HTML and metadata-f
     expect(wb.getValue(id, r, 1)).toBe(expected);
     const html = cellsToHtml([[expected]], [[wb.getCell(id, r, 0)]], null, [[value]]);
     expect(parseHtmlClipboard(html).cells[0][0].v).toBe(value);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(value); expect(pasted.s.code).toBe(code);
   }

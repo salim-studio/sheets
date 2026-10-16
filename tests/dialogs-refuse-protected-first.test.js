@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; v
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open(prepare) {
-  const doc = new Doc({ name: 'Locked', path: 'Spreadsheets/Locked.xlsx' });
+  const doc = new Doc({ name: 'Locked', path: 'Sheets/Locked.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Total');

@@ -13,7 +13,7 @@ it('binds Office types on the document and writes explicit text values without c
   expect(tds.at(-1).getAttribute('x:num')).toBe(String(values.at(-1)));
   expect(html).not.toContain('mso-number-format');
   expect(parseHtmlClipboard(html).cells).toEqual([cells]);
-  const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(external).rows).map(x => x.cell.v)).toEqual(values);
   for (const attr of [...doc.querySelector('table').attributes]) doc.querySelector('table').removeAttribute(attr.name);
   // Serialization emits decoded CRLF literally; the Office reader preserves it.
@@ -37,7 +37,7 @@ it('copies a formula result as explicitly typed text externally and keeps the fo
 it('retains typed values beyond the optional format-hint and private-cell budgets', () => {
   const values = Array.from({ length: 20001 }, (_, i) => [i % 2 ? i + 0.123456789 : `00${i}`]);
   const html = cellsToHtml(values.map(row => row.map(String)), null, null, values);
-  expect(html).not.toContain('data-spreadsheet-cells=');
+  expect(html).not.toContain('data-sheets-cells=');
   expect((html.match(/ x:str="/g) || []).length).toBe(10001);
   expect((html.match(/ x:num="/g) || []).length).toBe(10000);
   expect(html).toContain('x:str="0020000"');

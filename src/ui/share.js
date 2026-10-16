@@ -1,5 +1,5 @@
 /**
- * Share dialog: give other Puter users a spreadsheet to view or edit, by
+ * Share dialog: give other Puter users a sheets to view or edit, by
  * username or email address, see who can reach it, change or withdraw their
  * access, and copy a link that opens it for them.
  */
@@ -94,7 +94,7 @@ export function openShareDialog({ path, name, uid = null, onChange = null, doc =
       return;
     }
     if (closed || requestId !== loadId) return;
-    if (!rows.length) { notice('Only you can open this spreadsheet. Add someone above to share it.'); return; }
+    if (!rows.length) { notice('Only you can open this sheet. Add someone above to share it.'); return; }
     say(`${rows.length} ${rows.length === 1 ? 'person or group has' : 'people or groups have'} access`);
     list.setAttribute('role', 'list');
     list.replaceChildren(...rows.map((row, idx) => {
@@ -148,7 +148,7 @@ export function openShareDialog({ path, name, uid = null, onChange = null, doc =
       console.error(e);
       // The field is enabled again first: the refusal puts the focus on it.
       setBusy(false);
-      refuse(who, e?.message || 'Could not share the spreadsheet');
+      refuse(who, e?.message || 'Could not share the sheets');
       return;
     } finally {
       if (busy) setBusy(false);
@@ -211,19 +211,19 @@ export function openShareDialog({ path, name, uid = null, onChange = null, doc =
       }
     } finally { setBusy(false); }
     if (closed) return;
-    if (!url) { toast('Could not make a link to this spreadsheet', { icon: 'alert', duration: 3500 }); return; }
+    if (!url) { toast('Could not make a link to this sheet', { icon: 'alert', duration: 3500 }); return; }
     try {
       await navigator.clipboard.writeText(url);
       toast('Link copied. Only people with access can open it', { icon: 'link', duration: 3000 });
     } catch {
-      await promptDialog({ title: 'Link to this spreadsheet', label: 'Address (copy it from here)', value: url, confirmLabel: 'Done' });
+      await promptDialog({ title: 'Link to this sheet', label: 'Address (copy it from here)', value: url, confirmLabel: 'Done' });
     }
   }
 
   const addForm = el('form.share-add', { onsubmit: (e) => { e.preventDefault(); add(); } }, who, mode, shareBtn);
   const hint = el('p.field-hint', {}, 'Share with a Puter username, or an email address: someone without an account is invited to join.');
   const doneBtn = el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Done');
-  // Editing together (see coauthor.js) comes first: it is what most people sharing a spreadsheet want.
+  // Editing together (see coauthor.js) comes first: it is what most people sharing a sheets want.
   const live = doc && coauthorSection({ doc, onStarted: (room) => { modal.close(); onLive?.(room); } });
   const content = el('div.share-dialog', {},
     live,

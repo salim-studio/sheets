@@ -13,7 +13,7 @@ export function foreignDiagramXlsx({ drawn = true, layout = 'urn:microsoft.com/o
   const zip = X.CFB.read(new Uint8Array(bytes), { type: 'array' });
   const add = (part, xml) => X.CFB.utils.cfb_add(zip, part, new TextEncoder().encode(xml));
   add('xl/worksheets/_rels/sheet1.xml.rels', rels(`<Relationship Id="rIdD" Type="${R}/drawing" Target="../drawings/drawing1.xml"/>`));
-  add('xl/drawings/drawing1.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${R}">`
+  add('xl/drawings/drawing1.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="${R}">`
     + '<xdr:twoCellAnchor><xdr:from><xdr:col>1</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>2</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>'
     + '<xdr:to><xdr:col>7</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>14</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>'
     + '<xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="2" name="Diagram 1" descr="How we ship"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr>'

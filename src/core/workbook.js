@@ -10423,7 +10423,7 @@ export class Workbook extends EventTarget {
 
   /**
    * Merge a range into one cell. Only the top-left value survives, as in
-   * every spreadsheet; other cells keep their styles. Overlapping merges
+   * every sheets; other cells keep their styles. Overlapping merges
    * are replaced. One undo step. False when nothing was merged: a single
    * cell, a range over 20,000 cells, a table's cells, or protected cells.
    * A merge that discarded values announces a 'merged-values-dropped'
@@ -12147,7 +12147,7 @@ export class Workbook extends EventTarget {
 
   /**
    * Allow or block content from outside this file: IMPORTRANGE, IMPORTDATA,
-   * IMPORTHTML, IMPORTXML, and IMAGE(url). A spreadsheet opened from
+   * IMPORTHTML, IMPORTXML, and IMAGE(url). A sheets opened from
    * elsewhere could otherwise send other files' contents to an address of
    * its author's choosing the moment it is displayed.
    */

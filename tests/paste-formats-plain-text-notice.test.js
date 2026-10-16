@@ -34,7 +34,7 @@ const clipboardOf = (items) => ({ read: async () => items.map(({ type, text }) =
 
 async function mount(clipboard) {
   vi.stubGlobal('navigator', { onLine: true, clipboard });
-  const doc = new Doc({ name: 'Special', path: 'Spreadsheets/Special.xlsx' });
+  const doc = new Doc({ name: 'Special', path: 'Sheets/Special.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'kept');

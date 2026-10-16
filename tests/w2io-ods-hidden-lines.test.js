@@ -75,15 +75,15 @@ it('leaves the table style displayed when no sheet is hidden', async () => {
 
 it('reads a sheet LibreOffice hid through its table style', async () => {
   const flat = `<?xml version="1.0" encoding="UTF-8"?>
-<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
 <office:automatic-styles>
 <style:style style:name="ta1" style:family="table" style:master-page-name="Default"><style:table-properties table:display="true" style:writing-mode="lr-tb"/></style:style>
 <style:style style:name="ta2" style:family="table" style:master-page-name="Default"><style:table-properties table:display="false" style:writing-mode="lr-tb"/></style:style>
 </office:automatic-styles>
-<office:body><office:spreadsheet>
+<office:body><office:sheets>
 <table:table table:name="Shown" table:style-name="ta1"><table:table-column/><table:table-row><table:table-cell table:formula="of:=[$Backing.A1]*2" office:value-type="float" office:value="42"><text:p>42</text:p></table:table-cell></table:table-row></table:table>
 <table:table table:name="Backing" table:style-name="ta2"><table:table-column/><table:table-row><table:table-cell office:value-type="float" office:value="21"><text:p>21</text:p></table:table-cell></table:table-row></table:table>
-</office:spreadsheet></office:body></office:document>`;
+</office:sheets></office:body></office:document>`;
   expect(X.read(flat, { type: 'string' }).Workbook.Sheets).toEqual([{ name: 'Shown', Hidden: 0 }, { name: 'Backing', Hidden: 1 }]);
   const wb = await workbookFromFile(new TextEncoder().encode(flat), 'backing.fods');
   expect(wb.sheets.map((s) => [s.name, s.hidden])).toEqual([['Shown', false], ['Backing', true]]);

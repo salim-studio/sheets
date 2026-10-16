@@ -4,7 +4,7 @@ import { editorView } from '../src/views/editor.js';
 import { Doc } from '../src/lib/doc.js';
 import { closeAllModals } from '../src/ui/modal.js';
 
-// New spreadsheet, New from template, Import from this device and a dropped
+// New sheets, New from template, Import from this device and a dropped
 // file all save the open document first. When the editor was left while that
 // save ran (the back arrow, a link), the finished save still opened the new
 // document or ran the import over whatever screen was showing by then.
@@ -53,9 +53,9 @@ async function mount() {
   return { doc, handlers, leaveThenRelease, release: () => release() };
 }
 
-it('does not open a new spreadsheet after the editor was left', async () => {
+it('does not open a new sheet after the editor was left', async () => {
   const { handlers, leaveThenRelease } = await mount();
-  fileMenu('New spreadsheet');
+  fileMenu('New sheets');
   await leaveThenRelease();
   expect(handlers.newDoc).not.toHaveBeenCalled();
 });
@@ -78,16 +78,16 @@ it('does not import a file chosen from the device after the editor was left', as
   expect(handlers.importFile).not.toHaveBeenCalled();
 });
 
-it('does not import a dropped spreadsheet after the editor was left', async () => {
+it('does not import a dropped sheets after the editor was left', async () => {
   const { handlers, leaveThenRelease } = await mount();
   view.acceptDrop(new File(['a,b'], 'data.csv', { type: 'text/csv' }));
   await leaveThenRelease();
   expect(handlers.importFile).not.toHaveBeenCalled();
 });
 
-it('still opens the new spreadsheet once the save is through when the editor stays', async () => {
+it('still opens the new sheets once the save is through when the editor stays', async () => {
   const { handlers, release } = await mount();
-  fileMenu('New spreadsheet');
+  fileMenu('New sheets');
   await vi.advanceTimersByTimeAsync(1);
   expect(handlers.newDoc).not.toHaveBeenCalled(); // waiting on the save
   release();

@@ -18,7 +18,7 @@ async function openDocument() {
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'saved');
   await doc.rename('Budget');
   expect(await doc.save()).toBe(true);
-  expect(doc.path).toBe('Spreadsheets/Budget.xlsx');
+  expect(doc.path).toBe('Sheets/Budget.xlsx');
   return doc;
 }
 
@@ -38,11 +38,11 @@ it('follows a file renamed elsewhere while it is open and saves it there, record
   expect(doc.writeDraft()).toBe(true);
   try {
     expect(await doc.save()).toBe(true);
-    expect(doc.path).toBe('Spreadsheets/Plan.xlsx');
+    expect(doc.path).toBe('Sheets/Plan.xlsx');
     expect(doc.name).toBe('Plan');
     expect(doc.status).toBe('saved');
     expect(conflicts).toEqual([]);
-    expect(paths).toEqual([{ path: 'Spreadsheets/Plan.xlsx', name: 'Plan', oldPath }]);
+    expect(paths).toEqual([{ path: 'Sheets/Plan.xlsx', name: 'Plan', oldPath }]);
     expect(mock.fs.has(oldPath)).toBe(false);
     expect(loadDraft(draftKey(oldPath))).toBeNull();
     expect(loadDraft(draftKey(doc.path))).toBeNull();

@@ -3,7 +3,7 @@ import { Doc } from '../src/lib/doc.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 import { installMockPuter } from './helpers/mock-puter.js';
 
-// A .csv double-clicked on the desktop is edited as a spreadsheet and saved as an .xlsx: that file
+// A .csv double-clicked on the desktop is edited as a sheets and saved as an .xlsx: that file
 // goes beside the .csv, where whoever opened it looks, not into the app's own data folder.
 let mock;
 beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
@@ -27,7 +27,7 @@ it('saves a .csv from elsewhere on the drive as an .xlsx beside it', async () =>
     expect(doc.name).toBe('data');
     expect(moved).toHaveBeenCalledWith('/nj/Desktop/data.xlsx');
     expect(mock.fs.has('/nj/Desktop/data.csv')).toBe(true); // the source is left as it was
-    expect([...mock.fs.keys()].some((k) => k.startsWith('Spreadsheets/') && !k.includes('/.versions/'))).toBe(false);
+    expect([...mock.fs.keys()].some((k) => k.startsWith('Sheets/') && !k.includes('/.versions/'))).toBe(false);
     // From then on the .xlsx is the file: saves overwrite it, they do not make another.
     doc.wb.setInput(doc.wb.activeSheetId, 3, 0, '4');
     expect(await doc.save()).toBe(true);
@@ -59,16 +59,16 @@ it('saves into the app folder when the source\'s folder will not take the file',
   try {
     doc.wb.setInput(doc.wb.activeSheetId, 2, 0, '3');
     expect(await doc.save()).toBe(true);
-    expect(doc.path).toBe('Spreadsheets/data.xlsx');
+    expect(doc.path).toBe('Sheets/data.xlsx');
   } finally { doc.destroy(); }
 });
 
 it('keeps a .csv in the app folder saving there', async () => {
-  csvAt('Spreadsheets/data.csv');
-  const doc = await Doc.fromPath('Spreadsheets/data.csv');
+  csvAt('Sheets/data.csv');
+  const doc = await Doc.fromPath('Sheets/data.csv');
   try {
     doc.wb.setInput(doc.wb.activeSheetId, 2, 0, '3');
     expect(await doc.save()).toBe(true);
-    expect(doc.path).toBe('Spreadsheets/data.xlsx');
+    expect(doc.path).toBe('Sheets/data.xlsx');
   } finally { doc.destroy(); }
 });

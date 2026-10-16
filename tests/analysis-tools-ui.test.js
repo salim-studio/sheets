@@ -122,17 +122,17 @@ describe('Data Analysis', () => {
     expect(sheet.charts[0].sourceRefs[0].categories).toBe('Sheet1!$B$2:$B$6');
   });
 
-  it('saves a new spreadsheet file and offers to open it', async () => {
+  it('saves a new sheet file and offers to open it', async () => {
     const { ctx } = setup([[1], [2], [3], [4]]);
     vi.spyOn(P, 'uniqueName').mockResolvedValue('Sampling.xlsx');
-    const write = vi.spyOn(P, 'writeFile').mockResolvedValue({ name: 'Sampling.xlsx', path: 'Spreadsheets/Sampling.xlsx' });
+    const write = vi.spyOn(P, 'writeFile').mockResolvedValue({ name: 'Sampling.xlsx', path: 'Sheets/Sampling.xlsx' });
     openAnalysisTool(ctx, 'sampling');
     field('Period').value = '2';
-    radio('New spreadsheet').checked = true;
-    radio('New spreadsheet').dispatchEvent(new Event('change'));
+    radio('New sheets').checked = true;
+    radio('New sheets').dispatchEvent(new Event('change'));
     submit();
     await vi.waitFor(() => expect(panel()?.querySelector('.field-error:not([hidden])')?.textContent ?? toast.mock.calls.length).toBe(1), { timeout: 10000 });
-    expect(write.mock.calls[0][0]).toBe('Spreadsheets/Sampling.xlsx');
+    expect(write.mock.calls[0][0]).toBe('Sheets/Sampling.xlsx');
     expect(toast.mock.calls[0][1].action.label).toBe('Open');
   });
 

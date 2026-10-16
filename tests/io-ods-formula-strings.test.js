@@ -34,10 +34,10 @@ it.each(texts)('imports literal strings while converting ODS syntax: %s', async 
   const formula = `of:=CONCATENATE(${quote(text)};COM.MICROSOFT.ABS(-7);${quote(text)})`;
   const content = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
     <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
-      xmlns:table="${tableNS}" office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-      <office:body><office:spreadsheet><table:table table:name="Data"><table:table-row>
+      xmlns:table="${tableNS}" office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+      <office:body><office:sheets><table:table table:name="Data"><table:table-row>
         <table:table-cell office:value-type="string" table:formula="${escape(formula)}"/>
-      </table:table-row></table:table></office:spreadsheet></office:body>
+      </table:table-row></table:table></office:sheets></office:body>
     </office:document>`);
   const wb = await workbookFromFile(content, 'strings.fods');
   expect(wb.getCell(wb.activeSheetId, 0, 0).f).toBe(`CONCATENATE(${quote(text)},ABS(-7),${quote(text)})`);

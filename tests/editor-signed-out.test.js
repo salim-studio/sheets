@@ -76,7 +76,7 @@ describe('editing without a Puter session', () => {
     pill.click();
     await vi.advanceTimersByTimeAsync(0);
     expect(puter.auth.signIn).toHaveBeenCalledTimes(1);
-    await vi.waitFor(() => expect(writes()).toEqual(['Spreadsheets/Untitled spreadsheet.xlsx']));
+    await vi.waitFor(() => expect(writes()).toEqual(['Sheets/Untitled sheets.xlsx']));
     await vi.waitFor(() => expect(doc.wb.dirty).toBe(false));
     expect(pill.classList.contains('signed-out')).toBe(false);
     expect(pill.textContent).toContain('Saved');
@@ -112,7 +112,7 @@ describe('editing without a Puter session', () => {
     leaveDialog.mockResolvedValueOnce('sign-in');
     expect(await view.flush()).toBe(true);
     expect(puter.auth.signIn).toHaveBeenCalledTimes(1);
-    expect(writes()).toEqual(['Spreadsheets/Untitled spreadsheet.xlsx']);
+    expect(writes()).toEqual(['Sheets/Untitled sheets.xlsx']);
     expect(doc.wb.dirty).toBe(false);
     expect(goHome).not.toHaveBeenCalled();
   });

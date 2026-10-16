@@ -32,7 +32,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(type = 'pie') {
-  const doc = new Doc({ name: 'Drawing', path: 'Spreadsheets/Drawing.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
+  const doc = new Doc({ name: 'Drawing', path: 'Sheets/Drawing.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Cells behind drawing'); wb.setInput(id, 0, 1, '-3'); wb.setInput(id, 1, 0, 'Second'); wb.setInput(id, 1, 1, '1');
   wb.addChart(id, { type, title: 'Signed data', text: 'Drawing text', range: { r1: 0, c1: 0, r2: 1, c2: 1 }, anchor: { r: 3, c: 0 }, w: 300, h: 180 });
   wb.clearHistory();

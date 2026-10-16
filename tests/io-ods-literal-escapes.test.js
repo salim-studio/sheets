@@ -5,7 +5,7 @@ import { workbookFromFile, workbookToOds, workbookToXlsx } from '../src/core/io.
 const escape = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
 function file(cells, format = 'fods', before = '') {
   const tag = format === 'ods' ? 'document-content' : 'document';
-  const xml = `<?xml version="1.0"?><office:${tag} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet"><office:body><office:spreadsheet>${before}<table:table table:name="Data"><table:table-column/><table:table-row>${cells}</table:table-row></table:table></office:spreadsheet></office:${tag}>`;
+  const xml = `<?xml version="1.0"?><office:${tag} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets"><office:body><office:sheets>${before}<table:table table:name="Data"><table:table-column/><table:table-row>${cells}</table:table-row></table:table></office:sheets></office:${tag}>`;
   let bytes = new TextEncoder().encode(xml);
   if (format === 'ods') {
     const base = X.utils.book_new(); X.utils.book_append_sheet(base, X.utils.aoa_to_sheet([[0]]), 'Data');

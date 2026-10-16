@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 async function mount(prep) {
-  const doc = new Doc({ name: 'Spilled copy', path: 'Spreadsheets/Spilled copy.xlsx' });
+  const doc = new Doc({ name: 'Spilled copy', path: 'Sheets/Spilled copy.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   prep(wb, id);
   wb.clearHistory();
@@ -96,7 +96,7 @@ it.each([false, true])('carries displayed spill number formats to other apps wit
   const table = new DOMParser().parseFromString(html, 'text/html').querySelector('table');
   expect([...table.querySelectorAll('td')].map((td) => td.textContent)).toEqual(['€1.00', '€2.00', '300.0%']);
   // Other apps consume the actual HTML and typed attributes, not this app's embedded source cells.
-  for (const attr of [...table.attributes]) if (attr.name.startsWith('data-spreadsheet-')) table.removeAttribute(attr.name);
+  for (const attr of [...table.attributes]) if (attr.name.startsWith('data-sheets-')) table.removeAttribute(attr.name);
   const rows = parseHtmlClipboard(table.outerHTML).rows;
   expect(rows[1][0]).toMatchObject({ value: 2, style: { fmt: 'currency', cur: 'EUR', dec: 2 } });
   expect(rows[2][0]).toMatchObject({ value: 3, style: { fmt: 'percent', dec: 1 } });

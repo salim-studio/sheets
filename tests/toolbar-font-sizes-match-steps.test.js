@@ -66,7 +66,7 @@ describe('stepping the size in the editor', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('lands on a size the menu offers at every step, from the smallest to the largest, with that item checked', async () => {
-    const doc = new Doc({ name: 'Sizes', path: 'Spreadsheets/Sizes.xlsx' });
+    const doc = new Doc({ name: 'Sizes', path: 'Sheets/Sizes.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'x');

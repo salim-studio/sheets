@@ -118,7 +118,7 @@ it('uses the existing cross-file copy workflow without moving the current sheet'
   const run = vi.fn();
   const original = wb.toJSON();
   openMoveSheetDialog({ wb, run }, wb.activeSheetId);
-  [...dialog().querySelectorAll('button')].find(b => b.textContent === 'Copy to another spreadsheet…').click();
+  [...dialog().querySelectorAll('button')].find(b => b.textContent === 'Copy to another sheets…').click();
   expect(run).toHaveBeenCalledWith('copySheetTo', wb.activeSheetId);
   expect(wb.toJSON()).toEqual(original);
   expect(dialog()).toBeNull();

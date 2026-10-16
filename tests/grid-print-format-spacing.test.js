@@ -72,7 +72,7 @@ it('uses the combined visible width of merged columns for grid and print', async
 it('retains semantic codes and values through XLSX and external clipboard HTML', async () => {
   const wb = book(), id = wb.activeSheetId;
   const html = cellsToHtml([[wb.getDisplay(id, 0, 0)]], [[wb.getCell(id, 0, 0)]], null, [[12]]);
-  const rows = parseHtmlClipboard(html.replace(/ data-spreadsheet-\w+="[^"]*"/g, '')).rows;
+  const rows = parseHtmlClipboard(html.replace(/ data-sheets-\w+="[^"]*"/g, '')).rows;
   expect(rows[0][0].style.code).toBe('_W0*-');
   const blob = await workbookToXlsx(wb), bytes = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(blob); });
   const back = await workbookFromFile(bytes, 'spacing.xlsx');
@@ -132,7 +132,7 @@ it('exports underlying wrapped text and its fill format even when the display is
   wb.applyStyle(id, {r1:0,c1:0,r2:0,c2:0}, {wrap:true});
   expect(printed(wb).textContent).toBe('###');
   const html = cellsToHtml([[wb.getDisplay(id,0,0)]], [[wb.getCell(id,0,0)]], null, [[value]]);
-  const copied = parseHtmlClipboard(html.replace(/ data-spreadsheet-\w+="[^"]*"/g, '')).rows[0][0];
+  const copied = parseHtmlClipboard(html.replace(/ data-sheets-\w+="[^"]*"/g, '')).rows[0][0];
   expect(copied.value).toBe(value);
   expect(copied.style).toMatchObject({code, wrap:true});
   const blob = await workbookToXlsx(wb), bytes = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(blob); });

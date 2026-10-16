@@ -54,7 +54,7 @@ function* rules(text) {
   }
 }
 
-/** Type, universal, ID and compound class selectors used by spreadsheet HTML. */
+/** Type, universal, ID and compound class selectors used by sheets HTML. */
 function selector(text) {
   const match = /^(\*|[a-z][\w-]*)?((?:[.#][\p{L}\p{N}_-]+)*)$/iu.exec(text.trim());
   if (!match || !match[0]) return null;
@@ -140,18 +140,18 @@ export function readClipboardStyles(doc) {
       // itself is not inherited. Preserve that paint separately from cascade.
       let decoration = '';
       for (const [name, value] of result) if (name === 'text-decoration' || name === 'text-decoration-line') decoration = value;
-      const painted = new Set(((parent?.get('-spreadsheet-text-decoration') || '') + ' ' + decoration).match(/underline|line-through/g));
-      if (painted.size) result.set('-spreadsheet-text-decoration', [...painted].join(' '));
+      const painted = new Set(((parent?.get('-sheets-text-decoration') || '') + ' ' + decoration).match(/underline|line-through/g));
+      if (painted.size) result.set('-sheets-text-decoration', [...painted].join(' '));
       if (painted.has('underline')) {
         const double = /\bunderline\b/.test(decoration) && (result.get('text-decoration-style') === 'double' || /\bdouble\b/.test(decoration));
-        if (double || parent?.get('-spreadsheet-underline-style') === 'double') result.set('-spreadsheet-underline-style', 'double');
+        if (double || parent?.get('-sheets-underline-style') === 'double') result.set('-sheets-underline-style', 'double');
       }
       // Inline baseline offsets carry their descendants with them even though
       // vertical-align itself does not inherit. Table alignment is unrelated.
       if (!TABLE_ALIGN_ELEMENTS.has(node.tagName) && node.tagName !== 'TABLE') {
         const vertical = result.get('vertical-align');
-        const script = vertical === 'super' || vertical === 'sub' ? vertical : parent?.get('-spreadsheet-run-vertical-align');
-        if (script) result.set('-spreadsheet-run-vertical-align', script);
+        const script = vertical === 'super' || vertical === 'sub' ? vertical : parent?.get('-sheets-run-vertical-align');
+        if (script) result.set('-sheets-run-vertical-align', script);
       }
       computed.set(node, result);
     }

@@ -1,8 +1,8 @@
 /**
- * Home: the list of spreadsheets in the app folder, with new / import / open
+ * Home: the list of sheets in the app folder, with new / import / open
  * actions. Rows open the editor; a per-row menu renames, shares, duplicates,
- * downloads, or deletes. Spreadsheets other people shared with the user are
- * listed on their own. The list lives in the Puter cloud, so without a
+ * downloads, or deletes. Sheets other people shared with the user are
+ * listed on their own. The list lives in the cloud, so without a
  * session the screen offers the sign-in instead of the list.
  */
 
@@ -31,14 +31,14 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   const ids = { start: `home-start-${n}`, files: `home-files-${n}` };
   const fromTemplate = () => openTemplatePicker({ onPick: templateDoc });
   let files = [];
-  let shared = []; // spreadsheets other people shared with this user
+  let shared = []; // sheets other people shared with this user
   let query = '';
   let loading = true;
   let error = null;
   let destroyed = false;
   let loadId = 0;
   let sortBy = 'modified'; // 'modified' | 'name' | 'size'
-  try { sortBy = ['modified', 'name', 'size'].includes(localStorage.getItem('spreadsheet:homeSort')) ? localStorage.getItem('spreadsheet:homeSort') : 'modified'; } catch { /* no storage */ }
+  try { sortBy = ['modified', 'name', 'size'].includes(localStorage.getItem('sheets:homeSort')) ? localStorage.getItem('sheets:homeSort') : 'modified'; } catch { /* no storage */ }
 
   const fileInput = el('input', {
     type: 'file', accept: '.xlsx,.xlsm,.xls,.csv,.tsv,.ods,.txt', hidden: true, 'aria-hidden': 'true', tabindex: -1,
@@ -47,7 +47,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   const pickDevice = () => fileInput.click();
 
   const search = el('input.input.home-search', {
-    type: 'search', placeholder: 'Search spreadsheets', 'aria-label': 'Search spreadsheets', 'aria-keyshortcuts': '/',
+    type: 'search', placeholder: 'Search sheets', 'aria-label': 'Search sheets', 'aria-keyshortcuts': '/',
     oninput: () => { query = search.value.trim().toLowerCase(); renderList(); },
     // Escape in a search field empties it where the browser does not already; an empty one lets go of the keyboard.
     onkeydown: (e) => {
@@ -112,8 +112,8 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   };
   const clock = setInterval(tick, 60000);
 
-  const list = el('div.file-list', { role: 'list', 'aria-label': 'Spreadsheets' });
-  const listHeading = el('h2.home-h2', { id: ids.files, tabindex: -1 }, 'Your spreadsheets');
+  const list = el('div.file-list', { role: 'list', 'aria-label': 'Sheets' });
+  const listHeading = el('h2.home-h2', { id: ids.files, tabindex: -1 }, 'Your sheets');
   // How many there are, beside the heading; the status line below already says it, so this is for the eye only.
   const listCount = el('span.home-count', { 'aria-hidden': 'true', hidden: true });
   const showCount = (n) => { listCount.hidden = n == null; listCount.textContent = n == null ? '' : String(n); };
@@ -154,7 +154,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     pendingFocus = null;
   }
 
-  const draftsWrap = el('section.home-recent.home-drafts', { hidden: true, 'aria-label': 'Unsaved spreadsheets' });
+  const draftsWrap = el('section.home-recent.home-drafts', { hidden: true, 'aria-label': 'Unsaved sheets' });
   let lostDrafts = new Set(); // keys of drafts of files the drive no longer has (see findLostDrafts)
   function renderDrafts() {
     keepingFocus(draftsWrap, () => draftsWrap.querySelector('.home-h2') || listHeading, paintDrafts);
@@ -168,16 +168,16 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
       el('div.home-drafts-head', {},
         el('span.home-drafts-icon', { html: icon('alert', 18), 'aria-hidden': 'true' }),
         el('div', {},
-          el('h2.home-h2', { tabindex: -1 }, 'Unsaved spreadsheets'),
+          el('h2.home-h2', { tabindex: -1 }, 'Unsaved sheets'),
           el('p.small.muted', {}, 'Kept only on this device, never saved to your cloud. Open one to recover it.'))),
       el('div.recent-list', { role: 'list' }, ...drafts.map((draft) => el('div.recent-chip', { role: 'listitem', dataset: { focusKey: draft.key } },
-        // The edits to a file that is gone open through its old address, where they become a new spreadsheet.
+        // The edits to a file that is gone open through its old address, where they become a new sheet.
         el('button.recent-open', {
-          type: 'button', 'aria-label': `Recover ${draft.name}`, title: draft.path && 'The file no longer exists; the edits kept here open as a new spreadsheet',
+          type: 'button', 'aria-label': `Recover ${draft.name}`, title: draft.path && 'The file no longer exists; the edits kept here open as a new sheet',
           onclick: () => (draft.path ? openPath(draft.path) : recoverDraft?.(draft.key)),
         },
           el('span', { html: icon('sheet', 16) }), el('span.recent-name', { dir: 'auto' }, draft.name), when('span.recent-when', draft.savedAt)),
-        el('button.icon-btn.recent-forget', { type: 'button', html: icon('x', 14), 'aria-label': `Discard ${draft.name}`, title: 'Discard this unsaved spreadsheet', onclick: () => discardDraft(draft) })))));
+        el('button.icon-btn.recent-forget', { type: 'button', html: icon('x', 14), 'aria-label': `Discard ${draft.name}`, title: 'Discard this unsaved sheets', onclick: () => discardDraft(draft) })))));
   }
   /**
    * Drafts keyed by a file's address whose file the drive no longer has (deleted elsewhere, say)
@@ -185,8 +185,8 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
    * Only files not in the list are asked after, by id when the draft names one, else by address; a
    * file renamed or moved elsewhere lives on, and its draft is offered when it is opened, while one
    * in the trash is as good as deleted. A question that cannot be answered leaves the file as is.
-   * A draft of a file that is gone while another file has its address (deleted, and a new spreadsheet
-   * saved under its name) is not that file's: it is kept as an unsaved spreadsheet of its own, and
+   * A draft of a file that is gone while another file has its address (deleted, and a new sheet
+   * saved under its name) is not that file's: it is kept as an unsaved sheet of its own, and
    * listed as such, rather than opening the file now at the address.
    */
   async function findLostDrafts(requestId) {
@@ -216,14 +216,14 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   }
   /** Unsaved work that was never a file is gone for good once discarded: ask first, as deleting a file does. */
   async function discardDraft(draft) {
-    const ok = await confirmDialog({ title: `Discard "${draft.name}"?`, message: 'This unsaved spreadsheet is removed from this device. This cannot be undone.', confirmLabel: 'Discard' });
+    const ok = await confirmDialog({ title: `Discard "${draft.name}"?`, message: 'This unsaved sheets is removed from this device. This cannot be undone.', confirmLabel: 'Discard' });
     if (!ok || destroyed) return;
     clearDraft(draft.key);
     clearDraft(liveDraftKey(draft.key)); // edits made to the file while that draft awaited a decision were kept beside it, and go with it
     renderDrafts();
   }
   /**
-   * Spreadsheets other people shared with the user, at the masked addresses the drive gives them. Each
+   * Sheets other people shared with the user, at the masked addresses the drive gives them. Each
    * says whose it is and whether it may be edited; the × leaves the share, which only its owner can undo.
    */
   const sharedWrap = el('section.home-recent.home-shared', { hidden: true, 'aria-label': 'Shared with you' });
@@ -242,7 +242,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
         return el('div.recent-chip', { role: 'listitem', dataset: { focusKey: f.path } },
           el('button.recent-open', { type: 'button', title: `${f.name} · ${from}`, 'aria-label': `Open ${stripExtension(f.name)}, ${from}`, onclick: () => openPath(f.path) },
             el('span', { html: icon('users', 16) }), el('span.recent-name', { dir: 'auto' }, stripExtension(f.name)), el('span.recent-when', {}, from)),
-          el('button.icon-btn.recent-forget', { type: 'button', html: icon('x', 14), 'aria-label': `Leave ${stripExtension(f.name)}`, title: 'Remove this spreadsheet from what is shared with you', onclick: () => leaveShared(f) }));
+          el('button.icon-btn.recent-forget', { type: 'button', html: icon('x', 14), 'aria-label': `Leave ${stripExtension(f.name)}`, title: 'Remove this sheet from what is shared with you', onclick: () => leaveShared(f) }));
     });
     // Shown or hidden in place, not rebuilt, so the focus stays on the button that did it.
     const more = shared.length > SHARED_SHOWN && el('button.btn.btn-ghost.btn-sm.home-shared-more', { type: 'button', onclick: () => { sharedAll = !sharedAll; fold(); } });
@@ -270,7 +270,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   async function leaveShared(f) {
     const ok = await confirmDialog({
       title: `Leave "${stripExtension(f.name)}"?`,
-      message: `You will no longer be able to open this spreadsheet${f.owner ? `. ${f.owner} can share it with you again` : ''}. The file itself is not deleted.`,
+      message: `You will no longer be able to open this sheet${f.owner ? `. ${f.owner} can share it with you again` : ''}. The file itself is not deleted.`,
       confirmLabel: 'Leave',
     });
     if (!ok || destroyed) return;
@@ -279,7 +279,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
       // a leave does not reach. Said so, the chip stays; gone meanwhile (the owner stopped sharing), it goes.
       if (!await P.leaveShare(f.path) && await P.statFile(f.path).catch(() => null)) {
         if (destroyed) return;
-        toast(`This spreadsheet is shared with a team you are in, so it cannot be left here${f.owner ? `. Ask ${f.owner} to stop sharing it with the team` : ''}`, { icon: 'info', duration: 6000 });
+        toast(`This sheet is shared with a team you are in, so it cannot be left here${f.owner ? `. Ask ${f.owner} to stop sharing it with the team` : ''}`, { icon: 'info', duration: 6000 });
         return;
       }
       if (destroyed) return;
@@ -313,14 +313,14 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     onclick: (e) => openMenu({
       anchor: e.currentTarget, align: 'end', label: 'Sort by',
       // One order of several: a radio item, not a checkbox.
-      items: SORTS.map(([key, label]) => ({ label, checked: sortBy === key, radio: true, onSelect: () => { sortBy = key; try { localStorage.setItem('spreadsheet:homeSort', key); } catch { /* no storage */ } renderList(); } })),
+      items: SORTS.map(([key, label]) => ({ label, checked: sortBy === key, radio: true, onSelect: () => { sortBy = key; try { localStorage.setItem('sheets:homeSort', key); } catch { /* no storage */ } renderList(); } })),
     }),
   });
   /** The button shows the current order; its spoken name says what the order is of and includes it. */
   const labelSort = () => {
     const order = SORTS.find(([k]) => k === sortBy)[1];
     sortBtn.replaceChildren(el('span', { html: icon('chevUD', 14, 2) }), el('span', {}, order));
-    sortBtn.setAttribute('aria-label', `Sort spreadsheets by: ${order}`);
+    sortBtn.setAttribute('aria-label', `Sort sheets by: ${order}`);
     colHead.dataset.sort = sortBy;
   };
   labelSort(); // labelled from the start, not only once the list has loaded
@@ -341,13 +341,13 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   const root = el('div.home.view', {},
     fileInput,
     el('header.home-head', {},
-      el('div.brand', {}, el('span.brand-mark', { html: icon('brand', 20, 2) }), el('h1.brand-name', {}, 'Spreadsheet')),
+      el('div.brand', {}, el('span.brand-mark', { html: icon('brand', 20, 2) }), el('h1.brand-name', {}, 'Sheets')),
       el('div.grow'),
       avatar),
     el('main.home-main', {},
       el('section.home-start', { 'aria-labelledby': ids.start },
         el('div.home-section-head', {},
-          el('h2.home-h2', { id: ids.start }, 'Start a new spreadsheet'),
+          el('h2.home-h2', { id: ids.start }, 'Start a new sheet'),
           el('div.home-actions', {},
             el('button.btn.btn-outline.btn-sm', { type: 'button', html: icon('upload', 16), onclick: pickDevice }, el('span', {}, 'Import file')),
             P.canPickFiles() && el('button.btn.btn-outline.btn-sm', { type: 'button', html: icon('folderOpen', 16), onclick: openFromPuter }, el('span', {}, 'Open from Puter')))),
@@ -375,7 +375,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
       el(`span.start-thumb${preview ? '.has-preview' : ''}`, { 'aria-hidden': 'true' }, preview || el('span.start-glyph', { html: glyph })),
       el('span.start-label', {}, el('span.start-name', {}, name), sub && el('span.start-sub', {}, sub)));
     return el('div.start-grid', { role: 'group', 'aria-labelledby': ids.start },
-      tile('.start-blank', { name: 'Blank spreadsheet', glyph: icon('plus', 28, 2), onclick: newDoc }),
+      tile('.start-blank', { name: 'Blank sheets', glyph: icon('plus', 28, 2), onclick: newDoc }),
       ...featured.map((t) => tile('', { name: t.name, preview: templateThumbnail(t.id), glyph: icon(t.icon, 22), onclick: () => templateDoc(t.id), dataset: { template: t.id } })),
       more > 0 && tile('.start-more', { name: 'All templates', sub: `${more} more`, glyph: icon('layers', 22), onclick: fromTemplate }));
   }
@@ -503,7 +503,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   }
 
   async function remove(file) {
-    const ok = await confirmDialog({ title: `Delete "${stripExtension(file.name)}"?`, message: 'The file is removed from your Puter cloud. This cannot be undone.', confirmLabel: 'Delete' });
+    const ok = await confirmDialog({ title: `Delete "${stripExtension(file.name)}"?`, message: 'The file is removed from your cloud. This cannot be undone.', confirmLabel: 'Delete' });
     if (!ok) return;
     try {
       await P.deleteFile(file.path);
@@ -540,15 +540,15 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
       list.removeAttribute('role');
       list.append(el('div.empty', {},
         el('div.empty-icon', { html: icon('cloud', 26) }),
-        el('h3', {}, 'Sign in to see your spreadsheets'),
-        el('p', {}, 'Spreadsheets are saved as .xlsx files in your own Puter cloud. Sign in to open them here, or start working without an account.'),
+        el('h3', {}, 'Sign in to see your sheets'),
+        el('p', {}, 'Sheets are saved as .xlsx files in your own cloud. Sign in to open them here, or start working without an account.'),
         el('div.row', { style: { justifyContent: 'center', marginTop: '18px', flexWrap: 'wrap' } },
           el('button.btn.btn-primary', { type: 'button', html: icon('login', 16, 2.2), onclick: () => session.signIn() }, el('span', {}, 'Sign in to Puter')),
-          el('button.btn.btn-outline', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New spreadsheet')))));
+          el('button.btn.btn-outline', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New sheets')))));
       return;
     }
     if (loading) {
-      say('Loading your spreadsheets…');
+      say('Loading your sheets…');
       list.removeAttribute('role');
       list.append(...['46%', '32%', '54%', '38%'].map((w) => el('div.file-row.skeleton-row', { 'aria-hidden': 'true' },
         el('div.skeleton', { style: { width: '36px', height: '36px', flex: 'none' } }),
@@ -568,17 +568,17 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     if (!shown.length) {
       // The search finds a name holding the text anywhere, and the messages say so, in the case it was typed.
       const typed = search.value.trim();
-      say(files.length ? `No spreadsheet names contain "${typed}"` : 'No spreadsheets yet');
+      say(files.length ? `No sheets names contain "${typed}"` : 'No sheets yet');
       list.removeAttribute('role');
       list.append(files.length
-        ? el('div.empty', {}, el('div.empty-icon', { html: icon('search', 26) }), el('h3', {}, 'No matches'), el('p', {}, `No spreadsheet names contain "${typed}"`))
-        : el('div.empty', {}, el('div.empty-icon', { html: icon('sheet', 26) }), el('h3', {}, 'No spreadsheets yet'),
+        ? el('div.empty', {}, el('div.empty-icon', { html: icon('search', 26) }), el('h3', {}, 'No matches'), el('p', {}, `No sheets names contain "${typed}"`))
+        : el('div.empty', {}, el('div.empty-icon', { html: icon('sheet', 26) }), el('h3', {}, 'No sheets yet'),
           el('div.row', { style: { justifyContent: 'center', marginTop: '18px', flexWrap: 'wrap' } },
-            el('button.btn.btn-primary', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New spreadsheet')),
+            el('button.btn.btn-primary', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New sheets')),
             el('button.btn.btn-outline', { type: 'button', html: icon('sparkle', 16), onclick: sampleDoc }, el('span', {}, 'Try sample data')))));
       return;
     }
-    say(`${shown.length} spreadsheet${shown.length === 1 ? '' : 's'}${query ? ` containing "${search.value.trim()}"` : ''}`);
+    say(`${shown.length} sheets${shown.length === 1 ? '' : 's'}${query ? ` containing "${search.value.trim()}"` : ''}`);
     showCount(query ? `${shown.length} of ${files.length}` : files.length);
     colHead.hidden = false;
     // Groups only in order of change, and only when there is more than one: a single "Today" says nothing.

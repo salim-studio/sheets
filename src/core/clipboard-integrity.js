@@ -63,11 +63,11 @@ export function clipboardMarkupStamp(markup, serialized = false) {
 }
 
 export function hasClipboardSnapshot(table) {
-  const stamp = table.getAttribute('data-spreadsheet-markup');
+  const stamp = table.getAttribute('data-sheets-markup');
   if (!/^1:[0-9a-f]{1,8}:[0-9a-f]{1,8}$/.test(stamp || '')) return false;
   // Our fragment has inline cell styles and only private table attributes.
   // Foreign formatting outside the body also invalidates its old snapshot.
-  if (Array.from(table.attributes).some(a => !a.name.startsWith('data-spreadsheet-'))
+  if (Array.from(table.attributes).some(a => !a.name.startsWith('data-sheets-'))
     || table.ownerDocument.querySelector('style, link[rel~="stylesheet"]')) return false;
   for (let parent = table.parentElement; parent; parent = parent.parentElement) {
     if (parent.hasAttribute('style') || parent.hasAttribute('align') || parent.hasAttribute('bgcolor')

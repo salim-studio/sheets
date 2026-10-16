@@ -11,7 +11,7 @@ import { Workbook } from '../src/core/workbook.js';
 
 // A cell and the in-cell editor follow their text's direction, so a Hebrew or Arabic name reads with its
 // number and full stop at its own end; the fields and labels that name things did not: the prompt of
-// Rename sheet and Rename spreadsheet, the formula bar and name box, the sheet tab and the document title
+// Rename sheet and Rename sheets, the formula bar and name box, the sheet tab and the document title
 // laid "גיליון 2." out with the 2 and the full stop at the wrong end.
 function memoryStorage() {
   const m = new Map();
@@ -68,7 +68,7 @@ describe('fields and labels that carry a name follow the name\'s own direction',
   });
 
   it('the document title', async () => {
-    const doc = new Doc({ name: 'תקציב 2026', path: 'Spreadsheets/תקציב 2026.xlsx' });
+    const doc = new Doc({ name: 'תקציב 2026', path: 'Sheets/תקציב 2026.xlsx' });
     view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
     document.querySelector('#app').append(view.el);
     await vi.advanceTimersByTimeAsync(1);

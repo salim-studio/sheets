@@ -29,7 +29,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('moves the active cell up into the rows that remain', async () => {
-  const doc = new Doc({ name: 'Empty', path: 'Spreadsheets/Empty.xlsx' });
+  const doc = new Doc({ name: 'Empty', path: 'Sheets/Empty.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (const [r, v] of [[0, 'a'], [2, 'b'], [5, 'c']]) wb.setInput(id, r, 0, v);

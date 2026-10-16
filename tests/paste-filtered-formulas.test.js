@@ -62,7 +62,7 @@ describe('the editor', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('pastes a copied filtered list with formulas that read the rows beside them', async () => {
-    const doc = new Doc({ name: 'Filtered', path: 'Spreadsheets/Filtered.xlsx' });
+    const doc = new Doc({ name: 'Filtered', path: 'Sheets/Filtered.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'n');
@@ -86,7 +86,7 @@ describe('the editor', () => {
     viewport.dispatchEvent(clipboardEvent('copy'));
     expect(data['text/plain']).toBe('1\t2\n3\t6');
     // Another tab is not told which rows were skipped, so it is not given an origin to shift by.
-    expect(data['text/html']).not.toContain('data-spreadsheet-origin');
+    expect(data['text/html']).not.toContain('data-sheets-origin');
     view.goTo('Sheet1!D11');
     viewport.dispatchEvent(clipboardEvent('paste'));
     expect(wb.getCell(id, 10, 4).f).toBe('D11*2');
@@ -96,6 +96,6 @@ describe('the editor', () => {
     wb.setFilterCriteria(id, 0, null);
     view.goTo('Sheet1!A2:B4');
     viewport.dispatchEvent(clipboardEvent('copy'));
-    expect(data['text/html']).toContain('data-spreadsheet-origin="1,0"');
+    expect(data['text/html']).toContain('data-sheets-origin="1,0"');
   });
 });

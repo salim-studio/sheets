@@ -70,7 +70,7 @@ describe('cut and paste in the editor', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount(prep) {
-    const doc = new Doc({ name: 'Cut', path: 'Spreadsheets/Cut.xlsx' });
+    const doc = new Doc({ name: 'Cut', path: 'Sheets/Cut.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     prep(wb, id);

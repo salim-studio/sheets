@@ -1,5 +1,5 @@
 import { wildcardMatcher } from './wildcard.js';
-import { compareSpreadsheetText, foldComparisonText, foldPrefixText, compareFoldedText } from './text-comparison.js';
+import { compareSheetsText, foldComparisonText, foldPrefixText, compareFoldedText } from './text-comparison.js';
 /**
  * The function library, plus the value helpers every function shares.
  *
@@ -188,7 +188,7 @@ const comparisonSpaces = (text) => /[^\x00-\x7f]/.test(text) ? text.replace(/\p{
 const comparisonText = (text) => comparisonSpaces(text).toLowerCase();
 
 /**
- * Spreadsheet ordering: numbers < text < booleans; text is case-insensitive, in dictionary order
+ * Sheets ordering: numbers < text < booleans; text is case-insensitive, in dictionary order
  * with accented letters beside their base letters (é between e and f), as comparisons read it and
  * the Sort dialog orders it, rather than by code unit, which put every é after z.
  */
@@ -200,7 +200,7 @@ export function compareValues(a, b) {
   const ra = typeRank(a);
   const rb = typeRank(b);
   if (ra !== rb) return ra < rb ? -1 : 1;
-  if (typeof a === 'string') return compareSpreadsheetText(a, b);
+  if (typeof a === 'string') return compareSheetsText(a, b);
   const x = Number(a);
   const y = Number(b);
   // An infinity would pass the relative test below against any number at all.
@@ -452,7 +452,7 @@ export function criteriaMatcher(criteria) {
   // their compatible Unicode spellings before interpreting #NAME?'s '?' as
   // a wildcard. Text containing the token is a different cell value type.
   const rhsError = foldComparisonText(rhsText).includes('#')
-    ? ERROR_CODES.findIndex(code => compareSpreadsheetText(rhsText, code) === 0) : -1;
+    ? ERROR_CODES.findIndex(code => compareSheetsText(rhsText, code) === 0) : -1;
   if (rhsError >= 0) {
     const test = v => {
       if (!isError(v)) return false;
@@ -481,7 +481,7 @@ export function criteriaMatcher(criteria) {
       if (rhsIsNum) { const n = criteriaNumber(v); return n != null && compareValues(n, rhsNum) === 0; }
       if (rhsBool != null) return typeof v === 'boolean' && v === rhsBool;
       if (typeof v !== 'string') return false;
-      return wildcard ? wildcard(v) : compareSpreadsheetText(v, rhsText) === 0;
+      return wildcard ? wildcard(v) : compareSheetsText(v, rhsText) === 0;
     };
     // A plain text key can be looked up in an index of the range (criteriaIndex) instead of tested cell by cell.
     if (op === '=' && !wildcard && !rhsIsNum && rhsBool == null && rhsText !== '') eq.key = rhsLower;
@@ -978,7 +978,7 @@ function exactLookup(index, needle, last, fixedWidth) {
     for (let i = lo; i < sorted.length && compareFoldedText(sorted[i].broad, broad) === 0; i++) {
       const group = sorted[i];
       if (fixedWidth && group.value.length !== needle.length) continue;
-      if (compareSpreadsheetText(group.value, needle) !== 0) continue;
+      if (compareSheetsText(group.value, needle) !== 0) continue;
       const position = group.span[end];
       if (best < 0 || (last ? position > best : position < best)) best = position;
     }
@@ -1052,7 +1052,7 @@ function matchIndex(needle, values, mode, col = -1) {
     for (let i = 0; i < values.length; i++) {
       const v = vectorAt(values, col, i);
       if (typeof needle === 'string' && typeof v === 'string') {
-        if (wildcard ? wildcard(v) : v.length === needle.length && compareSpreadsheetText(v, needle) === 0) return i;
+        if (wildcard ? wildcard(v) : v.length === needle.length && compareSheetsText(v, needle) === 0) return i;
       } else if (v != null && typeof v === typeof needle && v === needle) return i;
     }
     return -1;
@@ -1110,7 +1110,7 @@ function xmatchIndex(needle, values, matchMode, searchMode, col = -1) {
       const i = reverse ? n - 1 - k : k;
       const v = vectorAt(values, col, i);
       if (typeof needle === 'string' && typeof v === 'string') {
-        if (match ? match(v) : (mm !== 2 || v.length === needle.length) && compareSpreadsheetText(v, needle) === 0) return i;
+        if (match ? match(v) : (mm !== 2 || v.length === needle.length) && compareSheetsText(v, needle) === 0) return i;
       } else if (v != null && typeof v === typeof needle && v === needle) return i;
     }
     return -1;
@@ -1179,7 +1179,7 @@ function overArguments(fn, positions, keepReferences = false) {
   };
 }
 
-/** The last serial of the spreadsheet calendar, 31 December 9999. */
+/** The last serial of the sheets calendar, 31 December 9999. */
 const MAX_DATE_SERIAL = 2958465;
 
 /** A date argument as a serial inside the calendar (day 0 to 31 December 9999), or #NUM!. */
@@ -1296,8 +1296,8 @@ const minimum = (list) => list.reduce((a, b) => Math.min(a, b), Infinity);
 const maximum = (list) => list.reduce((a, b) => Math.max(a, b), -Infinity);
 
 /**
- * A number on its 15 significant decimal digits, as a spreadsheet sees it: 0.3 / 0.1 is
- * 2.9999999999999996 in binary but 3 to a spreadsheet, so stepping functions
+ * A number on its 15 significant decimal digits, as a sheets sees it: 0.3 / 0.1 is
+ * 2.9999999999999996 in binary but 3 to a sheets, so stepping functions
  * must not floor it to 2. A value of 1E+15 or more needs every one of its 16 or
  * 17 digits, so it is kept as it is: snapping 1234567890123456 to ...460 made
  * FLOOR exceed its argument and ROUND move 2^53 to another integer.
@@ -7573,7 +7573,7 @@ function arith(f) {
   };
 }
 
-/** A comparison function (EQ, GT, ...): spreadsheet ordering, blanks read as the other side's empty value. */
+/** A comparison function (EQ, GT, ...): sheets ordering, blanks read as the other side's empty value. */
 function relation(f) {
   return ([a, b]) => {
     let x = scalar(a); if (isError(x)) return x;
@@ -7851,8 +7851,8 @@ FUNCTIONS.IMPORTXML = {
 };
 
 /**
- * IMPORTRANGE(file, range): cells from another spreadsheet on the Puter drive
- * ("Budget" for Spreadsheets/Budget.xlsx, or a full path), spilled into place.
+ * IMPORTRANGE(file, range): cells from another sheets on the Puter drive
+ * ("Budget" for Sheets/Budget.xlsx, or a full path), spilled into place.
  * The file is read once per distinct call and remembered; F9 reads it again.
  */
 FUNCTIONS.IMPORTRANGE = {

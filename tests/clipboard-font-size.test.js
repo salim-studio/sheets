@@ -30,7 +30,7 @@ it('retains large and fractional sizes through external HTML and native XLSX', a
   for (const size of [4 / 3, 40 / 3, 14, 24, 409 * 4 / 3]) {
     const style = { font: 'font:Book Antiqua', size, bold: true };
     const html = cellsToHtml([['Heading']], [[{ v: 'Heading', s: style }]], [[style]])
-      .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+      .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const element = new DOMParser().parseFromString(html, 'text/html').querySelector('td');
     expect(element.style.fontSize.endsWith('pt')).toBe(true);
     expect(parseFloat(element.style.fontSize)).toBeCloseTo(size * 3 / 4, 10);

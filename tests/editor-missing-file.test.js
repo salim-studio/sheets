@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   const openPath = vi.fn();
   view = editorView({ doc, goHome: vi.fn(), openPath, newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);

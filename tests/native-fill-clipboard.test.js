@@ -24,7 +24,7 @@ it('writes public No fill hints while keeping private clear bindings intact', ()
   expect(doc.querySelector('td').getAttribute('style')).toContain('mso-pattern:auto');
   expect(parseHtmlClipboard(html).cells[0][0].s.nativeFill.key).toBe('none');
   for (const element of doc.querySelectorAll('*')) for (const attr of [...element.attributes]) {
-    if (attr.name.startsWith('data-spreadsheet')) element.removeAttribute(attr.name);
+    if (attr.name.startsWith('data-sheets')) element.removeAttribute(attr.name);
   }
   const publicRows = parseHtmlClipboard(doc.documentElement.outerHTML).rows;
   expect(publicRows[0][0].style.bg).toBeNull();
@@ -59,11 +59,11 @@ it.each(['dangling', 'conflicting', 'malformed'])('falls back to visible public 
   const nativeFill = normalizeNativeFill({ key: 'same', xml: `<fill xmlns="${MAIN}"><patternFill patternType="solid"><fgColor rgb="FF123456"/></patternFill></fill>` });
   const html = cellsToHtml([['Visible']], [[{ v: 'Visible', s: { bg: nativeFill.paint, nativeFill } }]]);
   const doc = new DOMParser().parseFromString(html, 'text/html'), table = doc.querySelector('table');
-  const records = JSON.parse(table.getAttribute('data-spreadsheet-fills'));
+  const records = JSON.parse(table.getAttribute('data-sheets-fills'));
   if (problem === 'dangling') delete records.same;
   if (problem === 'conflicting') records.same.key = 'different';
   if (problem === 'malformed') records.same.xml = '<fill xmlns="urn:wrong"/>';
-  table.setAttribute('data-spreadsheet-fills', JSON.stringify(records));
+  table.setAttribute('data-sheets-fills', JSON.stringify(records));
   const parsed = parseHtmlClipboard(doc.body.innerHTML);
   expect(parsed.cells).toBeUndefined();
   expect(parsed.rows[0][0].text).toBe('Visible');

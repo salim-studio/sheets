@@ -73,7 +73,7 @@ async function bootEditor() {
 }
 
 describe('launched from the desktop', () => {
-  it('opens the spreadsheet it was launched with, where it lives', async () => {
+  it('opens the sheets it was launched with, where it lives', async () => {
     let ready;
     mocks.init.mockImplementation(() => new Promise((done) => { ready = done; }));
     await import('../src/main.js');
@@ -83,7 +83,7 @@ describe('launched from the desktop', () => {
     expect(mocks.fromPath).toHaveBeenCalledWith('/nj/Desktop/Budget.xlsx');
   });
 
-  it('says so, and opens nothing of it, when launched with a file that is not a spreadsheet', async () => {
+  it('says so, and opens nothing of it, when launched with a file that is not a sheets', async () => {
     let ready;
     mocks.init.mockImplementation(() => new Promise((done) => { ready = done; }));
     await import('../src/main.js');
@@ -96,7 +96,7 @@ describe('launched from the desktop', () => {
 });
 
 describe('files dragged onto the window from the desktop', () => {
-  it('opens a spreadsheet at its own address, so that its edits go back to it', async () => {
+  it('opens a sheets at its own address, so that its edits go back to it', async () => {
     const { view } = await bootEditor();
     const drop = driveDrop([{ name: 'Sales.csv', path: '/nj/Documents/Sales.csv', uid: 'u-1' }]);
     expect(drop.defaultPrevented).toBe(true);

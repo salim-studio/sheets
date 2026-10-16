@@ -40,12 +40,12 @@ it('opens a real .ods named .csv as the workbook it is', async () => {
   expect(back.getValue(back.sheets[0].id, 0, 0)).toBe(42);
 });
 
-// A flat XML spreadsheet or a saved web page carries its own extension (or none): those open
+// A flat XML sheets or a saved web page carries its own extension (or none): those open
 // through the library. Named .csv or .txt the same bytes are delimited text,
 // since a CSV's first cell may start with "<?xml" or "<table" too.
-it('opens a flat XML spreadsheet and an HTML table through the library unless they are named as text', async () => {
-  const NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet"';
-  const fods = `<?xml version="1.0"?><office:document ${NS}><office:body><office:spreadsheet><table:table table:name="Flat"><table:table-row><table:table-cell office:value-type="float" office:value="7"><text:p>7</text:p></table:table-cell></table:table-row></table:table></office:spreadsheet></office:body></office:document>`;
+it('opens a flat XML sheets and an HTML table through the library unless they are named as text', async () => {
+  const NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets"';
+  const fods = `<?xml version="1.0"?><office:document ${NS}><office:body><office:sheets><table:table table:name="Flat"><table:table-row><table:table-cell office:value-type="float" office:value="7"><text:p>7</text:p></table:table-cell></table:table-row></table:table></office:sheets></office:body></office:document>`;
   for (const name of ['flat.fods', 'flat.xml', 'flat']) {
     const flat = await workbookFromFile(bytesOf(fods), name);
     expect(flat.sheets[0].name).toBe('Flat');

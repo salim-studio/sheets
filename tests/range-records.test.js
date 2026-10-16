@@ -63,7 +63,7 @@ it.each(['row', 'col'])('matches point insertion/deletion on the %s axis across 
   }
 });
 
-it.each(['row', 'col'])('clips shifts at the spreadsheet limit without allocating the intervening cells (%s)', axis => {
+it.each(['row', 'col'])('clips shifts at the sheets limit without allocating the intervening cells (%s)', axis => {
   const lo = axis === 'row' ? 'r1' : 'c1', hi = axis === 'row' ? 'r2' : 'c2', last = GRID_RANGE[hi];
   const before = freeze([record({ ...box(0, 0), [lo]: last - 2, [hi]: last })]);
   const after = shiftRangeRecords(before, axis, last - 1, 2, false);

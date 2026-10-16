@@ -22,7 +22,7 @@ afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTim
 // More decimal places stepped a yen cell without a count of its own from the two places every currency
 // used to show, so the first press gave three where the cell had been showing none.
 it('steps a yen cell from the no decimals it shows, and a dollar cell from its two', async () => {
-  const doc = new Doc({ name: 'Yen', path: 'Spreadsheets/Yen.xlsx' });
+  const doc = new Doc({ name: 'Yen', path: 'Sheets/Yen.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '1000');

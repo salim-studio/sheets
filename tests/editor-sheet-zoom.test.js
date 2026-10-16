@@ -33,7 +33,7 @@ it('restores each native view on sheet navigation and saves only user zoom chang
     Detail: { head: '<sheetViews><sheetView workbookViewId="0" zoomScale="175"/></sheetViews>' },
     Overview: { head: '<sheetViews><sheetView workbookViewId="0"/></sheetViews>' },
   } }), 'views.xlsx');
-  localStorage.setItem('spreadsheet:zoom', '1.5'); mount(wb);
+  localStorage.setItem('sheets:zoom', '1.5'); mount(wb);
   expect(label()).toBe('175%'); expect(wb.dirty).toBe(false);
   wb.setActiveSheet(wb.sheets[1].id);
   refresh();
@@ -55,7 +55,7 @@ it('renders the complete native zoom range without modifying stored sizes', () =
 });
 
 it('keeps device zoom for a new document without treating initialization as an edit', () => {
-  localStorage.setItem('spreadsheet:zoom', '1.25'); const wb = new Workbook(); mount(wb);
+  localStorage.setItem('sheets:zoom', '1.25'); const wb = new Workbook(); mount(wb);
   expect(label()).toBe('125%'); expect(wb.dirty).toBe(false); expect(doc.status).toBe('saved');
 });
 
@@ -77,7 +77,7 @@ it('applies an exact custom percentage and preserves it when stepping and switch
   await applyPercentage(customZoom(), '133%');
   expect(label()).toBe('133%');
   expect(wb.sheets[0].viewZoom).toBe(1.33);
-  expect(localStorage.getItem('spreadsheet:zoom')).toBe('1.33');
+  expect(localStorage.getItem('sheets:zoom')).toBe('1.33');
   expect(wb.colWidth(wb.activeSheetId, 0)).toBe(100);
   expect(wb.canUndo()).toBe(false);
   document.querySelector('[aria-label="Zoom in"]').click(); refresh();

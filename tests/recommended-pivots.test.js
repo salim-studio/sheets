@@ -38,7 +38,7 @@ describe('in the editor', () => {
   afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('inserts the chosen recommendation on a new sheet as one undo step', async () => {
-    const doc = new Doc({ name: 'Rec', path: 'Spreadsheets/Rec.xlsx' });
+    const doc = new Doc({ name: 'Rec', path: 'Sheets/Rec.xlsx' });
     const { wb } = doc;
     fill(wb, wb.activeSheetId);
     wb.clearHistory();

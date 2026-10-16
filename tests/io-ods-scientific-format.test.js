@@ -25,12 +25,12 @@ it('reads a self-closing scientific number format as before', async () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0"
- xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+ xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
  <office:automatic-styles>
   <number:number-style style:name="N1"><number:scientific-number number:decimal-places="3" number:min-integer-digits="1" number:min-exponent-digits="2" number:forced-exponent-sign="true"/></number:number-style>
   <style:style style:name="ce1" style:family="table-cell" style:data-style-name="N1"/>
  </office:automatic-styles>
- <office:body><office:spreadsheet><table:table table:name="Data"><table:table-row><table:table-cell table:style-name="ce1" office:value-type="float" office:value="1500"><text:p>1.500E+03</text:p></table:table-cell></table:table-row></table:table></office:spreadsheet></office:body>
+ <office:body><office:sheets><table:table table:name="Data"><table:table-row><table:table-cell table:style-name="ce1" office:value-type="float" office:value="1500"><text:p>1.500E+03</text:p></table:table-cell></table:table-row></table:table></office:sheets></office:body>
 </office:document>`;
   const wb = await workbookFromFile(new TextEncoder().encode(xml), 'scientific.fods');
   expect(styleToNumFmt(wb.getCell(wb.activeSheetId, 0, 0).s)).toBe('0.000E+00');

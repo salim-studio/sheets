@@ -118,7 +118,7 @@ it.each([false, true])('replaces inherited defaults from HTML clipboard formats,
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   const wb = book(), id = wb.activeSheetId;
   let html = cellsToHtml([['2']], wb.copyRange(id, range(0, 0)));
-  if (foreign) html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (foreign) html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html);
   wb.pasteStyles(id, parsed.cells || parsed.rows.map(row => row.map(({ style }) => ({ s: style }))), 4, 3);
   plainTarget(wb, 4, 3); expect(wb.getValue(id, 4, 3)).toBe(14);

@@ -106,7 +106,7 @@ it('preserves numeric values through edit, undo, HTML copy and XLSX export', asy
   wb.undo();
   expect(wb.getValue(id, 0, 1)).toBe(2469.12);
   const html = cellsToHtml([[wb.getDisplay(id, 0, 0)]], [[wb.getCell(id, 0, 0)]], null, [[1234.56]])
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(pasted(html)[0].v).toBe(1234.56);
   const blob = await workbookToXlsx(wb);
   const bytes = await new Promise(resolve => { const r = new FileReader(); r.onload = () => resolve(new Uint8Array(r.result)); r.readAsArrayBuffer(blob); });

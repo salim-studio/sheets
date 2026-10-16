@@ -33,7 +33,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(rows, prep = null) {
-  const doc = new Doc({ name: 'Text', path: 'Spreadsheets/Text.xlsx' });
+  const doc = new Doc({ name: 'Text', path: 'Sheets/Text.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   rows.forEach((row, r) => row.forEach((v, c) => { if (v != null) wb.setInput(id, r, c, String(v)); }));

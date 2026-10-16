@@ -51,12 +51,12 @@ it.each(["'Two Data'.Rate", "'Two Data'.$$Rate", "'Two Data'.$$'Rate'"])(
     const escaped = formula.replace(/'/g, '&apos;');
     const xml = `<?xml version="1.0"?><office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
       xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2"
-      office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-      <office:body><office:spreadsheet><table:table table:name="One"><table:table-row>
+      office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+      <office:body><office:sheets><table:table table:name="One"><table:table-row>
       <table:table-cell table:formula="of:=${escaped}" office:value-type="float" office:value="20"/>
       </table:table-row></table:table><table:table table:name="Two Data"><table:named-expressions>
       <table:named-expression table:name="Rate" table:expression="of:=20" table:base-cell-address="&apos;Two Data&apos;.A1"/>
-      </table:named-expressions></table:table></office:spreadsheet></office:body></office:document>`;
+      </table:named-expressions></table:table></office:sheets></office:body></office:document>`;
     const wb = await workbookFromFile(new TextEncoder().encode(xml), 'external.fods');
     expect(wb.getCell(wb.sheets[0].id, 0, 0).f).toBe("'Two Data'!Rate");
     expect(wb.getValue(wb.sheets[0].id, 0, 0)).toBe(20);

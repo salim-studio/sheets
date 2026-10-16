@@ -31,7 +31,7 @@ export function stackedChartXlsx({ grouping = 'stacked', line = 'broken', negati
   add('xl/worksheets/_rels/sheet1.xml.rels', rel('draw', 'drawing', '../drawings/cost.xml'));
   add('xl/drawings/_rels/cost.xml.rels', rel('chart', 'chart', '../charts/cost.xml'));
   const point = (name, col, row, x, y) => `<xdr:${name}><xdr:col>${col}</xdr:col><xdr:colOff>${x * 9525}</xdr:colOff><xdr:row>${row}</xdr:row><xdr:rowOff>${y * 9525}</xdr:rowOff></xdr:${name}>`;
-  add('xl/drawings/cost.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}"><xdr:twoCellAnchor>${point('from', 5, 2, 28, 0)}${point('to', 13, 8, 78, 0)}<xdr:graphicFrame><c:chart r:id="chart"/></xdr:graphicFrame></xdr:twoCellAnchor></xdr:wsDr>`);
+  add('xl/drawings/cost.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}"><xdr:twoCellAnchor>${point('from', 5, 2, 28, 0)}${point('to', 13, 8, 78, 0)}<xdr:graphicFrame><c:chart r:id="chart"/></xdr:graphicFrame></xdr:twoCellAnchor></xdr:wsDr>`);
   const fill = color => `<a:solidFill><a:srgbClr val="${color}"/></a:solidFill>`;
   const ref = (kind, formula, format = '') => `<c:${kind}Ref><c:f>${formula}</c:f><c:${kind}Cache>${format ? `<c:formatCode>${format}</c:formatCode>` : ''}<c:ptCount val="1"/><c:pt idx="0"><c:v>999</c:v></c:pt></c:${kind}Cache></c:${kind}Ref>`;
   const cat = `<c:cat>${ref('str', 'Summary!$D$3:$E$3')}</c:cat>`;

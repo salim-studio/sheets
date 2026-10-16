@@ -104,7 +104,7 @@ it('keeps copied sheet rules live and retains their displayed colors in external
   // workbook's rule records. Re-pasting it must preserve typed values/styles.
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(12);
     expect(pasted.s).toMatchObject({ color: '#123456', bg: '#fedcba', bold: true });

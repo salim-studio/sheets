@@ -46,7 +46,7 @@ it('preserves Welch denominator errors, recalculation and shifted copies through
 
 it('retains small numeric inputs from external HTML across the Welch denominator boundary', () => {
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

@@ -20,7 +20,7 @@ beforeEach(() => {
 afterEach(() => {view?.destroy();view=null;vi.clearAllTimers();vi.useRealTimers();vi.restoreAllMocks();vi.unstubAllGlobals();document.body.replaceChildren();});
 
 it('retains a native report through editor copy/paste, refuses a partial delete and undoes once', async () => {
-  const doc = new Doc({ name: 'Reports', path: 'Spreadsheets/Reports.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
+  const doc = new Doc({ name: 'Reports', path: 'Sheets/Reports.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
   const ns = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
   wb.setCells(id, [{ r: 0, c: 0, cell: { v: 'Total' } }, { r: 1, c: 1, cell: { v: 19 } }]);
   wb.nativePivots = { version: 1, caches: [{ key: 'source', scope: 'main', xml: `<pivotCacheDefinition xmlns="${ns}"><cacheSource type="worksheet"><worksheetSource sheet="Sheet1" ref="H1:H2"/></cacheSource></pivotCacheDefinition>`, records: '' }],

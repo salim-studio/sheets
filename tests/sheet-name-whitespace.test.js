@@ -83,6 +83,6 @@ it('retains exact quoted names in rich clipboard formulas and exports typed valu
   expect(wb.getCell(id, 2, 0).f).toBe("'Data '!A1");
   expect(wb.getCell(id, 2, 1).f).toBe(`@INDIRECT("'Data '!A1")`);
   expect(wb.getValue(id, 2, 1)).toBe(3);
-  const external = cellsFromHtmlRows(parseHtmlClipboard(html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '')).rows);
+  const external = cellsFromHtmlRows(parseHtmlClipboard(html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '')).rows);
   expect(external.map(c => c.cell.v)).toEqual([3, 3]);
 });

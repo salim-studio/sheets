@@ -35,7 +35,7 @@ it('preserves product formulas, database criteria, edits and shifted copies thro
 
 it('preserves numeric zero and error types in external HTML copies of product results', () => {
   const values=[[0,6,{error:'#N/A'}]],shown=[['0','6','#N/A']];
-  const html=cellsToHtml(shown,[values[0].map(v=>({v}))],null,values).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const html=cellsToHtml(shown,[values[0].map(v=>({v}))],null,values).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   vi.stubGlobal('DOMParser',new JSDOM('').window.DOMParser);
   try {expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x=>x.cell.v)).toEqual(values[0]);}
   finally {vi.unstubAllGlobals();}

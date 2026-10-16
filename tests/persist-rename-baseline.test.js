@@ -14,7 +14,7 @@ async function openDocument() {
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'saved');
   await doc.rename('Budget');
   expect(await doc.save()).toBe(true);
-  expect(doc.path).toBe('Spreadsheets/Budget.xlsx');
+  expect(doc.path).toBe('Sheets/Budget.xlsx');
   return doc;
 }
 
@@ -35,7 +35,7 @@ it('saves after the file was renamed here without reporting a change made elsewh
     await vi.advanceTimersByTimeAsync(2000);
     expect(conflicts).toEqual([]);
     expect(doc.status).toBe('saved');
-    expect(doc.path).toBe('Spreadsheets/Budget 2.xlsx');
+    expect(doc.path).toBe('Sheets/Budget 2.xlsx');
   } finally { doc.destroy(); }
 });
 
@@ -49,7 +49,7 @@ it('saves after the file was renamed elsewhere, following it, without reporting 
   try {
     expect(conflicts).toEqual([]);
     expect(doc.status).toBe('saved');
-    expect(doc.path).toBe('Spreadsheets/Renamed.xlsx');
+    expect(doc.path).toBe('Sheets/Renamed.xlsx');
     expect(doc.name).toBe('Renamed');
   } finally { doc.destroy(); }
 });

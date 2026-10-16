@@ -30,7 +30,7 @@ afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealT
 it('names the size limit when a dropped picture is too large for the sheet', async () => {
   const readers = [];
   vi.stubGlobal('FileReader', class { readAsDataURL() { readers.push(this); } });
-  const doc = new Doc({ name: 'Pictures', path: 'Spreadsheets/Pictures.xlsx' });
+  const doc = new Doc({ name: 'Pictures', path: 'Sheets/Pictures.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });

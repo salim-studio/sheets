@@ -46,7 +46,7 @@ if (puter && !puter.workers) {
   puter.authToken = `h.${btoa(JSON.stringify({ type: 'app-under-user', user_uid: me.uuid }))}.s`;
   puter.fs.getReadURL = async () => `https://api.puter.test/token-read?token=${encodeURIComponent(`h.${btoa(JSON.stringify({ type: 'access-token', user_uid: me.uuid, exp: Math.floor(Date.now() / 1000) + 86400 }))}.s`)}`;
   const realFetch = window.fetch.bind(window);
-  window.fetch = (url, init) => (String(url).includes('worker/spreadsheet-worker.js') ? Promise.resolve(new Response('/* spreadsheet-worker build=0123456789abcdef */')) : realFetch(url, init));
+  window.fetch = (url, init) => (String(url).includes('worker/sheets-worker.js') ? Promise.resolve(new Response('/* sheets-worker build=0123456789abcdef */')) : realFetch(url, init));
   window.__collabBuild = '0123456789abcdef';
 
   const bots = [];
@@ -61,7 +61,7 @@ if (puter && !puter.workers) {
       else {
         const roomKeys = [...data.keys()].filter((k) => k.endsWith(':meta'));
         room = roomKeys.at(-1)?.split(':')[1];
-        server = (await puter.kv.get('spreadsheet-collab-worker-v1'))?.server;
+        server = (await puter.kv.get('sheets-collab-worker-v1'))?.server;
       }
       const user = { uuid: crypto.randomUUID(), username };
       const sdk = sdkFor(user, { kv: { get: async () => null, set: async () => true }, fs: puter.fs, auth: { getUser: async () => user } });

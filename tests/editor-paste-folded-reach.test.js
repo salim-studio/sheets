@@ -29,7 +29,7 @@ describe('pasting a reaching formula spelled with folded letters', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount() {
-    const doc = new Doc({ name: 'Trusted', path: 'Spreadsheets/Trusted.xlsx' });
+    const doc = new Doc({ name: 'Trusted', path: 'Sheets/Trusted.xlsx' });
     const wb = doc.wb;
     expect(wb.externalAllowed).toBe(true);
     view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });

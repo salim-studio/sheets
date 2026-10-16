@@ -52,7 +52,7 @@ it('retains pasted line endings through private/external copies, editing, Undo a
   const cell = cellsFromHtmlRows(parseHtmlClipboard(office(`<td x:str="${text}">display</td>`)).rows)[0].cell;
   const html = cellsToHtml([[text]], [[cell]], null, [[text]]);
   expect(parseHtmlClipboard(html).cells[0][0].v).toBe(text);
-  const foreign = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const foreign = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(values(foreign)).toEqual([text]);
   expect(values(cellsToHtml([[text]], null, null, [[text]]))).toEqual([text]);
   const wb = new Workbook(), id = wb.activeSheetId;

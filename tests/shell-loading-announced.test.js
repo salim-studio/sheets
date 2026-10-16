@@ -20,7 +20,7 @@ vi.mock('../src/lib/puter.js', () => ({
 }));
 
 const editors = [];
-const doc = (path) => Object.assign(new EventTarget(), { path, name: path || 'Untitled spreadsheet' });
+const doc = (path) => Object.assign(new EventTarget(), { path, name: path || 'Untitled sheets' });
 const tick = async (n = 12) => { for (let i = 0; i < n; i++) await Promise.resolve(); };
 const waiting = () => document.querySelector('#app [role="status"]');
 
@@ -58,12 +58,12 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-it('says what it is waiting for while a spreadsheet is opened from its address', async () => {
-  history.replaceState(null, '', '#/edit/Spreadsheets%2FBudget.xlsx');
+it('says what it is waiting for while a sheets is opened from its address', async () => {
+  history.replaceState(null, '', '#/edit/Sheets%2FBudget.xlsx');
   await import('../src/main.js');
   await vi.waitFor(() => expect(waiting()).not.toBeNull());
   expect(waiting().textContent).toBe('Opening…');
-  deferred.resolve(doc('Spreadsheets/Budget.xlsx'));
+  deferred.resolve(doc('Sheets/Budget.xlsx'));
   await vi.waitFor(() => expect(editors).toHaveLength(1));
   expect(waiting()).toBeNull(); // the wait is over, and its line goes with it
 });

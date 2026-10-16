@@ -49,7 +49,7 @@ it('preserves General signs and conditions through edit/undo, HTML and metadata-
     wb.applyStyle(id,{r1:r,r2:r,c1:0,c2:0},{fmt:'custom',code});
     wb.setInput(id,r,1,`=A${r+1}*2`);
     expect(wb.getDisplay(id,r,0)).toBe(display);
-    const html=cellsToHtml([[display]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html=cellsToHtml([[display]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const cell=cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(value); expect(cell.s.code).toBe(code);
   }

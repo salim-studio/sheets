@@ -31,7 +31,7 @@ it.each(CURRENCIES.map(([cur]) => ({ cur })))(
       }
       const back = await workbookFromFile(bytes, exportFile === workbookToXlsx ? 'currency.xlsx' : 'currency.ods');
       expect(back.getCell(back.activeSheetId, 0, 0).s).toMatchObject(styles[0]);
-      // Other spreadsheet apps only see the actual format code, not our sidecar.
+      // Other sheets apps only see the actual format code, not our sidecar.
       raw.SheetNames = raw.SheetNames.filter((name) => name !== META_SHEET);
       delete raw.Sheets[META_SHEET];
       const external = await workbookFromFile(XLSX.write(raw, { type: 'array', bookType: 'xlsx' }), 'external.xlsx');

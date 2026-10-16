@@ -55,12 +55,12 @@ it.each(['fods', 'ods'].flatMap((format) => [false, true].map((local) => ({ form
     const content = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
       <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
         xmlns:table="${tableNS}" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2"
-        office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-        <office:body><office:spreadsheet><table:table table:name="Data">
+        office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+        <office:body><office:sheets><table:table table:name="Data">
           <table:table-row><table:table-cell office:value-type="float" office:value="42"/></table:table-row>
           <table:table-row><table:table-cell office:value-type="float" office:value="8"/></table:table-row>
           ${local ? names : ''}
-        </table:table>${local ? '' : names}</office:spreadsheet></office:body>
+        </table:table>${local ? '' : names}</office:sheets></office:body>
       </office:${root}>`);
     let bytes = content;
     if (format === 'ods') {
@@ -94,7 +94,7 @@ it.each([false, true])('exports scoped expressions with a valid quoted base addr
   const node = contentDoc(bytes).getElementsByTagNameNS(tableNS, 'named-expression')[0];
   expect(node.getAttributeNS(tableNS, 'expression')).toBe('of:=0.2');
   expect(node.getAttributeNS(tableNS, 'base-cell-address')).toBe("$'Plan''s & data'.$A$1");
-  expect(node.parentNode.parentNode.localName).toBe(local ? 'table' : 'spreadsheet');
+  expect(node.parentNode.parentNode.localName).toBe(local ? 'table' : 'sheets');
   expect(X.read(bytes, { type: 'array' }).Workbook.Names).toEqual([{ Name: 'Rate', Ref: '0.2', ...(local ? { Sheet: 0 } : {}) }]);
 });
 

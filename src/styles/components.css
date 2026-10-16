@@ -704,7 +704,7 @@ body.modal-open { overflow: hidden; }
 .menu-item.danger .menu-icon { color: var(--critical); }
 .menu-item.checked .menu-icon { color: var(--accent-strong); }
 .menu-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* An item's hint: a muted second line under its label ("Save spreadsheets to your own cloud"). */
+/* An item's hint: a muted second line under its label ("Save sheets to your own cloud"). */
 .menu-hint { display: block; font-size: 11.5px; font-weight: 400; color: var(--ink-3); line-height: 1.3; margin-top: 1px; }
 
 .menu-shortcut {

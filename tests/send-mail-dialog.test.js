@@ -20,7 +20,7 @@ function doc() {
   wb.setInput(id, 0, 0, 'Item');
   wb.setInput(id, 1, 0, 'Paper');
   const d = new Doc({ wb, name: 'Supplies' });
-  d.path = 'Spreadsheets/Supplies.xlsx';
+  d.path = 'Sheets/Supplies.xlsx';
   d.uid = 'uid-9';
   return d;
 }
@@ -106,17 +106,17 @@ describe('Send a link', () => {
     vi.spyOn(P, 'puterShareLink').mockResolvedValue(null);
     const d = doc();
     const mailer = { sendLink: vi.fn(async ({ recipients }) => results(recipients.map((r) => r.email))) };
-    openSendLinkDialog({ doc: d, mailer, location: { origin: 'https://spreadsheet.puter.com', pathname: '/' } });
+    openSendLinkDialog({ doc: d, mailer, location: { origin: 'https://sheets.puter.com', pathname: '/' } });
     fill(document.querySelector('.send-to'), 'ana@example.com, kim@example.org');
     const mode = document.querySelector('.send-dialog select');
     mode.value = 'write';
     fill(document.querySelector('.send-message'), 'Your turn');
     submit();
     await until(() => expect(document.querySelector('.send-dialog')).toBeNull());
-    expect(P.shareFile.mock.calls).toEqual([['Spreadsheets/Supplies.xlsx', 'ana@example.com', 'write'], ['Spreadsheets/Supplies.xlsx', 'kim@example.org', 'write']]);
+    expect(P.shareFile.mock.calls).toEqual([['Sheets/Supplies.xlsx', 'ana@example.com', 'write'], ['Sheets/Supplies.xlsx', 'kim@example.org', 'write']]);
     expect(mailer.sendLink).toHaveBeenCalledWith({
       workbookName: 'Supplies', recipients: [{ email: 'ana@example.com', name: '' }, { email: 'kim@example.org', name: '' }],
-      link: 'https://spreadsheet.puter.com/#/file/uid-9', access: 'edit', message: 'Your turn',
+      link: 'https://sheets.puter.com/#/file/uid-9', access: 'edit', message: 'Your turn',
     });
   });
 });

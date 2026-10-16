@@ -1,6 +1,6 @@
 /* Page Layout ▸ Themes: the gallery, the Colors and Fonts menus, their dialogs, and the theme block of the colour palettes. */
 
-/* Theme colours over their tints, as a spreadsheet palette sets them: the colours in a row, a gap, then the five tints touching. */
+/* Theme colours over their tints, as a sheets palette sets them: the colours in a row, a gap, then the five tints touching. */
 .swatches.swatches-theme {
   grid-template-columns: repeat(10, 18px);
   grid-template-rows: 23px repeat(5, 17px);

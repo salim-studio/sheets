@@ -67,7 +67,7 @@ it('retains imported families in cells, chart text, native XLSX and external HTM
     families.forEach((name, c) => {
       const style = wb.styleAt(id, 0, c);
       expect(fontName(style.font)).toBe(name);
-      const html = cellsToHtml([[`Sample ${c}`]], [[wb.getCell(id, 0, c)]], [[style]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+      const html = cellsToHtml([[`Sample ${c}`]], [[wb.getCell(id, 0, c)]], [[style]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
       const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows);
       expect(fontName(pasted[0].cell.s.font)).toBe(name);
     });

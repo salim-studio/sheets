@@ -92,7 +92,7 @@ describe('a paste from another program into a formatted column', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('keeps column formats for plain text and replaces them for HTML tables', async () => {
-    const doc = new Doc({ name: 'Prices', path: 'Spreadsheets/Prices.xlsx' });
+    const doc = new Doc({ name: 'Prices', path: 'Sheets/Prices.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     const name = wb.sheet(id).name;

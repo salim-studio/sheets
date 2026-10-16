@@ -70,7 +70,7 @@ describe('a history step picked while a cell is being edited', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('leaves the edit and the sheet behind it as they are, as Undo itself does', async () => {
-    const doc = new Doc({ name: 'History', path: 'Spreadsheets/History.xlsx' });
+    const doc = new Doc({ name: 'History', path: 'Sheets/History.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 1, 'kept');

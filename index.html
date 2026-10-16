@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
-  <title>Spreadsheet</title>
-  <meta name="description" content="A fast, private AI spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud." />
+  <title>Sheets</title>
+  <meta name="description" content="Sheets — a fast, private, AI-powered sheets app. 500+ formulas, charts, tables, and real .xlsx files saved to your own cloud." />
   <!-- Link previews. Crawlers need an absolute image URL. Alternate designs live beside it in public/og/
        (sources in dev/og/). -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Puter" />
-  <meta property="og:url" content="https://spreadsheet.puter.com/" />
-  <meta property="og:title" content="Spreadsheet" />
-  <meta property="og:description" content="A fast, private AI spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud." />
-  <meta property="og:image" content="https://spreadsheet.puter.com/og/og-image-a.png" />
+  <meta property="og:site_name" content="Sheets" />
+  <meta property="og:url" content="https://salim-studio.github.io/sheets/" />
+  <meta property="og:title" content="Sheets" />
+  <meta property="og:description" content="Sheets — a fast, private, AI-powered sheets app. 500+ formulas, charts, tables, and real .xlsx files saved to your own cloud." />
+  <meta property="og:image" content="https://salim-studio.github.io/sheets/og/og-image-a.png" />
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Spreadsheet app icon on a green background. Fast, private, and AI powered. Real .xlsx files in your own cloud." />
+  <meta property="og:image:alt" content="Sheets app icon on an emerald background. Fast, private, and AI powered. Real .xlsx files in your own cloud." />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Spreadsheet" />
-  <meta name="twitter:description" content="A fast, private AI spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud." />
-  <meta name="twitter:image" content="https://spreadsheet.puter.com/og/og-image-a.png" />
-  <meta name="twitter:image:alt" content="Spreadsheet app icon on a green background. Fast, private, and AI powered. Real .xlsx files in your own cloud." />
-  <meta name="theme-color" content="#356d49" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#28593a" media="(prefers-color-scheme: dark)" />
+  <meta name="twitter:title" content="Sheets" />
+  <meta name="twitter:description" content="Sheets — a fast, private, AI-powered sheets app. 500+ formulas, charts, tables, and real .xlsx files saved to your own cloud." />
+  <meta name="twitter:image" content="https://salim-studio.github.io/sheets/og/og-image-a.png" />
+  <meta name="twitter:image:alt" content="Sheets app icon on an emerald background. Fast, private, and AI powered. Real .xlsx files in your own cloud." />
+  <meta name="theme-color" content="#0E7A4D" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0B3B2A" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <!-- Not black-translucent: that draws the page under the status bar and paints the clock, signal and
        battery white, over the app's own top bar, which is --surface (#ffffff) in the default light theme.
        "default" leaves the status bar to the system, which picks a style that reads on its own backdrop. -->
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Spreadsheet" />
+  <meta name="apple-mobile-web-app-title" content="Sheets" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48" />
   <link rel="icon" href="./favicon-16x16.png" type="image/png" sizes="16x16" />
@@ -42,19 +42,12 @@
     // saved theme too, not the OS scheme the metas are keyed by, until theme.js takes over.
     (() => {
       try {
-        const t = localStorage.getItem('spreadsheet:theme');
+        const t = localStorage.getItem('sheets:theme');
         if (t !== 'light' && t !== 'dark') return;
         document.documentElement.dataset.theme = t;
-        for (const m of document.querySelectorAll('meta[name="theme-color"]')) m.setAttribute('content', t === 'dark' ? '#28593a' : '#356d49');
+        for (const m of document.querySelectorAll('meta[name="theme-color"]')) m.setAttribute('content', t === 'dark' ? '#0B3B2A' : '#0E7A4D');
       } catch {}
     })();
-  </script>
-  <!-- Privacy-friendly analytics by Plausible -->
-  <script async src="https://plausible.io/js/pa-MRQHafK7nSUP6VOpIrhR4.js"></script>
-  <script>
-    window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments); };
-    plausible.init = plausible.init || function (i) { plausible.o = i || {}; };
-    plausible.init();
   </script>
   <script src="https://js.puter.com/v2/" defer></script>
   <script type="module" src="/src/main.js"></script>
@@ -79,7 +72,7 @@
       <linearGradient id="ico-g-purple-solid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--ico-purple-top)"/><stop offset="1" style="stop-color:var(--ico-purple-deep)"/></linearGradient>
     </defs>
   </svg>
-  <noscript>Please enable JavaScript to use Spreadsheet.</noscript>
+  <noscript>Please enable JavaScript to use Sheets.</noscript>
   <div id="app" class="app">
     <div class="boot-splash" id="boot-splash" aria-hidden="true">
       <div class="boot-mark">

@@ -38,13 +38,13 @@ describe('copied cells carry their links', () => {
     const cells = [[{ v: null, f: 'HYPERLINK("https://example.com/?a=1&b=""2""","A & B")' }, { v: 'x\ny', f: null }]];
     const html = cellsToHtml([['A & B', 'x\ny']], cells);
     expect(html).toContain('<a href="https://example.com/?a=1&amp;b=&quot;2&quot;">A &amp; B</a>');
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     expect(cellsFromHtmlRows(parseHtmlClipboard(external).rows)[1].cell).toMatchObject({ v: 'x\ny', s: { wrap: false } });
   });
 
   it('brings the link back when the markup comes home without the embedded cells', () => {
     const cells = [[{ v: null, f: 'HYPERLINK("https://example.com/report","Q3 report")' }]];
-    const html = cellsToHtml([['Q3 report']], cells).replace(/ data-spreadsheet-cells="[^"]*"/, '');
+    const html = cellsToHtml([['Q3 report']], cells).replace(/ data-sheets-cells="[^"]*"/, '');
     const parsed = parseHtmlClipboard(html);
     expect(parsed.rows[0][0].link).toBe('https://example.com/report');
     expect(cellsFromHtmlRows(parsed.rows, null)[0].cell).toMatchObject({ v: 'Q3 report', f: null, hyperlink: 'https://example.com/report' });

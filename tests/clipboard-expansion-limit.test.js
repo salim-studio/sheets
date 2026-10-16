@@ -36,7 +36,7 @@ it('accepts the boundary-sized table and retains span positions and styling', ()
 
 it.each([200, 201])('applies the same cell limit to embedded metadata with %s rows', (height) => {
   const cells = Array.from({ length: height }, () => Array(1000).fill(null));
-  const parsed = parseHtmlClipboard(stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'><tr><td>Fallback</td></tr></table>`));
+  const parsed = parseHtmlClipboard(stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'><tr><td>Fallback</td></tr></table>`));
   if (height === 200) {
     expect(parsed.error).toBeUndefined();
     expect(parsed.cells).toHaveLength(200);

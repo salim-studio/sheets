@@ -48,7 +48,7 @@ it.each([true, false])('renders conditional emphasis %s consistently in grid, pr
   expect(td.style.fontWeight).toBe(value ? '600' : '400');
   expect(td.style.fontStyle).toBe(value ? 'italic' : '');
   expect(td.style.textDecoration).toBe(value ? 'underline line-through' : '');
-  const html = cellsToHtml([['Emphasis']], [[wb.getCell(id, 0, 0)]], [[wb.conditionalStyle(id, 0, 0, 'Emphasis')]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([['Emphasis']], [[wb.getCell(id, 0, 0)]], [[wb.conditionalStyle(id, 0, 0, 'Emphasis')]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(parseHtmlClipboard(html).rows[0][0].style).toMatchObject(flags(value));
 });
 it('clears an underline without suppressing a retained strike', async () => {

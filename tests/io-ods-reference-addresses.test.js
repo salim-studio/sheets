@@ -17,14 +17,14 @@ it.each(['fods', 'ods'].flatMap((format) => ['Data', 'Q1.2026', "Plan's.data", '
       <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
         xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
         xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink"
-        office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-        <office:body><office:spreadsheet><table:table table:name="${escape(name)}">
+        office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+        <office:body><office:sheets><table:table table:name="${escape(name)}">
           <table:table-row><table:table-cell office:value-type="float" office:value="42"/>
             <table:table-cell office:value-type="string"><text:p><text:a xlink:href="${escape(`#${odsref}`)}">Jump</text:a></text:p></table:table-cell>
           </table:table-row><table:table-row><table:table-cell office:value-type="float" office:value="8"/></table:table-row>
         </table:table><table:named-expressions>
           <table:named-range table:name="Amount" table:cell-range-address="${escape(odsref)}" table:base-cell-address="${escape(`$${sheet}.$A$1`)}"/>
-        </table:named-expressions></office:spreadsheet></office:body>
+        </table:named-expressions></office:sheets></office:body>
       </office:${root}>`);
     let bytes = content;
     if (format === 'ods') {

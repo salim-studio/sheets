@@ -13,13 +13,13 @@ afterEach(() => { vi.restoreAllMocks(); setGuestStorage(); });
 function recordsForCurrentScope(who) {
   const wb = new Workbook();
   wb.setInput(wb.activeSheetId, 0, 0, `${who}'s salary`);
-  expect(saveDraft(draftKey('Spreadsheets/Private.xlsx'), wb, 'Private', `rev-${who}`)).toBe(true);
+  expect(saveDraft(draftKey('Sheets/Private.xlsx'), wb, 'Private', `rev-${who}`)).toBe(true);
   rememberRecent(`/${who}/Secret.xlsx`, 'Secret');
-  localStorage.setItem(`${accountStorageKey('spreadsheet:external')}Spreadsheets/Private.xlsx`, '1');
+  localStorage.setItem(`${accountStorageKey('sheets:external')}Sheets/Private.xlsx`, '1');
 }
 
 // Signing out is how a user takes their work off a shared computer, but every record this browser
-// kept for the account — whole unsaved spreadsheets among them — stayed behind for good.
+// kept for the account — whole unsaved sheets among them — stayed behind for good.
 it('removes every record kept for the account being left, and nothing else', () => {
   setStorageUser({ uuid: 'u-1' });
   recordsForCurrentScope('alice');
@@ -28,20 +28,20 @@ it('removes every record kept for the account being left, and nothing else', () 
   recordsForCurrentScope('bob');
   setGuestStorage();
   recordsForCurrentScope('a visitor');
-  localStorage.setItem('spreadsheet:settings:v1', '{"theme":"dark"}'); // kept for the browser, not for an account
+  localStorage.setItem('sheets:settings:v1', '{"theme":"dark"}'); // kept for the browser, not for an account
 
   expect(clearAccountStorage('uuid:u-1')).toBe(3);
   expect(localStorage.keys().filter((k) => k.includes('uuid%3Au-1:'))).toEqual([]);
   // The other account, the visitor's records and the theme all stand.
   expect(localStorage.keys().filter((k) => k.includes('uuid%3Au-10:'))).toHaveLength(3);
   expect(localStorage.keys().filter((k) => k.includes(':account:guest:'))).toHaveLength(3);
-  expect(localStorage.getItem('spreadsheet:settings:v1')).toBe('{"theme":"dark"}');
+  expect(localStorage.getItem('sheets:settings:v1')).toBe('{"theme":"dark"}');
 
   // Nothing of the account's is offered to whoever signs in next.
   setStorageUser({ uuid: 'u-1' });
   expect(listDrafts()).toEqual([]);
   expect(recentFiles()).toEqual([]);
-  expect(localStorage.getItem(`${accountStorageKey('spreadsheet:external')}Spreadsheets/Private.xlsx`)).toBeNull();
+  expect(localStorage.getItem(`${accountStorageKey('sheets:external')}Sheets/Private.xlsx`)).toBeNull();
 });
 
 it('sweeps the scope the app is in when none is named, and says how many records went', () => {

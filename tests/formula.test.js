@@ -101,7 +101,7 @@ describe('evaluator', () => {
     expect(calc('A1+1')).toBe(1); // empty cell counts as 0
   });
 
-  it('produces spreadsheet errors', () => {
+  it('produces sheets errors', () => {
     expect(calc('1/0')).toEqual({ error: '#DIV/0!' });
     expect(calc('"abc"+1')).toEqual({ error: '#VALUE!' });
     expect(calc('NOPE(1)')).toEqual({ error: '#NAME?' });

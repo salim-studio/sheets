@@ -29,7 +29,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(prep) {
-  const doc = new Doc({ name: 'Sums', path: 'Spreadsheets/Sums.xlsx' });
+  const doc = new Doc({ name: 'Sums', path: 'Sheets/Sums.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   prep(wb, id);

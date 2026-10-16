@@ -159,7 +159,7 @@ export function createSheetTabs(ctx, { excelLayout = false } = {}) {
         { label: 'Unhide', icon: 'showHide', disabled: !hiddenSheets().length, submenu: hiddenSheets().map((h) => ({ label: h.name, icon: 'showHide', onSelect: () => act('showSheet', h.id, () => ctx.wb.setSheetHidden(h.id, false)) })) },
         { separator: true },
         { label: 'Duplicate', icon: 'duplicate', onSelect: () => act('duplicateSheet', sheet.id, () => ctx.wb.duplicateSheet(sheet.id)) },
-        ctx.run && { label: 'Copy to another spreadsheet…', icon: 'copy', onSelect: () => ctx.run('copySheetTo', sheet.id) },
+        ctx.run && { label: 'Copy to another sheets…', icon: 'copy', onSelect: () => ctx.run('copySheetTo', sheet.id) },
         { label: 'Move left', icon: 'chevL', disabled: !before, onSelect: () => ctx.wb.moveSheet(sheet.id, ctx.wb.sheets.indexOf(before)) },
         { label: 'Move right', icon: 'chevR', disabled: !after, onSelect: () => ctx.wb.moveSheet(sheet.id, ctx.wb.sheets.indexOf(after)) },
         { separator: true },

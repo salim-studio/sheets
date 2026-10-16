@@ -89,14 +89,14 @@ describe('dropping a file on the app', () => {
     expect(drop.defaultPrevented).toBe(true);
   });
 
-  it('hands a file dropped outside the sheet to the open spreadsheet', async () => {
+  it('hands a file dropped outside the sheet to the open sheets', async () => {
     const { view } = await bootEditor();
     const dropped = dropOn(document.body, 'Picture.png', 'image/png');
     expect(view.acceptDrop).toHaveBeenCalledWith(dropped, expect.objectContaining({ files: [dropped] }));
     expect(mocks.fromBrowserFile).not.toHaveBeenCalled();
   });
 
-  it('opens a spreadsheet dropped on a screen of its own, such as the file list', async () => {
+  it('opens a sheets dropped on a screen of its own, such as the file list', async () => {
     await bootHome();
     const dropped = dropOn(document.body, 'Budget.xlsx');
     await vi.waitFor(() => expect(mocks.fromBrowserFile).toHaveBeenCalledWith(dropped));
@@ -154,7 +154,7 @@ describe('dropping a file on the app', () => {
     expect(document.body.classList.contains('dropping')).toBe(false);
   });
 
-  it('lets the open spreadsheet mark where the file goes in place of the window, and clears it when the drag ends', async () => {
+  it('lets the open sheets mark where the file goes in place of the window, and clears it when the drag ends', async () => {
     const { view } = await bootEditor();
     view.dragOver = vi.fn((x) => x !== null); // the stand-in drag has no position: it is over the panel
     document.body.dispatchEvent(dragEvent('dragover', { files: [file('receipt.png')] }));

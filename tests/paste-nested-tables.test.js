@@ -16,7 +16,7 @@ describe('nested tables in pasted HTML', () => {
   });
 
   it('still reads a wrapped table from this app with its cells intact', () => {
-    const inner = stampClipboardHtml(`<table data-spreadsheet-cells='[[{"v":10,"s":{"bold":true}}]]'><tr><td>10</td></tr></table>`);
+    const inner = stampClipboardHtml(`<table data-sheets-cells='[[{"v":10,"s":{"bold":true}}]]'><tr><td>10</td></tr></table>`);
     expect(parseHtmlClipboard(`<table><tr><td>${inner}</td></tr></table>`).cells).toEqual([[{ v: 10, s: { bold: true } }]]);
   });
 

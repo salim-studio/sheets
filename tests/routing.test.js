@@ -77,7 +77,7 @@ describe('document routing', () => {
     const importing = editors[0].options.importFile({ name: 'Imported.xlsx' });
     await vi.waitFor(() => expect(mocks.fromBrowserFile).toHaveBeenCalledOnce());
     navigate('#/edit/Second.xlsx');
-    resolve(doc('Spreadsheets/Imported.xlsx'));
+    resolve(doc('Sheets/Imported.xlsx'));
     await importing;
     await vi.waitFor(() => expect(document.querySelector('#app').textContent).toBe('Second.xlsx'));
     for (const editor of editors.slice(0, -1)) {

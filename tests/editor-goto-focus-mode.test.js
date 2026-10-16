@@ -22,7 +22,7 @@ afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTim
 
 // In focus mode the formula bar is hidden, so "Go to" had nothing to focus and silently did nothing.
 it('asks for the address in focus mode and goes there', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   view.el.classList.add('focus-mode');

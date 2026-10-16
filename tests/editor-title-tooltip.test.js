@@ -27,7 +27,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('shows the whole document name in the title button’s tooltip, and follows a rename', async () => {
-  const doc = new Doc({ name: 'Quarterly budget review 2026 (draft)', path: 'Spreadsheets/Quarterly budget review 2026 (draft).xlsx' });
+  const doc = new Doc({ name: 'Quarterly budget review 2026 (draft)', path: 'Sheets/Quarterly budget review 2026 (draft).xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await vi.advanceTimersByTimeAsync(1);

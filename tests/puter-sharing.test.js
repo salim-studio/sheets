@@ -10,8 +10,8 @@ describe('sharing through Puter', () => {
     const share = vi.fn().mockResolvedValue([{ uid: 's1', holder: 'ana', mode: 'write', isNew: false }]);
     withSDK({ share, getShares() {} });
     expect(P.canShare()).toBe(true);
-    const row = await P.shareFile('Spreadsheets/Plan.xlsx', '  ana ', 'write');
-    expect(share).toHaveBeenCalledWith('Spreadsheets/Plan.xlsx', 'ana', 'write');
+    const row = await P.shareFile('Sheets/Plan.xlsx', '  ana ', 'write');
+    expect(share).toHaveBeenCalledWith('Sheets/Plan.xlsx', 'ana', 'write');
     expect(row).toMatchObject({ who: 'user', label: 'ana', recipient: 'ana', mode: 'write', isNew: false });
   });
 
@@ -54,7 +54,7 @@ describe('sharing through Puter', () => {
     expect((await P.shareAccess('a.xlsx')).map((r) => [r.who, r.label])).toEqual([['team', 'A team'], ['team', 'Finance'], ['team', 'ops']]);
   });
 
-  it('pages through what is shared with the user until the cursor is gone, keeping only spreadsheet files', async () => {
+  it('pages through what is shared with the user until the cursor is gone, keeping only sheets files', async () => {
     const listShared = vi.fn()
       .mockResolvedValueOnce({ items: [{ name: 'Old.xlsx', path: '/ana/u1/Old.xlsx', entryUid: 'u1', mode: 'read', owner: 'ana', modified: 1 }], cursor: 'next' })
       .mockResolvedValueOnce({ items: [{ name: 'Photos', isDir: true, path: '/ana/u2/Photos' }, { name: 'notes.txt', path: '/ana/u3/notes.txt' }, { name: 'New.csv', path: '/bo/u4/New.csv', mode: 'write', issuer: 'bo', modified: 9 }] });
@@ -72,11 +72,11 @@ describe('sharing through Puter', () => {
   });
 
   it('builds a Puter link only inside the desktop', async () => {
-    const getShareLink = vi.fn().mockResolvedValue('https://puter.com/app/spreadsheet?file=u1');
+    const getShareLink = vi.fn().mockResolvedValue('https://puter.com/app/sheets?file=u1');
     withSDK({ getShareLink }, { env: 'web' });
     expect(await P.puterShareLink('a.xlsx')).toBeNull();
     withSDK({ getShareLink }, { env: 'app' });
-    expect(await P.puterShareLink('a.xlsx')).toBe('https://puter.com/app/spreadsheet?file=u1');
+    expect(await P.puterShareLink('a.xlsx')).toBe('https://puter.com/app/sheets?file=u1');
   });
 });
 
@@ -113,7 +113,7 @@ describe('the access the user has to a file shared with them', () => {
     withSDK({ listShared: async () => ({ items: [{ name: 'A.xlsx', path: '/ana/u1/A.xlsx', entryUid: 'u1', mode: 'read' }, { name: 'B.xlsx', path: '/ana/u2/B.xlsx', entryUid: 'u2', mode: 'write' }] }) });
     expect(await P.sharedModeOf({ path: '/elsewhere/A.xlsx', uid: 'u1' })).toBe('read');
     expect(await P.sharedModeOf({ path: '/ana/u2/B.xlsx' })).toBe('write');
-    expect(await P.sharedModeOf({ path: '/me/Spreadsheets/C.xlsx', uid: 'u3' })).toBeNull();
+    expect(await P.sharedModeOf({ path: '/me/Sheets/C.xlsx', uid: 'u3' })).toBeNull();
     expect([P.canWriteMode('read'), P.canWriteMode('write'), P.canWriteMode('manage')]).toEqual([false, true, true]);
   });
 });

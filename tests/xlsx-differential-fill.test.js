@@ -70,7 +70,7 @@ it('preserves differential fills through editing, native export and external HTM
   const id = wb.activeSheetId, coat = book => book.conditionalStyle(book.activeSheetId, 2, 1, 'Header');
   wb.setInput(id, 3, 1, '19'); expect(coat(wb).bg).toBe('#2266aa'); wb.undo();
   const html = cellsToHtml([['Header']], [[wb.getCell(id, 2, 1)]], [[coat(wb)]]);
-  const externalHtml = html.replace(/ data-spreadsheet-\w+="[^"]*"/g, '');
+  const externalHtml = html.replace(/ data-sheets-\w+="[^"]*"/g, '');
   expect(parseHtmlClipboard(externalHtml).rows[0][0].style.bg).toBe('#2266aa');
   const blob = await workbookToXlsx(wb);
   const bytes = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(blob); });

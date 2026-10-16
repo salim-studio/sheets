@@ -91,7 +91,7 @@ export const SIGNATURES = {
   IMPORTXML: ['url, xpath_query', 'Nodes picked by an XPath query from an XML or HTML document, one per row; #BUSY! while it downloads.'],
   IMPORTHTML: ['url, "table" | "list", [index]', 'The nth table or list on a web page, spilled into place; #BUSY! while it downloads.'],
   IMPORTDATA: ['url, [delimiter]', 'A CSV or TSV file from a web address, spilled into place; #BUSY! while it downloads.'],
-  IMPORTRANGE: ['spreadsheet, range', 'Cells from another spreadsheet on your Puter drive ("Budget" or a path, then "Sheet1!A1:B10"); #BUSY! while it loads.'],
+  IMPORTRANGE: ['sheets, range', 'Cells from another sheets on your Puter drive ("Budget" or a path, then "Sheet1!A1:B10"); #BUSY! while it loads.'],
   AI: ['prompt, [data]', 'Asks Puter AI a question, optionally about a range of data; the answer fills the cell (#BUSY! while it thinks).'],
   TRANSLATE: ['text, [source_language], [target_language]', 'Translates text with Puter AI (languages as codes or names; the target defaults to English). #BUSY! while it works.'],
   GOOGLETRANSLATE: ['text, [source_language], [target_language]', 'Translates text with Puter AI (the Sheets name for TRANSLATE).'],

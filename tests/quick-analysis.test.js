@@ -38,7 +38,7 @@ describe('in the editor', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('shows the button for a block of data, opens with Ctrl+Q, and adds totals below as one undo step', async () => {
-    const doc = new Doc({ name: 'QA', path: 'Spreadsheets/QA.xlsx' });
+    const doc = new Doc({ name: 'QA', path: 'Sheets/QA.xlsx' });
     const { wb } = doc; const id = wb.activeSheetId; fill(wb, id); wb.clearHistory();
     view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
     document.querySelector('#app').append(view.el);

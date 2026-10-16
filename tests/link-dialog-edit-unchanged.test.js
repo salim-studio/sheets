@@ -31,7 +31,7 @@ afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTim
 
 /** A1 holding `input` (with `style`), the editor on it and its Edit link dialog open. */
 async function open(input, style = null) {
-  const doc = new Doc({ name: 'Links', path: 'Spreadsheets/Links.xlsx' });
+  const doc = new Doc({ name: 'Links', path: 'Sheets/Links.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, input);

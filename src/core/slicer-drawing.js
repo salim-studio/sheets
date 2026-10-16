@@ -1,6 +1,6 @@
 import { modelChildren, standaloneModelXml } from './data-model-metadata.js';
 
-const XDR = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing';
+const XDR = 'http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing';
 const A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
 const MC = 'http://schemas.openxmlformats.org/markup-compatibility/2006';
 const SLE = 'http://schemas.microsoft.com/office/drawing/2010/slicer';

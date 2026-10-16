@@ -31,7 +31,7 @@ describe('paste special: column widths', () => {
   const item = (label) => [...document.querySelectorAll('.menu-item')].find((b) => b.querySelector('.menu-label')?.textContent === label);
 
   it('pastes the widths of the copied columns only, skipping a hidden one', async () => {
-    const doc = new Doc({ name: 'Widths', path: 'Spreadsheets/Widths.xlsx' });
+    const doc = new Doc({ name: 'Widths', path: 'Sheets/Widths.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     for (let c = 0; c < 3; c++) wb.setInput(id, 0, c, 'abc'[c]);

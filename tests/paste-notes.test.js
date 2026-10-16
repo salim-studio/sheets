@@ -57,7 +57,7 @@ describe('the editor', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it.each(['first', '  Indented\nLast line  \n'])('copies note %j with the cells, but not with values or formatting only', async (note) => {
-    const doc = new Doc({ name: 'Notes', path: 'Spreadsheets/Notes.xlsx' });
+    const doc = new Doc({ name: 'Notes', path: 'Sheets/Notes.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'a');

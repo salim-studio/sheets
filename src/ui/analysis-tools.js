@@ -1,7 +1,7 @@
 /**
  * Data ▸ Analyze ▸ Data Analysis: a list of the analysis tools, then a dialog for the one chosen with
  * its input ranges and options and where the results go: a range on a sheet, a new sheet, or a new
- * spreadsheet file. The computing is in core/analysis-tools.js; this is the form around it.
+ * sheets file. The computing is in core/analysis-tools.js; this is the form around it.
  */
 import { el, fieldId } from './dom.js';
 import { openModal, fieldAlert, confirmDialog } from './modal.js';
@@ -434,10 +434,10 @@ export function openAnalysisTool(ctx, id) {
   const fields = tool.fields();
 
   /* ---- Output options ---- */
-  const outputs = radios('output', 'Output options', [['range', 'Output range'], ['sheet', 'New sheet'], ['book', 'New spreadsheet']], 'sheet');
+  const outputs = radios('output', 'Output options', [['range', 'Output range'], ['sheet', 'New sheet'], ['book', 'New sheets']], 'sheet');
   const outRange = el('input.input', { type: 'text', 'aria-label': 'Output range', autocomplete: 'off', spellcheck: false, placeholder: 'e.g. $E$1' });
   const sheetName = el('input.input', { type: 'text', 'aria-label': 'New sheet name', autocomplete: 'off', placeholder: 'Name (optional)', maxLength: 31 });
-  const bookName = el('input.input', { type: 'text', 'aria-label': 'New spreadsheet name', autocomplete: 'off', value: toolName(id).replace(/[:/\\]/g, ' -') });
+  const bookName = el('input.input', { type: 'text', 'aria-label': 'New sheets name', autocomplete: 'off', value: toolName(id).replace(/[:/\\]/g, ' -') });
   f.outRange = outRange; f.sheetName = sheetName; f.bookName = bookName;
   const syncOutput = () => {
     outRange.disabled = f.output.value !== 'range';
@@ -494,9 +494,9 @@ export function openAnalysisTool(ctx, id) {
       return;
     }
     const clean = P.sanitizeName(bookName.value).replace(/\.xlsx$/i, '');
-    if (!clean) return refuse(bookName, 'Enter a name for the new spreadsheet');
+    if (!clean) return refuse(bookName, 'Enter a name for the new sheets');
     const book = analysisWorkbook(wb, layout, 'Sheet1');
-    if (!book) return refuse(null, 'The new spreadsheet could not be made.');
+    if (!book) return refuse(null, 'The new sheets could not be made.');
     busy = true;
     try {
       const fileName = await P.uniqueName(clean);
@@ -507,7 +507,7 @@ export function openAnalysisTool(ctx, id) {
       modal.close();
       toast(`${toolName(id)} saved as ${stripExtension(savedName)}`, { icon: 'check', action: { label: 'Open', onClick: () => ctx.run?.('openFile', saved) } });
     } catch (err) {
-      refuse(null, `Could not save the new spreadsheet: ${err?.message || 'unknown error'}`);
+      refuse(null, `Could not save the new sheets: ${err?.message || 'unknown error'}`);
     } finally {
       busy = false;
     }

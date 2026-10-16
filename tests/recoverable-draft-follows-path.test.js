@@ -24,33 +24,33 @@ const text = (draft) => draft?.workbook.sheets[0].cells['0,0'].v;
 // behind under the old path, where discarding could not find it and the next file of that
 // name would be offered it instead.
 it('moves an undecided draft with the file when it is renamed, and discards it from there', async () => {
-  await fileWithDraft('Spreadsheets/Budget.xlsx');
-  const doc = await Doc.fromPath('Spreadsheets/Budget.xlsx');
+  await fileWithDraft('Sheets/Budget.xlsx');
+  const doc = await Doc.fromPath('Sheets/Budget.xlsx');
   expect(text(doc.recoverable)).toBe('never saved');
   expect(await doc.rename('Plan')).toBeNull();
-  expect(loadDraft(draftKey('Spreadsheets/Budget.xlsx'))).toBeNull();
-  expect(text(loadDraft(draftKey('Spreadsheets/Plan.xlsx')))).toBe('never saved');
+  expect(loadDraft(draftKey('Sheets/Budget.xlsx'))).toBeNull();
+  expect(text(loadDraft(draftKey('Sheets/Plan.xlsx')))).toBe('never saved');
   expect(text(doc.recoverable)).toBe('never saved');
   doc.discardDraft();
   expect(doc.recoverable).toBeNull();
-  expect(loadDraft(draftKey('Spreadsheets/Plan.xlsx'))).toBeNull();
+  expect(loadDraft(draftKey('Sheets/Plan.xlsx'))).toBeNull();
   // Drafting resumes under the new key.
   doc.wb.setInput(doc.wb.activeSheetId, 1, 1, 'fresh');
   expect(doc.writeDraft()).toBe(true);
-  expect(loadDraft(draftKey('Spreadsheets/Plan.xlsx')).workbook.sheets[0].cells['1,1'].v).toBe('fresh');
+  expect(loadDraft(draftKey('Sheets/Plan.xlsx')).workbook.sheets[0].cells['1,1'].v).toBe('fresh');
   doc.destroy();
 });
 
 it('keeps an undecided draft with the document across a save under another name, and restores it from there', async () => {
-  await fileWithDraft('Spreadsheets/Budget.xlsx');
-  const doc = await Doc.fromPath('Spreadsheets/Budget.xlsx');
+  await fileWithDraft('Sheets/Budget.xlsx');
+  const doc = await Doc.fromPath('Sheets/Budget.xlsx');
   expect(await doc.saveAs('Copy')).toBeNull();
-  expect(doc.path).toBe('Spreadsheets/Copy.xlsx');
-  expect(loadDraft(draftKey('Spreadsheets/Budget.xlsx'))).toBeNull();
-  expect(text(loadDraft(draftKey('Spreadsheets/Copy.xlsx')))).toBe('never saved');
+  expect(doc.path).toBe('Sheets/Copy.xlsx');
+  expect(loadDraft(draftKey('Sheets/Budget.xlsx'))).toBeNull();
+  expect(text(loadDraft(draftKey('Sheets/Copy.xlsx')))).toBe('never saved');
   expect(doc.restoreDraft()).toBe(true);
   expect(doc.wb.getValue(doc.wb.activeSheetId, 0, 0)).toBe('never saved');
   expect(await doc.save()).toBe(true);
-  expect(loadDraft(draftKey('Spreadsheets/Copy.xlsx'))).toBeNull();
+  expect(loadDraft(draftKey('Sheets/Copy.xlsx'))).toBeNull();
   doc.destroy();
 });

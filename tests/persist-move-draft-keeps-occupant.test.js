@@ -11,7 +11,7 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 /** Every draft as the home screen lists it: [name, path, first cell]. */
 const listed = () => listDrafts().map((d) => [d.name, d.path, text(loadDraft(d.key))]).sort();
@@ -36,10 +36,10 @@ async function deletedFileWithDraft() {
   expect(text(loadDraft(draftKey(PATH)))).toBe('never saved');
 }
 
-// A new spreadsheet saved under the name of a file deleted elsewhere took over that file's address, and
+// A new sheet saved under the name of a file deleted elsewhere took over that file's address, and
 // with it the draft of edits the file's owner had never managed to save: the new document's draft was
 // moved over it, then cleared once the save landed, and the home screen listed nothing.
-it('keeps the deleted file\'s draft as an unsaved spreadsheet when a new spreadsheet takes the file\'s name', async () => {
+it('keeps the deleted file\'s draft as an unsaved sheet when a new sheet takes the file\'s name', async () => {
   await deletedFileWithDraft();
   const doc = Doc.blank();
   await doc.rename('Budget');
@@ -54,27 +54,27 @@ it('keeps the deleted file\'s draft as an unsaved spreadsheet when a new spreads
 });
 
 it('parks a different draft found at the destination of a move rather than writing over it, and still gives way for the same snapshot or an unreadable one', () => {
-  const from = draftKey('Spreadsheets/A.xlsx');
-  const to = draftKey('Spreadsheets/B.xlsx');
+  const from = draftKey('Sheets/A.xlsx');
+  const to = draftKey('Sheets/B.xlsx');
   expect(saveDraft(from, book('A'), 'A', 'rev-a')).toBe(true);
   expect(saveDraft(to, book('B'), 'B', 'rev-b')).toBe(true);
   moveDraft(from, to);
   expect(loadDraft(from)).toBeNull();
   expect(text(loadDraft(to))).toBe('A');
-  expect(listed()).toEqual([['A', 'Spreadsheets/B.xlsx', 'A'], ['B', null, 'B']]);
+  expect(listed()).toEqual([['A', 'Sheets/B.xlsx', 'A'], ['B', null, 'B']]);
   // The same snapshot already at the destination (another tab moved it first): nothing to keep apart.
-  const again = draftKey('Spreadsheets/C.xlsx');
+  const again = draftKey('Sheets/C.xlsx');
   localStorage.setItem(again, localStorage.getItem(to));
   moveDraft(to, again);
   expect(loadDraft(to)).toBeNull();
   expect(text(loadDraft(again))).toBe('A');
-  expect(listed()).toEqual([['A', 'Spreadsheets/C.xlsx', 'A'], ['B', null, 'B']]);
+  expect(listed()).toEqual([['A', 'Sheets/C.xlsx', 'A'], ['B', null, 'B']]);
   // A record at the destination that is not a readable draft is not worth keeping.
-  const garbage = draftKey('Spreadsheets/D.xlsx');
+  const garbage = draftKey('Sheets/D.xlsx');
   localStorage.setItem(garbage, JSON.stringify({ savedAt: 1, name: 'D', workbook: 'not a book' }));
   moveDraft(again, garbage);
   expect(text(loadDraft(garbage))).toBe('A');
-  expect(listed()).toEqual([['A', 'Spreadsheets/D.xlsx', 'A'], ['B', null, 'B']]);
+  expect(listed()).toEqual([['A', 'Sheets/D.xlsx', 'A'], ['B', null, 'B']]);
   // A revision that does not match still leaves the source where it is, destination untouched.
   moveDraft(garbage, to, 'rev-other');
   expect(text(loadDraft(garbage))).toBe('A');

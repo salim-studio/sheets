@@ -31,7 +31,7 @@ export function progressChartXlsx({ grouping = 'clustered', reversed = false } =
     add(`xl/drawings/_rels/progress${i}.xml.rels`, rel('chart', 'chart', `../charts/progress${i}.xml`));
     const points = horizontal ? point('from', 3, 3, 86, 32.7) + point('to', 7, 6, 55, 11.5)
       : point('from', 4, 3, 3, 6) + point('to', 4, 11, 530, 39);
-    add(`xl/drawings/progress${i}.xml`, `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}"><xdr:twoCellAnchor>${points}<xdr:graphicFrame><c:chart r:id="chart"/></xdr:graphicFrame></xdr:twoCellAnchor></xdr:wsDr>`);
+    add(`xl/drawings/progress${i}.xml`, `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}"><xdr:twoCellAnchor>${points}<xdr:graphicFrame><c:chart r:id="chart"/></xdr:graphicFrame></xdr:twoCellAnchor></xdr:wsDr>`);
     const source = horizontal ? '<c:tx><c:strRef><c:f>Shopping!E4</c:f></c:strRef></c:tx>' : '<c:tx><c:v>Total cost</c:v></c:tx>';
     const series = `${source}<c:spPr>${fill('314159')}</c:spPr>${horizontal ? `<c:dPt><c:idx val="0"/><c:spPr>${fill('C67431')}</c:spPr></c:dPt>` : ''}<c:cat>${ref(horizontal ? 'Shopping!G9' : 'Budget!A1:A3')}</c:cat><c:val>${ref(horizontal ? 'Shopping!E5' : 'Budget!B1:B3')}</c:val>`;
     const scale = horizontal ? '<c:scaling><c:max val="1"/></c:scaling><c:majorUnit val="0.25"/><c:majorTickMark val="out"/>' : '';

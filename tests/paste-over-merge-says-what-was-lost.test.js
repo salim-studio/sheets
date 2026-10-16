@@ -32,7 +32,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(prep) {
-  const doc = new Doc({ name: 'Merge', path: 'Spreadsheets/Merge.xlsx' });
+  const doc = new Doc({ name: 'Merge', path: 'Sheets/Merge.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   prep?.(wb, id);
@@ -90,7 +90,7 @@ it('says it for a paste pressed on a cell drawn inside the merged block', async 
   expect(said()).toEqual(['Pasted. 3 values fell under merged cells and were left out']);
 });
 
-it('says it for cells copied in this spreadsheet, and for Paste special values only', async () => {
+it('says it for cells copied in this sheet, and for Paste special values only', async () => {
   const { wb, id, copy, pasteCopy, said } = await mount((wb, id) => {
     merged(wb, id);
     wb.setInput(id, 0, 4, '1'); wb.setInput(id, 0, 5, '2');

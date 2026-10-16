@@ -76,7 +76,7 @@ describe('the editor', () => {
   afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount() {
-    const doc = new Doc({ name: 'Locked', path: 'Spreadsheets/Locked.xlsx' });
+    const doc = new Doc({ name: 'Locked', path: 'Sheets/Locked.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     for (const [r, a, b] of [[0, 'a,b', 'x'], [1, 'c,d', 'y'], [2, 'e,f', 'z']]) { wb.setInput(id, r, 0, a); wb.setInput(id, r, 1, b); }

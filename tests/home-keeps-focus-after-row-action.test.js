@@ -11,9 +11,9 @@ import { closeMenu } from '../src/ui/menu.js';
 
 let sdk, view;
 const files = [
-  { path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 3 },
-  { path: 'Spreadsheets/Plan.xlsx', name: 'Plan.xlsx', size: 14, modified: 2 },
-  { path: 'Spreadsheets/Taxes.xlsx', name: 'Taxes.xlsx', size: 16, modified: 1 },
+  { path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 3 },
+  { path: 'Sheets/Plan.xlsx', name: 'Plan.xlsx', size: 14, modified: 2 },
+  { path: 'Sheets/Taxes.xlsx', name: 'Taxes.xlsx', size: 16, modified: 1 },
 ];
 
 beforeEach(() => {
@@ -38,7 +38,7 @@ beforeEach(() => {
       delete: vi.fn(async (path) => { sdk._files = sdk._files.filter((f) => f.path !== path); return true; }),
       rename: vi.fn(async (path, name) => {
         const f = sdk._files.find((x) => x.path === path);
-        if (f) { f.name = name; f.path = `Spreadsheets/${name}`; }
+        if (f) { f.name = name; f.path = `Sheets/${name}`; }
         return true;
       }),
     },
@@ -101,7 +101,7 @@ it('keeps focus on the last row when the file at the end is deleted', async () =
 });
 
 it('falls back to the list heading when the last file goes', async () => {
-  sdk._files = [{ path: 'Spreadsheets/Only.xlsx', name: 'Only.xlsx', size: 9, modified: 1 }];
+  sdk._files = [{ path: 'Sheets/Only.xlsx', name: 'Only.xlsx', size: 9, modified: 1 }];
   await mount();
   await fromRowMenu(0, 'Delete');
   dialogButton('Delete').click();

@@ -1943,7 +1943,7 @@ it('keeps the active cell visible while Enter and Tab walk a large selection', (
   grid.destroy();
 });
 
-it('accepts AltGraph characters without treating them as spreadsheet shortcuts', () => {
+it('accepts AltGraph characters without treating them as sheets shortcuts', () => {
   const { grid, commands } = setup();
   const event = new KeyboardEvent('keydown', { key: '€', code: 'KeyE', ctrlKey: true, altKey: true, modifierAltGraph: true, bubbles: true, cancelable: true });
   expect(event.getModifierState('AltGraph')).toBe(true);

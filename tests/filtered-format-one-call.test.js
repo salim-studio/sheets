@@ -77,7 +77,7 @@ describe('the editor clears and formats a filtered selection in one call per ran
 
   /** Column A keeps only "a" rows: rows 3, 5 and 7 (1-based) are hidden, cutting B2:B8 into four runs. */
   async function open() {
-    const doc = new Doc({ name: 'Filtered', path: 'Spreadsheets/Filtered.xlsx' });
+    const doc = new Doc({ name: 'Filtered', path: 'Sheets/Filtered.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     [['Key', 'Value'], ['a', '1'], ['b', '2'], ['a', '3'], ['b', '4'], ['a', '5'], ['b', '6'], ['a', '7']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

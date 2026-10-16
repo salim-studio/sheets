@@ -30,7 +30,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const labels = () => [...document.querySelectorAll('.menu:not(.submenu) .menu-item .menu-label')].map((n) => n.textContent);
 
 it('offers Remove link in the Insert menu on a linked cell, and not on a plain one', async () => {
-  const doc = new Doc({ name: 'Links', path: 'Spreadsheets/Links.xlsx' });
+  const doc = new Doc({ name: 'Links', path: 'Sheets/Links.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setLink(id, 1, 0, 'https://x.org', 'X');

@@ -27,7 +27,7 @@ it('uses the same compacted merge geometry for private, cross-tab and external H
   const cells = [[{ f: 'SUM(A1:A2)', s: { bg: '#abcdef' } }, null, null], [null, null, null]];
   const html = cellsToHtml([['3', '', ''], ['', '', '']], cells, null, null, { r: 2, c: 1 }, { mergeLayout });
   expect(parseHtmlClipboard(html)).toEqual({ cells, origin: { r: 2, c: 1 }, merges: mergeLayout.ranges });
-  const foreign = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const foreign = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(parseHtmlClipboard(foreign).merges).toEqual(mergeLayout.ranges);
 });
 

@@ -19,8 +19,8 @@ import { startRecorder } from '../core/script-recorder.js';
 import { sandboxTransport } from '../lib/script-sandbox.js';
 import * as Library from '../lib/script-library.js';
 
-const WIDTH_KEY = 'spreadsheet:scripts-pane-width';
-const OUTPUT_KEY = 'spreadsheet:scripts-output-height';
+const WIDTH_KEY = 'sheets:scripts-pane-width';
+const OUTPUT_KEY = 'sheets:scripts-output-height';
 const SAVE_DELAY = 500;
 const MAX_LOG_ENTRIES = 2000;
 
@@ -40,7 +40,7 @@ export function addScriptButton(wb, sheetId, anchor, name) {
   const w = Math.min(260, Math.max(120, Math.round(name.length * 8.5) + 40));
   return wb.addChart(sheetId, {
     type: 'text', text: name, anchor: { r: anchor.r, c: anchor.c }, dx: 4, dy: 4, w, h: 40,
-    style: { size: 13, bold: true, color: '#ffffff', bg: '#356d49', align: 'center', valign: 'middle', border: false },
+    style: { size: 13, bold: true, color: '#ffffff', bg: '#0E7A4D', align: 'center', valign: 'middle', border: false },
     hyperlink: scriptLink(name), hyperlinkTooltip: `Run the script “${name}”`, description: `Button that runs the script ${name}`,
   });
 }

@@ -6,7 +6,7 @@ import { cellsToHtml, cellsFromHtmlRows, parseHtmlClipboard } from '../src/core/
 it('retains the original characters through private/foreign HTML while formulas compare space separators', () => {
   const values = ['a b', 'a\u00a0b', 'a\u2007b', 'a\u202fb', 'a\u3000b', 'a\tb', 'a\nb'];
   const html = cellsToHtml([values], [values.map(v => ({ v }))], null, [values]);
-  for (const markup of [html, html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '')]) {
+  for (const markup of [html, html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '')]) {
     const parsed = parseHtmlClipboard(markup);
     const cells = parsed.cells ? parsed.cells.flatMap((row, i) => row.map((cell, j) => ({ i, j, cell }))) : cellsFromHtmlRows(parsed.rows);
     expect(cells.map(x => x.cell.v)).toEqual(values);

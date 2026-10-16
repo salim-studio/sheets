@@ -29,7 +29,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function open() {
-  const doc = new Doc({ name: 'MidEdit', path: 'Spreadsheets/MidEdit.xlsx' });
+  const doc = new Doc({ name: 'MidEdit', path: 'Sheets/MidEdit.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'first');

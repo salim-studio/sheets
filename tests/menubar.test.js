@@ -70,7 +70,7 @@ describe('menu bar definitions', () => {
 
     const rich = menubarMenus({ ...richFlags, filter: true, showFormulas: true, gridlines: false, canUndo: false, isFullscreen: true, style: { bold: true, fmt: 'percent', wrap: true, rot: 45 } });
     expect(labels(rich, 'file')).toContain('New from template…');
-    expect(labels(rich, 'help')).toEqual(['Search the menus…', 'Keyboard shortcuts…', 'About Spreadsheet…']); // the two dialogs end in an ellipsis, as every item that opens one does
+    expect(labels(rich, 'help')).toEqual(['Search the menus…', 'Keyboard shortcuts…', 'About Sheets…']); // the two dialogs end in an ellipsis, as every item that opens one does
     expect(labels(rich, 'insert')).toEqual(expect.arrayContaining(['Edit note', 'Delete note', 'Remove link']));
     expect(labels(rich, 'data')).toEqual(expect.arrayContaining(['Filter', 'Edit table…', 'Total row', 'Ask AI about this data…']));
     expect(labels(rich, 'tools')).toEqual(expect.arrayContaining(['Write a formula with AI…', 'Explain this formula (AI)…']));
@@ -126,7 +126,7 @@ describe('menu bar widget', () => {
     expect(openLabel()).toBe('File');
     expect(title('File').getAttribute('aria-expanded')).toBe('true');
     expect(title('File').classList.contains('open')).toBe(true);
-    expect(itemNamed('New spreadsheet')).toBeTruthy();
+    expect(itemNamed('New sheets')).toBeTruthy();
     expect(bar.openId).toBe('file');
   });
 
@@ -223,7 +223,7 @@ describe('menu bar widget', () => {
     expect(document.activeElement).toBe(title('File'));
     title('File').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
     expect(openLabel()).toBe('File');
-    expect(document.activeElement).toBe(itemNamed('New spreadsheet'));
+    expect(document.activeElement).toBe(itemNamed('New sheets'));
     // Up opens a title's menu on its last item.
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
     title('Edit').focus();

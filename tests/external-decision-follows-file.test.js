@@ -27,51 +27,51 @@ it('keeps a blocked import blocked on another device once it is saved to the app
   const imported = await Doc.fromBrowserFile(new File([await bytes.arrayBuffer()], 'evil.xlsx'));
   expect(imported.wb.externalAllowed).toBe(false);
   expect(await imported.save()).toBe(true);
-  expect(imported.path).toBe('Spreadsheets/evil.xlsx');
+  expect(imported.path).toBe('Sheets/evil.xlsx');
   otherDevice();
-  const elsewhere = await Doc.fromPath('Spreadsheets/evil.xlsx');
+  const elsewhere = await Doc.fromPath('Sheets/evil.xlsx');
   expect(elsewhere.wb.externalAllowed).toBe(false);
   expect(elsewhere.wb.getValue(elsewhere.wb.activeSheetId, 0, 0)).toEqual({ error: '#BLOCKED!' });
   imported.allowExternal();
   otherDevice();
-  expect((await Doc.fromPath('Spreadsheets/evil.xlsx')).wb.externalAllowed).toBe(true);
+  expect((await Doc.fromPath('Sheets/evil.xlsx')).wb.externalAllowed).toBe(true);
   imported.destroy();
 });
 
 it('does not trust a file that reaches out just because it turned up in the app folder', async () => {
-  place('Spreadsheets/shared-in.xlsx', await reachingOut());
-  const doc = await Doc.fromPath('Spreadsheets/shared-in.xlsx');
+  place('Sheets/shared-in.xlsx', await reachingOut());
+  const doc = await Doc.fromPath('Sheets/shared-in.xlsx');
   expect(doc.wb.externalAllowed).toBe(false);
   expect(doc.wb.getValue(doc.wb.activeSheetId, 0, 0)).toEqual({ error: '#BLOCKED!' });
   // Once allowed, the decision holds for the account, not just this browser.
   doc.allowExternal();
   otherDevice();
-  expect((await Doc.fromPath('Spreadsheets/shared-in.xlsx')).wb.externalAllowed).toBe(true);
+  expect((await Doc.fromPath('Sheets/shared-in.xlsx')).wb.externalAllowed).toBe(true);
   doc.destroy();
 });
 
 it('needs no decision for a file in the app folder that does not reach out', async () => {
-  place('Spreadsheets/plain.xlsx', await Doc.blank().toXlsxBlob());
-  expect((await Doc.fromPath('Spreadsheets/plain.xlsx')).wb.externalAllowed).toBe(true);
+  place('Sheets/plain.xlsx', await Doc.blank().toXlsxBlob());
+  expect((await Doc.fromPath('Sheets/plain.xlsx')).wb.externalAllowed).toBe(true);
   // Every place a formula can live counts, not only cells.
   const wb = new Workbook();
   wb.setInput(wb.activeSheetId, 0, 0, '1');
   wb.names.push({ name: 'Remote', ref: 'AI("summarise")' });
-  place('Spreadsheets/named.xlsx', await workbookToXlsx(wb));
-  expect((await Doc.fromPath('Spreadsheets/named.xlsx')).wb.externalAllowed).toBe(false);
-  place('Spreadsheets/picture.xlsx', await reachingOut('=IMAGE("https://example.com/p.png")'));
-  expect((await Doc.fromPath('Spreadsheets/picture.xlsx')).wb.externalAllowed).toBe(false);
+  place('Sheets/named.xlsx', await workbookToXlsx(wb));
+  expect((await Doc.fromPath('Sheets/named.xlsx')).wb.externalAllowed).toBe(false);
+  place('Sheets/picture.xlsx', await reachingOut('=IMAGE("https://example.com/p.png")'));
+  expect((await Doc.fromPath('Sheets/picture.xlsx')).wb.externalAllowed).toBe(false);
 });
 
 it('keeps the decision with the file when it is renamed elsewhere', async () => {
-  place('Spreadsheets/Q.xlsx', await reachingOut());
-  const doc = await Doc.fromPath('Spreadsheets/Q.xlsx');
+  place('Sheets/Q.xlsx', await reachingOut());
+  const doc = await Doc.fromPath('Sheets/Q.xlsx');
   expect(doc.wb.externalAllowed).toBe(false);
   doc.allowExternal();
   doc.destroy();
-  await puter.fs.rename('Spreadsheets/Q.xlsx', 'R.xlsx'); // the file keeps its identity
+  await puter.fs.rename('Sheets/Q.xlsx', 'R.xlsx'); // the file keeps its identity
   otherDevice();
-  expect((await Doc.fromPath('Spreadsheets/R.xlsx')).wb.externalAllowed).toBe(true);
+  expect((await Doc.fromPath('Sheets/R.xlsx')).wb.externalAllowed).toBe(true);
 });
 
 it('still distrusts files from elsewhere on the drive until allowed, then remembers it for the account', async () => {
@@ -85,12 +85,12 @@ it('still distrusts files from elsewhere on the drive until allowed, then rememb
 });
 
 it('falls back to what this browser remembers when the account store cannot be reached', async () => {
-  place('Spreadsheets/flaky.xlsx', await reachingOut());
-  const doc = await Doc.fromPath('Spreadsheets/flaky.xlsx');
+  place('Sheets/flaky.xlsx', await reachingOut());
+  const doc = await Doc.fromPath('Sheets/flaky.xlsx');
   doc.allowExternal();
   doc.destroy();
   puter.kv.get = async () => { throw new Error('Network request failed'); };
-  expect((await Doc.fromPath('Spreadsheets/flaky.xlsx')).wb.externalAllowed).toBe(true);
+  expect((await Doc.fromPath('Sheets/flaky.xlsx')).wb.externalAllowed).toBe(true);
   otherDevice();
-  expect((await Doc.fromPath('Spreadsheets/flaky.xlsx')).wb.externalAllowed).toBe(false);
+  expect((await Doc.fromPath('Sheets/flaky.xlsx')).wb.externalAllowed).toBe(false);
 });

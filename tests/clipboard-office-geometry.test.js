@@ -88,6 +88,6 @@ it('retains separate editable cells and real merges through external HTML and na
   expect(back.getValue(back.activeSheetId,0,1)).toBe('Independent edit');
   expect(back.getValue(back.activeSheetId,4,0)).toBe('after blank run');
   const cells=Array.from({length:5},(_,r)=>Array.from({length:4},(_,c)=>back.getCell(back.activeSheetId,r,c)||null));
-  const html=cellsToHtml(cells.map(row=>row.map(c=>String(c?.v??''))),cells).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const html=cellsToHtml(cells.map(row=>row.map(c=>String(c?.v??''))),cells).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   expect(parseHtmlClipboard(html).merges).toBeUndefined();
 });

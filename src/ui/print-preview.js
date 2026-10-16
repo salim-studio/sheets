@@ -107,7 +107,7 @@ export function createPrintPreview({ wb, sheetId, docName, getPrefs, getRange })
     g.fillRect(0, 0, w, h);
     const m = box.margins;
     const sheet = wb.sheet(sheetId);
-    const info = { file: docName || 'Spreadsheet', tab: sheet?.name || '', page: page + 1, pages: total };
+    const info = { file: docName || 'Sheets', tab: sheet?.name || '', page: page + 1, pages: total };
     // Header and footer, each in its left, centre and right parts, in the middle of the margin.
     const regular = { ...prefs, header: String(prefs.header || '').trim(), footer: String(prefs.footer || '').trim() || (prefs.native ? '' : 'Page &[Page] of &[Pages]') };
     const texts = printPageText(regular, page);

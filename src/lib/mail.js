@@ -1,5 +1,5 @@
 /**
- * Email from the spreadsheet: the app's side of src/workers/email-worker.js. Send a Copy (the workbook as an
+ * Email from the sheets: the app's side of src/workers/email-worker.js. Send a Copy (the workbook as an
  * attachment), Send a Link (a link that opens it) and comment @mentions (a note to the person mentioned) all go
  * through the app's one shared email worker at EMAIL_WORKER_URL. The call goes through puter.workers.exec(),
  * which forwards the signed-in user's Puter session: that is what lets the worker send at all, and what bills
@@ -13,7 +13,7 @@ import { rangeToCsv } from '../core/io.js';
 import * as P from './puter.js';
 
 /** The one shared, app-owned worker (see src/workers/email-worker.js). */
-export const EMAIL_WORKER_URL = 'https://spreadsheet-email.puter.work';
+export const EMAIL_WORKER_URL = 'https://sheets-email.puter.work';
 
 /** The worker's own limits, so the dialog can refuse before anything is sent. */
 export const MAX_RECIPIENTS = 20;
@@ -100,7 +100,7 @@ const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.s
  */
 export async function buildAttachment(doc, { format = 'xlsx', scope = 'workbook', sheetId = doc.wb.activeSheetId, range = null } = {}) {
   const wb = doc.wb;
-  const base = P.sanitizeName(doc.name) || 'Spreadsheet';
+  const base = P.sanitizeName(doc.name) || 'Sheets';
   const sheet = wb.sheet(sheetId);
   const suffix = scope === 'selection' ? ' (selection)' : scope === 'sheet' && wb.sheets.length > 1 && sheet ? ` - ${P.sanitizeName(sheet.name)}` : '';
   if (format === 'pdf') {
@@ -182,7 +182,7 @@ export function createMailer({ getPuter = () => globalThis.puter, workerUrl = EM
   }
 
   async function post(route, body) {
-    if (!available()) throw new Error('Email is not available here. Open the spreadsheet in Puter to send email.');
+    if (!available()) throw new Error('Email is not available here. Open the sheets in Puter to send email.');
     let res;
     try {
       res = await getPuter().workers.exec(`${workerUrl}${route}`, {

@@ -25,7 +25,7 @@ describe('remembering the outside-content decision', () => {
     const imported = await Doc.fromBrowserFile(new File([await bytes.arrayBuffer()], 'device.xlsx'));
     expect(imported.wb.externalAllowed).toBe(false);
     expect(await imported.save()).toBe(true);
-    expect(imported.path).toBe('Spreadsheets/device.xlsx');
+    expect(imported.path).toBe('Sheets/device.xlsx');
     expect((await Doc.fromPath(imported.path)).wb.externalAllowed).toBe(false);
     imported.allowExternal();
     expect((await Doc.fromPath(imported.path)).wb.externalAllowed).toBe(true);
@@ -35,7 +35,7 @@ describe('remembering the outside-content decision', () => {
     const bytes = await place('unused.xlsx');
     const imported = await Doc.fromBrowserFile(new File([await bytes.arrayBuffer()], 'device.xlsx'));
     expect(await imported.saveAs('Copy of device')).toBeNull();
-    expect((await Doc.fromPath('Spreadsheets/Copy of device.xlsx')).wb.externalAllowed).toBe(false);
+    expect((await Doc.fromPath('Sheets/Copy of device.xlsx')).wb.externalAllowed).toBe(false);
   });
 
   it('keeps a CSV from elsewhere blocked once it is saved as .xlsx in the folder', async () => {
@@ -45,7 +45,7 @@ describe('remembering the outside-content decision', () => {
     expect(opened.wb.externalAllowed).toBe(false);
     opened.wb.setInput(opened.wb.activeSheetId, 2, 0, 'x');
     expect(await opened.save()).toBe(true);
-    expect(opened.path).toBe('Spreadsheets/data.xlsx');
+    expect(opened.path).toBe('Sheets/data.xlsx');
     expect((await Doc.fromPath(opened.path)).wb.externalAllowed).toBe(false);
   });
 
@@ -64,7 +64,7 @@ describe('remembering the outside-content decision', () => {
     doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'x');
     await doc.save();
     expect((await Doc.fromPath(doc.path)).wb.externalAllowed).toBe(true);
-    await place('Spreadsheets/Mine.xlsx');
-    expect((await Doc.fromPath('Spreadsheets/Mine.xlsx')).wb.externalAllowed).toBe(true);
+    await place('Sheets/Mine.xlsx');
+    expect((await Doc.fromPath('Sheets/Mine.xlsx')).wb.externalAllowed).toBe(true);
   });
 });

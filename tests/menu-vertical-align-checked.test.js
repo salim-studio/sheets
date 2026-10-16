@@ -40,7 +40,7 @@ describe('the Format menu on screen', () => {
   afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('marks one of Top, Middle and Bottom at all times, including after Middle is chosen', async () => {
-    const doc = new Doc({ name: 'Align', path: 'Spreadsheets/Align.xlsx' });
+    const doc = new Doc({ name: 'Align', path: 'Sheets/Align.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'x');

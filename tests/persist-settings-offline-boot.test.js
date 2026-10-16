@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { memoryStorage } from './helpers/memory-storage.js';
 
-const SETTINGS_KEY = 'spreadsheet:settings:v1';
+const SETTINGS_KEY = 'sheets:settings:v1';
 let session;
 let getLocale;
 let record; // the account's settings as the store holds them
@@ -48,7 +48,7 @@ it('keeps the settings last read when the record cannot be read at boot, and hol
   expect(session.settings).toMatchObject({ theme: 'dark', locale: 'de-DE' });
   expect(getLocale()).toBe('de-DE');
   expect(document.documentElement.dataset.theme).toBe('dark');
-  expect(localStorage.getItem('spreadsheet:theme')).toBe('dark');
+  expect(localStorage.getItem('sheets:theme')).toBe('dark');
 
   // A choice made offline is kept in this browser, and nothing derived from defaults is written.
   await session.setTheme('light');

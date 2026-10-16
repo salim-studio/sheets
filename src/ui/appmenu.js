@@ -58,7 +58,7 @@ export function openAppMenu(anchor, { onOptions = null } = {}) {
   ];
   if (!P.isApp()) {
     items.push({ separator: true });
-    if (session.signedOut) items.push({ label: 'Sign in to Puter', icon: 'login', hint: 'Save spreadsheets to your own cloud', onSelect: () => session.signIn() });
+    if (session.signedOut) items.push({ label: 'Sign in to Puter', icon: 'login', hint: 'Save sheets to your own cloud', onSelect: () => session.signIn() });
     else items.push({ label: 'Sign out', icon: 'logout', onSelect: confirmSignOut });
   }
   openMenu({ anchor, items, align: 'end', label: 'Account', minWidth: 240 });
@@ -106,7 +106,7 @@ export function renderAccountButton(button) {
 export async function confirmSignOut() {
   const ok = await confirmDialog({
     title: 'Sign out?',
-    message: 'Your spreadsheets stay in your Puter account. Anything unsaved in an open document is saved first, and the copies this browser kept are removed from this computer.',
+    message: 'Your sheets stay in your Puter account. Anything unsaved in an open document is saved first, and the copies this browser kept are removed from this computer.',
     confirmLabel: 'Sign out', danger: false,
   });
   if (!ok) return;
@@ -153,13 +153,13 @@ export function openLocaleDialog() {
   return modal;
 }
 
-const COMPANY = 'Puter Technologies Inc.';
+const COMPANY = 'salim-slimani';
 
-/** Puter's own pages, for the row of links under the description. */
+/** The project's own pages, for the row of links under the description. */
 const ABOUT_LINKS = [
-  ['Website', 'https://puter.com'],
-  ['Privacy', 'https://puter.com/privacy'],
-  ['Terms', 'https://puter.com/terms'],
+  ['Website', 'https://salim-studio.github.io/sheets/'],
+  ['Source', 'https://github.com/salim-studio/sheets'],
+  ['Issues', 'https://github.com/salim-studio/sheets/issues'],
 ];
 
 /**
@@ -197,15 +197,15 @@ export function openAbout() {
         opensNew.cloneNode(true))))));
   openModal({
     // The dialog is named in full for a screen reader; on screen the app's name heads it, under its icon.
-    title: 'About Spreadsheet',
+    title: 'About Sheets',
     className: 'about',
     content: el('div', {},
       el('div.about-hero', { 'aria-hidden': 'true' },
         el('div.about-icon', { html: icon('brand', 80) }),
-        el('p.about-name', {}, 'Spreadsheet')),
+        el('p.about-name', {}, 'Sheets')),
       el('p.about-meta', {}, `Version ${APP_VERSION}`, el('span.about-dot', { 'aria-hidden': 'true' }, ' · '), `by ${COMPANY}`),
-      el('p.modal-text.about-tagline', {}, 'A fast, private spreadsheet. Your work is saved as standard .xlsx files in your own Puter cloud, ready to open anywhere.'),
-      el('nav.about-links', { 'aria-label': 'Puter' }, ABOUT_LINKS.map(([label, href]) =>
+      el('p.modal-text.about-tagline', {}, 'Sheets — a fast, private, AI-powered sheets app. Your work is saved as standard .xlsx files in your own cloud, ready to open anywhere.'),
+      el('nav.about-links', { 'aria-label': 'Sheets' }, ABOUT_LINKS.map(([label, href]) =>
         el('a.about-link', { href, ...external, 'aria-label': `${label}, opens in a new tab` }, label, opensNew.cloneNode(true)))),
       credits,
       el('p.about-legal', {}, `© ${new Date().getFullYear()} ${COMPANY} All rights reserved.`)),

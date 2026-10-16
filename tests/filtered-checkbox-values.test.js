@@ -31,7 +31,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 
 /** A filtered list: column A keeps only "a" rows, hiding rows 3 and 4 (1-based); column B doubles column C. */
 async function open() {
-  const doc = new Doc({ name: 'Filtered', path: 'Spreadsheets/Filtered.xlsx' });
+  const doc = new Doc({ name: 'Filtered', path: 'Sheets/Filtered.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   [['Key', 'Double', 'N'], ['a', '=C2*2', '1'], ['b', '=C3*2', '2'], ['b', '=C4*2', '3'], ['a', '=C5*2', '4']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

@@ -43,7 +43,7 @@ it('preserves paired/pooled tests through native-only XLSX saves, edits, Undo an
 it('retains statistical input types through external HTML and filters pairs by position', () => {
   const values = [[1, 2], [true, 5], [3, false], [7, 8]];
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

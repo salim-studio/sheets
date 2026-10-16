@@ -6,8 +6,8 @@
 import { workerURL } from './protocol.js';
 import { authorize, refuseCredential } from './auth.js';
 
-export const WORKER_KEY = 'spreadsheet-collab-worker-v1';
-export const WORKER_BUNDLE = 'worker/spreadsheet-worker.js';
+export const WORKER_KEY = 'sheets-collab-worker-v1';
+export const WORKER_BUNDLE = 'worker/sheets-worker.js';
 
 export class CollabError extends Error {
   constructor(message, status = 0) {
@@ -22,7 +22,7 @@ export class CollabError extends Error {
 export function collabPuter() {
   const p = globalThis.puter;
   if (!p?.workers?.exec || !p.workers.create || !p.kv?.get || !p.fs?.getReadURL || !p.auth?.getUser) {
-    throw new Error('Editing together needs Puter. Open the spreadsheet from Puter or check your connection, then try again.');
+    throw new Error('Editing together needs Puter. Open the sheets from Puter or check your connection, then try again.');
   }
   return p;
 }
@@ -68,12 +68,12 @@ export async function deploy(puter, progress = () => {}, fetchBundle = defaultBu
   check();
   progress('Preparing the collaboration server…');
   const source = await fetchBundle();
-  const build = /spreadsheet-worker build=([a-f0-9]+)/.exec(source)?.[1];
+  const build = /sheets-worker build=([a-f0-9]+)/.exec(source)?.[1];
   if (!build) throw new Error('The collaboration server bundle is invalid.');
   check();
   if (!config) {
-    const name = `spreadsheet-${crypto.randomUUID().replaceAll('-', '').slice(0, 20)}`;
-    const file = await puter.fs.write('spreadsheet/collab/spreadsheet-worker.js', source, { overwrite: true, dedupeName: false, createMissingParents: true });
+    const name = `sheets-${crypto.randomUUID().replaceAll('-', '').slice(0, 20)}`;
+    const file = await puter.fs.write('sheets/collab/sheets-worker.js', source, { overwrite: true, dedupeName: false, createMissingParents: true });
     check();
     const deployed = await puter.workers.create(name, file.path);
     check();

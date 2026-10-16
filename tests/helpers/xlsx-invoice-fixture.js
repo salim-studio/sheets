@@ -34,7 +34,7 @@ export function invoiceXlsx({ rectangleText = ' ' } = {}) {
   const rect = (from, to, light, text = '') => `<xdr:twoCellAnchor><xdr:from>${marker(from)}</xdr:from><xdr:to>${marker(to)}</xdr:to>
     <xdr:sp><xdr:spPr><a:prstGeom prst="rect"/><a:solidFill><a:schemeClr val="accent3"><a:lumMod val="${100000 - light}"/><a:lumOff val="${light}"/></a:schemeClr></a:solidFill><a:ln><a:noFill/></a:ln></xdr:spPr>
     <xdr:txBody><a:p><a:r><a:t>${text}</a:t></a:r></a:p></xdr:txBody></xdr:sp></xdr:twoCellAnchor>`;
-  add('xl/drawings/invoice.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+  add('xl/drawings/invoice.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
     ${rect([1, 0, 3026, 0], [1, 2, 360046, 8573], 80000)}
     ${rect([1, 2, 359352, 8573], [1, 3, 711972, 1], 40000)}
     ${rect([1, 3, 165589, 309], [1, 3, 360046, 199690], 80000, rectangleText)}

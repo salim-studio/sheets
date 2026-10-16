@@ -58,7 +58,7 @@ it('preserves typed numeric values in internal and external HTML clipboard paths
  const cells=wb.copyRange(id,{r1:0,c1:0,r2:0,c2:0});
  wb.pasteCells(id,cells,1,1);expect(wb.getValue(id,1,1)).toBe(-10);
  const html=cellsToHtml([['']],cells,[[wb.conditionalStyle(id,0,0,-10)]],[[-10]]);
- for(const source of [html,html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'')]){
+ for(const source of [html,html.replace(/ data-sheets-[\w-]+="[^"]*"/g,'')]){
   const parsed=parseHtmlClipboard(source);
   expect((parsed.cells || [cellsFromHtmlRows(parsed.rows).map(entry=>entry.cell)])[0][0].v).toBe(-10);
  }

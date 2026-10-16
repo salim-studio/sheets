@@ -23,14 +23,14 @@ function draft(key, value, fileUid) {
 const text = (d) => d?.workbook.sheets[0].cells['0,0']?.v;
 const file = (path, uid) => ({ path, name: path.split('/').pop(), modified: 1, size: 100, uid });
 
-// When a deleted file's draft was kept as an unsaved spreadsheet because another file had taken its
+// When a deleted file's draft was kept as an unsaved sheet because another file had taken its
 // address, the edits made beside it while it awaited a decision stayed under that address, where nothing
 // listed them and the file now there would have been offered them as its own.
-it('keeps the edits made beside a deleted file\'s draft as an unsaved spreadsheet too, when another file has its address', async () => {
-  const key = draftKey('Spreadsheets/Budget.xlsx');
+it('keeps the edits made beside a deleted file\'s draft as an unsaved sheet too, when another file has its address', async () => {
+  const key = draftKey('Sheets/Budget.xlsx');
   draft(key, 'recovered edits', 'uid-old-budget');
   draft(liveDraftKey(key), 'meanwhile', 'uid-old-budget');
-  vi.spyOn(P, 'listFiles').mockResolvedValue([file('Spreadsheets/Budget.xlsx', 'uid-new-budget')]);
+  vi.spyOn(P, 'listFiles').mockResolvedValue([file('Sheets/Budget.xlsx', 'uid-new-budget')]);
   vi.spyOn(P, 'statByUid').mockResolvedValue(null);
   vi.spyOn(P, 'statFile').mockResolvedValue(null);
   const view = homeView({ openPath: vi.fn(), recoverDraft: vi.fn() });

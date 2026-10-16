@@ -43,7 +43,7 @@ it('preserves nonzero skew tails and underflow through XLSX edits and internal c
 
 it('recalculates extreme beta and F tails from external HTML numeric inputs', () => {
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

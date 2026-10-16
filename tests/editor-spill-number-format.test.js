@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 async function mount(style = { fmt: 'currency', cur: 'USD', dec: 2 }, selection = 'A2') {
-  const doc = new Doc({ name: 'Spill formats', path: 'Spreadsheets/Spill formats.xlsx' });
+  const doc = new Doc({ name: 'Spill formats', path: 'Sheets/Spill formats.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.setCells(id, [{ r: 0, c: 0, cell: { f: 'SEQUENCE(4)', s: style } }]);
   wb.clearHistory();

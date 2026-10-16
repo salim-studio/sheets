@@ -37,7 +37,7 @@ export function loanXlsx({ numericX = false, markerOnly = false } = {}) {
   add('xl/worksheets/_rels/sheet1.xml.rels', rels(rel('drawing', 'drawing', '../drawings/loan.xml')));
   add('xl/drawings/_rels/loan.xml.rels', rels(rel('balance', 'chart', '../charts/balance.xml') + rel('rate', 'chart', '../charts/rate.xml')));
   const point = (tag, row, dx = 0) => `<xdr:${tag}><xdr:col>4</xdr:col><xdr:colOff>${dx * 9525}</xdr:colOff><xdr:row>${row}</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:${tag}>`;
-  add('xl/drawings/loan.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}">${['balance', 'rate'].map((id, i) => `<xdr:twoCellAnchor>${point('from', 8 + i * 17)}${point('to', 24 + i * 17, 480)}<xdr:graphicFrame><c:chart r:id="${id}"/></xdr:graphicFrame></xdr:twoCellAnchor>`).join('')}</xdr:wsDr>`);
+  add('xl/drawings/loan.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}">${['balance', 'rate'].map((id, i) => `<xdr:twoCellAnchor>${point('from', 8 + i * 17)}${point('to', 24 + i * 17, 480)}<xdr:graphicFrame><c:chart r:id="${id}"/></xdr:graphicFrame></xdr:twoCellAnchor>`).join('')}</xdr:wsDr>`);
   const ref = (range, kind = 'numRef') => `<c:${kind}><c:f>'Loan Model'!${range}</c:f></c:${kind}>`;
   const title = text => `<c:title><c:tx><c:rich><a:p><a:r><a:t>${text}</a:t></a:r></a:p></c:rich></c:tx></c:title>`;
   const layout = (x, y, w, h) => `<c:layout><c:manualLayout><c:x val="${x}"/><c:y val="${y}"/><c:w val="${w}"/><c:h val="${h}"/></c:manualLayout></c:layout>`;

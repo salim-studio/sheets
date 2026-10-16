@@ -34,7 +34,7 @@ describe('relativeTime', () => {
 
 describe('the home list', () => {
   it('keeps the modified times current while it is on screen, leaving the rows themselves in place', async () => {
-    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 2048, modified: Date.now() - 30000 }]);
+    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 2048, modified: Date.now() - 30000 }]);
     const view = open();
     await vi.advanceTimersByTimeAsync(0);
     const row = view.el.querySelector('.file-row');
@@ -54,8 +54,8 @@ describe('the home list', () => {
 
   it('searches the names without their extensions', async () => {
     vi.spyOn(P, 'listFiles').mockResolvedValue([
-      { path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 1, modified: 2 },
-      { path: 'Spreadsheets/Expenses.csv', name: 'Expenses.csv', size: 1, modified: 1 },
+      { path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 1, modified: 2 },
+      { path: 'Sheets/Expenses.csv', name: 'Expenses.csv', size: 1, modified: 1 },
     ]);
     const view = open();
     await vi.advanceTimersByTimeAsync(0);

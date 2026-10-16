@@ -8,7 +8,7 @@ const cell = (formula = 'fx:=2*3', attrs = '', empty = false) => `<table:table-c
 const named = (formula = 'fx:=2*3', attrs = '') => `<table:named-expressions><table:named-expression table:name="Result" table:expression="${escape(formula)}" table:base-cell-address="$Data.$A$1" ${attrs}/></table:named-expressions>`;
 async function read({ root = `xmlns:fx="${OF}"`, rows, local = '', global = '', before = '', format = 'fods' } = {}) {
   const tag = format === 'ods' ? 'document-content' : 'document';
-  const xml = `<?xml version="1.0"?><office:${tag} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" ${root} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet"><office:body><office:spreadsheet>${before}<table:table table:name="Data"><table:table-column/>${rows || `<table:table-row>${cell()}</table:table-row>`}${local}</table:table>${global}</office:spreadsheet></office:body></office:${tag}>`;
+  const xml = `<?xml version="1.0"?><office:${tag} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" ${root} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets"><office:body><office:sheets>${before}<table:table table:name="Data"><table:table-column/>${rows || `<table:table-row>${cell()}</table:table-row>`}${local}</table:table>${global}</office:sheets></office:body></office:${tag}>`;
   let bytes = new TextEncoder().encode(xml);
   if (format === 'ods') {
     const base = X.utils.book_new();

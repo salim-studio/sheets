@@ -1,5 +1,5 @@
 /**
- * The app's options: how the editor behaves for this person, whatever spreadsheet is open (where Enter moves,
+ * The app's options: how the editor behaves for this person, whatever sheets is open (where Enter moves,
  * whether the fill handle shows, the font a new workbook starts with, whether AI features are offered…).
  * They are kept with the person's other preferences (lib/user-prefs.js): in this browser under the account,
  * and in the account's key-value store, so they follow the account to another device.
@@ -21,7 +21,7 @@ export const OPTION_DEFAULTS = Object.freeze({
   newSheets: 1,
   newView: 'normal', // 'normal' | 'pageLayout' | 'pageBreak'
   userName: '', // blank: the Puter account's name
-  startScreen: false, // true: the app opens on the start screen (the spreadsheet list) rather than a blank workbook
+  startScreen: false, // true: the app opens on the start screen (the sheets list) rather than a blank workbook
   // Edit
   enterMove: true,
   enterDirection: 'down', // 'down' | 'right' | 'up' | 'left'

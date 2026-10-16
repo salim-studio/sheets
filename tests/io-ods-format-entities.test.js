@@ -31,9 +31,9 @@ function file(mode, kind, encoded) {
   const type = kind === 'currency' ? 'currency' : kind === 'percentage' ? 'percentage' : 'number';
   const definitions = `<number:${type}-style style:name="N1">${contents}</number:${type}-style><style:style style:name="s1" style:family="table-cell" style:data-style-name="N1"/>`;
   const root = mode === 'fods' ? 'document' : 'document-content';
-  const content = new TextEncoder().encode(`<?xml version="1.0"?><office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+  const content = new TextEncoder().encode(`<?xml version="1.0"?><office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
     ${mode === 'fods' ? `<office:styles>${definitions}</office:styles>` : ''}
-    <office:body><office:spreadsheet><table:table table:name="Data"><table:table-row><table:table-cell office:value-type="float" office:value="7.5" table:style-name="s1"/></table:table-row></table:table></office:spreadsheet></office:body></office:${root}>`);
+    <office:body><office:sheets><table:table table:name="Data"><table:table-row><table:table-cell office:value-type="float" office:value="7.5" table:style-name="s1"/></table:table-row></table:table></office:sheets></office:body></office:${root}>`);
   if (mode === 'fods') return content;
   const book = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet([[0]]), 'Data');

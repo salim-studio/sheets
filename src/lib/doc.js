@@ -37,7 +37,7 @@ import { optionState } from './option-state.js';
 
 const AUTOSAVE_MS = 1500;
 // The title row's AutoSave switch: off, edits wait for Save (the local draft still keeps them). Per device.
-const AUTOSAVE_KEY = 'spreadsheet:autosave';
+const AUTOSAVE_KEY = 'sheets:autosave';
 // A device that never flipped the switch saves as it goes unless the app's options say not to (Save ▸ AutoSave by default).
 export function autoSaveEnabled() {
   try {
@@ -55,7 +55,7 @@ const RETRY_MAX_MS = 5 * 60_000;
 // move made elsewhere from a change made there before the conflict dialog is raised over it.
 const COMPARE_MAX_BYTES = 4 * 1024 * 1024;
 // Files the user has allowed to load outside content, remembered per account and path.
-const EXTERNAL_PREFIX = 'spreadsheet:external';
+const EXTERNAL_PREFIX = 'sheets:external';
 const externalKey = (path, scope) => `${accountStorageKey(EXTERNAL_PREFIX, scope)}${path}`;
 /** The decision remembered for a path, { allowed, uid } (uid null for records from before file ids were kept), or null when none was made. */
 function rememberedExternal(path, scope) {
@@ -76,7 +76,7 @@ function rememberedExternal(path, scope) {
  * a record that allows is trusted only for the file it was made for, or when
  * there is no way to tell. A record that blocks costs a question at most.
  */
-const EXTERNAL_RECORD = 'spreadsheet:external:v1:';
+const EXTERNAL_RECORD = 'sheets:external:v1:';
 const externalRecordKey = (uid) => `${EXTERNAL_RECORD}${uid}`;
 const STORE_UNREACHABLE = Symbol('unreachable');
 /** The recorded decision for a file: true, false, or null when none was made. */
@@ -167,12 +167,12 @@ const draftMs = () => {
   const s = Number(optionState.draftDelay);
   return Number.isFinite(s) && s > 1 ? Math.min(s, 3600) * 1000 : 600;
 };
-export const UNTITLED = 'Untitled spreadsheet';
+export const UNTITLED = 'Untitled sheets';
 /** How long a shared workbook waits after its last change before its owner's browser writes the .xlsx file. */
 const SHARED_FILE_MS = 15_000;
-export const SIGN_IN_TO_SAVE = 'Sign in to Puter to save this spreadsheet';
-/** Why a spreadsheet shared with the user only to view is not saved. */
-export const VIEW_ONLY = 'You can view this spreadsheet, but not change it. Use File > Save a copy to keep your changes';
+export const SIGN_IN_TO_SAVE = 'Sign in to Puter to save this sheet';
+/** Why a sheets shared with the user only to view is not saved. */
+export const VIEW_ONLY = 'You can view this sheet, but not change it. Use File > Save a copy to keep your changes';
 
 /** A Puter FSItem's modified time in milliseconds (the API gives seconds), or null. */
 function modifiedMs(item) {
@@ -183,7 +183,7 @@ function modifiedMs(item) {
   return n < 1e12 ? n * 1000 : n;
 }
 
-/** A Puter FSItem's size in bytes, or null when it is not reported (a spreadsheet file is never empty). */
+/** A Puter FSItem's size in bytes, or null when it is not reported (a sheets file is never empty). */
 function sizeOf(item) {
   return Number.isFinite(item?.size) && item.size > 0 ? item.size : null;
 }
@@ -306,7 +306,7 @@ export class Doc extends EventTarget {
     return { path: this.path, uid: this.uid };
   }
 
-  /** "Budget" for Spreadsheets/Budget.xlsx; the file name for others. */
+  /** "Budget" for Sheets/Budget.xlsx; the file name for others. */
   static nameFor(path) {
     return stripExtension(P.displayName(path));
   }
@@ -379,7 +379,7 @@ export class Doc extends EventTarget {
   /**
    * The file holds the book: this document's own draft goes, from where it lives now and, when a first save
    * or a copy under a new name moved it, from where it lived before, should it not have followed (storage
-   * refused the record under the new address, say) — a draft left there listed an unsaved spreadsheet for
+   * refused the record under the new address, say) — a draft left there listed an unsaved sheet for
    * a file that was saved. A recovered draft still awaiting a decision is not this document's, and stays.
    */
   _clearOwnDraft(oldKey = null) {
@@ -615,7 +615,7 @@ export class Doc extends EventTarget {
       // In the background, but kept in hand: a rename waits for it, or the snapshot would land under the old name.
       const versioning = this._autoVersion(blob).catch(() => {}).finally(() => { if (this._versioning === versioning) this._versioning = null; });
       this._versioning = versioning;
-      trackEvent('Spreadsheet Saved', { method: auto ? 'auto' : 'manual' });
+      trackEvent('Sheets Saved', { method: auto ? 'auto' : 'manual' });
       return true;
     } catch (e) {
       console.error(e);
@@ -699,7 +699,7 @@ export class Doc extends EventTarget {
     await this._saveVersion(RESTORE_LABEL);
     // The backup contains the state at serialization, not edits made while
     // it uploads. Those edits must remain available in the current workbook.
-    if (this.wb.version !== version) throw new Error('The spreadsheet changed while preparing to restore. Your edits are intact; try restoring again.');
+    if (this.wb.version !== version) throw new Error('The sheets changed while preparing to restore. Your edits are intact; try restoring again.');
     if (distrust) this.distrustExternal();
     // The record of edits (Show Changes) goes on through a restore, which is one more change to it.
     const changeHistory = this.wb.changeHistory;
@@ -860,7 +860,7 @@ export class Doc extends EventTarget {
     if (this.wb.dirty) { this.writeDraft(); this._changed('cells'); }
     else this._clearOwnDraft(oldKey);
     this.dispatchEvent(new CustomEvent('path', { detail: { path: this.path, name: this.name } }));
-    trackEvent('Spreadsheet Saved', { method: 'copy' });
+    trackEvent('Sheets Saved', { method: 'copy' });
     return null;
   }
 
@@ -890,7 +890,7 @@ export class Doc extends EventTarget {
 
   /* ---------- Constructors ---------- */
 
-  /** Recover a spreadsheet that closed before its first cloud save. */
+  /** Recover a sheets that closed before its first cloud save. */
   /* ---------- Shared workbooks (see collab/client.js) ---------- */
 
   /**
@@ -961,13 +961,13 @@ export class Doc extends EventTarget {
   }
 
   static fromDraft(key) {
-    // Only this account's drafts of spreadsheets that have no file are recovered this way.
+    // Only this account's drafts of sheets that have no file are recovered this way.
     const draft = isUnsavedDraftKey(key) ? loadDraft(key) : null;
-    if (!draft) throw new Error('That unsaved spreadsheet is no longer available');
+    if (!draft) throw new Error('That unsaved sheets is no longer available');
     const doc = Doc._fromDraftRecord(draft);
     // A record that cannot be read or loaded (damaged in storage, or written in another shape) would
     // fail the same way each time it is picked: it is dropped, and the failure put in words for the screen.
-    if (!doc) { clearDraft(key, draftRevision(draft)); throw new Error('Could not read the unsaved spreadsheet'); }
+    if (!doc) { clearDraft(key, draftRevision(draft)); throw new Error('Could not read the unsaved sheets'); }
     // Keep the exact source key, including older title-only drafts, until
     // this recovered document is renamed or gets a cloud path.
     doc._recoveredDraftKey = key;
@@ -991,14 +991,14 @@ export class Doc extends EventTarget {
    * A file is gone from its address, but this browser kept edits made to it that never reached
    * Puter. When the draft names the file's id and the drive still has the file, moved or renamed
    * elsewhere, the file opens from where it is now, with the draft offered as usual. Otherwise the
-   * edits open as a new spreadsheet, so that they are not lost with the file. Null without such a draft.
+   * edits open as a new sheet, so that they are not lost with the file. Null without such a draft.
    */
   static async _fromLostFile(path, scope) {
     const key = draftKey(path, '', scope);
     let draft = loadDraft(key);
     // Edits made while that draft awaited a decision were kept beside it (see _ownDraftKey). Never saved
     // either, and the newer, they are the lost file's draft; the earlier draft is kept as an unsaved
-    // spreadsheet of its own rather than left behind under the address, where nothing lists it.
+    // sheets of its own rather than left behind under the address, where nothing lists it.
     const live = loadDraft(liveDraftKey(key));
     if (readableDraft(live) && (!readableDraft(draft) || parkDraft(key, draftRevision(draft)))) {
       moveDraft(liveDraftKey(key), key, draftRevision(live));
@@ -1014,7 +1014,7 @@ export class Doc extends EventTarget {
     }
     const doc = Doc._fromDraftRecord(draft);
     if (!doc) { clearDraft(key, draftRevision(draft)); return null; } // shaped like a book, but the workbook will not load it
-    // Whatever lands at the old address later is another file: the draft is an unsaved spreadsheet's now.
+    // Whatever lands at the old address later is another file: the draft is an unsaved sheet's now.
     moveDraft(key, doc.draftKey, doc._draftRevision);
     return doc;
   }
@@ -1073,7 +1073,7 @@ export class Doc extends EventTarget {
       if (!draft) return null;
       // Made for another file, deleted since with this one saved under its name: not this file's unsaved
       // changes, so not offered as such (restoring would have put the old edits in the new file). They are
-      // kept as an unsaved spreadsheet of their own, where the home screen lists them.
+      // kept as an unsaved sheet of their own, where the home screen lists them.
       if (readableDraft(draft) && draft.fileUid && uid && draft.fileUid !== uid && parkDraft(at, draftRevision(draft))) return null;
       const verdict = draftVerdict(draft, remoteModified);
       if (verdict === 'stale' || inFile(draft) !== false) { clearDraft(at, draftRevision(draft)); return null; }
@@ -1098,7 +1098,7 @@ export class Doc extends EventTarget {
     }
     // Edits made while an earlier draft awaited a decision were kept beside it (see _ownDraftKey). Never
     // saved either, and the newer, they are the draft on offer; the earlier draft, still undecided, is kept
-    // as an unsaved spreadsheet of its own, listed on the home screen, rather than offered again with the
+    // as an unsaved sheet of its own, listed on the home screen, rather than offered again with the
     // edits stranded beside it, where the first edit here would have written over them.
     let offer = undecided;
     if (live && (!undecided || parkDraft(key, draftRevision(undecided.draft)))) {
@@ -1124,7 +1124,7 @@ export class Doc extends EventTarget {
     return doc;
   }
 
-  /** A new, empty spreadsheet; `excel` starts it with the usual .xlsx defaults: Calibri 11 (the theme's body font) as the
+  /** A new, empty sheets; `excel` starts it with the usual .xlsx defaults: Calibri 11 (the theme's body font) as the
    * Normal font, cells aligned to the bottom, and the format's default column width and row height. */
   /**
    * A new, empty workbook. `start` carries the app's options for new workbooks (lib/app-options.js): the font

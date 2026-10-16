@@ -37,7 +37,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open(protectedRange) {
-  const doc = new Doc({ name: 'Boxes', path: 'Spreadsheets/Boxes.xlsx' });
+  const doc = new Doc({ name: 'Boxes', path: 'Sheets/Boxes.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.protectRange(id, protectedRange, 'locked');

@@ -13,7 +13,7 @@ beforeEach(() => { document.body.replaceChildren(); });
 afterEach(() => { closeMenu(); vi.restoreAllMocks(); document.body.replaceChildren(); });
 
 it('does not append the extension twice when the typed name already has it', async () => {
-  vi.spyOn(P, 'listFiles').mockResolvedValue([{ name: 'Plan.xlsx', path: 'Spreadsheets/Plan.xlsx', size: 10, modified: 1 }]);
+  vi.spyOn(P, 'listFiles').mockResolvedValue([{ name: 'Plan.xlsx', path: 'Sheets/Plan.xlsx', size: 10, modified: 1 }]);
   const renameFile = vi.spyOn(P, 'renameFile').mockResolvedValue({});
   const view = homeView({ openPath() {}, newDoc() {}, sampleDoc() {}, templateDoc() {}, importFile() {} });
   document.body.append(view.el);
@@ -24,5 +24,5 @@ it('does not append the extension twice when the typed name already has it', asy
   item.click();
   await new Promise((r) => setTimeout(r, 0));
   await new Promise((r) => setTimeout(r, 0));
-  expect(renameFile).toHaveBeenCalledWith('Spreadsheets/Plan.xlsx', 'Budget.xlsx');
+  expect(renameFile).toHaveBeenCalledWith('Sheets/Plan.xlsx', 'Budget.xlsx');
 });

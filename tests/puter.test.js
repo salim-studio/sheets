@@ -8,7 +8,7 @@ describe('names', () => {
     expect(P.sanitizeName('x'.repeat(300))).toHaveLength(200);
     expect(P.ensureXlsx('Budget')).toBe('Budget.xlsx');
     expect(P.ensureXlsx('Budget.XLSX')).toBe('Budget.XLSX');
-    expect(P.displayName('Spreadsheets/a/b.xlsx')).toBe('b.xlsx');
+    expect(P.displayName('Sheets/a/b.xlsx')).toBe('b.xlsx');
   });
 
   it('recognizes not-found errors in their several shapes', () => {
@@ -23,15 +23,15 @@ describe('files', () => {
   let entries;
   beforeEach(() => {
     entries = [
-      { name: 'b.xlsx', path: 'Spreadsheets/b.xlsx', size: 10, modified: 100, is_dir: false },
-      { name: 'notes.txt', path: 'Spreadsheets/notes.txt', size: 1, modified: 500, is_dir: false },
-      { name: 'sub', path: 'Spreadsheets/sub', is_dir: true },
-      { name: 'a.csv', path: 'Spreadsheets/a.csv', size: 20, modified: 300, is_dir: false },
+      { name: 'b.xlsx', path: 'Sheets/b.xlsx', size: 10, modified: 100, is_dir: false },
+      { name: 'notes.txt', path: 'Sheets/notes.txt', size: 1, modified: 500, is_dir: false },
+      { name: 'sub', path: 'Sheets/sub', is_dir: true },
+      { name: 'a.csv', path: 'Sheets/a.csv', size: 20, modified: 300, is_dir: false },
     ];
     globalThis.puter = {
       env: 'app',
       fs: {
-        async readdir(p) { if (p !== 'Spreadsheets') throw Object.assign(new Error('x does not exist'), { code: 'subject_does_not_exist' }); return entries; },
+        async readdir(p) { if (p !== 'Sheets') throw Object.assign(new Error('x does not exist'), { code: 'subject_does_not_exist' }); return entries; },
         async stat(p) { const e = entries.find((x) => x.path === p); if (!e) throw new Error('does not exist'); return e; },
       },
       ui: { showOpenFilePicker() {} },
@@ -39,10 +39,10 @@ describe('files', () => {
   });
   afterEach(() => { delete globalThis.puter; });
 
-  it('lists only spreadsheet files, newest first', async () => {
+  it('lists only sheets files, newest first', async () => {
     const files = await P.listFiles();
     expect(files.map((f) => f.name)).toEqual(['a.csv', 'b.xlsx']);
-    expect(files[0].path).toBe('Spreadsheets/a.csv');
+    expect(files[0].path).toBe('Sheets/a.csv');
   });
 
   it('treats a missing folder as empty', async () => {
@@ -80,9 +80,9 @@ it('resolves known workbook paths for synchronous copy without guessing an app f
   const previous = globalThis.puter;
   try {
     globalThis.puter = {};
-    expect(P.resolvedAbsolutePath('Spreadsheets/Book.xlsx')).toBeNull();
-    P.canonicalPath('Spreadsheets/Original.xlsx',{path:'/drive/Spreadsheets/Original.xlsx'});
-    expect(P.resolvedAbsolutePath('Spreadsheets/Book.xlsx')).toBe('/drive/Spreadsheets/Book.xlsx');
+    expect(P.resolvedAbsolutePath('Sheets/Book.xlsx')).toBeNull();
+    P.canonicalPath('Sheets/Original.xlsx',{path:'/drive/Sheets/Original.xlsx'});
+    expect(P.resolvedAbsolutePath('Sheets/Book.xlsx')).toBe('/drive/Sheets/Book.xlsx');
   } finally { globalThis.puter = previous; }
 });
 
@@ -117,7 +117,7 @@ describe('the desktop window', () => {
 
 describe('the Open picker', () => {
   afterEach(() => { vi.unstubAllGlobals(); });
-  it('keeps spreadsheet filters by default and accepts other file types when requested', async () => {
+  it('keeps sheets filters by default and accepts other file types when requested', async () => {
     const item = { path: '/drive/Pictures/Company logo.png', size: 512 };
     const showOpenFilePicker = vi.fn().mockResolvedValue(item);
     vi.stubGlobal('puter', { ui: { showOpenFilePicker } });

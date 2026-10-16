@@ -13,7 +13,7 @@ async function setup() {
   const wb = new Workbook({ sheets: [{ name: 'Budget' }] });
   wb.setInput(wb.sheets[0].id, 0, 0, 'Item');
   wb.setInput(wb.sheets[0].id, 0, 1, 'Cost');
-  const room = await RoomClient.create({ puter: env.sdk(owner), server: SERVER, wb, name: 'Budget', file: { path: '/alice/Spreadsheets/Budget.xlsx', uid: 'u1' } });
+  const room = await RoomClient.create({ puter: env.sdk(owner), server: SERVER, wb, name: 'Budget', file: { path: '/alice/Sheets/Budget.xlsx', uid: 'u1' } });
   const invite = async (role) => (await call(env.sdk(owner), SERVER, { op: 'invite', room, role })).token;
   const join = async (user, { token, store = memoryOutbox(), ...rest } = {}) => {
     const client = new RoomClient({ puter: env.sdk(user), server: SERVER, room, token, store, poll: 50, noPeers: true, ...rest });
@@ -126,7 +126,7 @@ describe('co-authoring sessions', () => {
     await until(() => !a.replica.pending.length, 4000, 'delivery');
     const res = await a.checkpoint({ file: true });
     expect(res).toMatchObject({ saved: true, wrote: true });
-    expect(env.files.get('/alice/Spreadsheets/Budget.xlsx')).toBeInstanceOf(Uint8Array);
+    expect(env.files.get('/alice/Sheets/Budget.xlsx')).toBeInstanceOf(Uint8Array);
     const cp = await env.kv.get(`ss:${room}:cp`);
     expect(cp.rev).toBe(a.replica.rev);
     const b = await join(editor, { token: await invite('editor') });

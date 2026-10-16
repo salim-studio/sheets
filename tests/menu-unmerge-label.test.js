@@ -39,7 +39,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('tells the Format menu about the merged cell under the selection', async () => {
-  const doc = new Doc({ name: 'Merged', path: 'Spreadsheets/Merged.xlsx' });
+  const doc = new Doc({ name: 'Merged', path: 'Sheets/Merged.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.mergeCells(id, { r1: 0, c1: 0, r2: 1, c2: 1 });

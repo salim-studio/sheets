@@ -53,7 +53,7 @@ it('names the sort button with the order it shows', async () => {
   document.body.append(view.el);
   await vi.advanceTimersByTimeAsync(0);
   const sort = view.el.querySelector('.home-sort');
-  expect(sort.getAttribute('aria-label')).toBe(`Sort spreadsheets by: ${sort.textContent.trim()}`);
+  expect(sort.getAttribute('aria-label')).toBe(`Sort sheets by: ${sort.textContent.trim()}`);
   expect(sort.textContent.trim()).not.toBe('');
   view.destroy?.();
 });

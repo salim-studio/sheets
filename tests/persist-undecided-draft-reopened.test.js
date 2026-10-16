@@ -11,11 +11,11 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 const KEY = () => draftKey(PATH);
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 const cellA1 = (doc) => doc.wb.getValue(doc.wb.activeSheetId, 0, 0);
-/** The drafts of spreadsheets without a file, as the home screen lists them: [name, first cell]. */
+/** The drafts of sheets without a file, as the home screen lists them: [name, first cell]. */
 const unsaved = () => listDrafts().filter((d) => d.path === null).map((d) => [d.name, text(loadDraft(d.key))]).sort();
 
 function book(value) {
@@ -45,7 +45,7 @@ async function closedUndecided() {
 // home screen never listed. Opened again with both still there, the file offered the earlier draft
 // once more, and the first keystroke wrote this session's draft over those edits; discarding the
 // offer before any edit left them stranded under that key for good.
-it('offers the edits made beside an undecided draft on a later open, keeping that draft as an unsaved spreadsheet, and never writes over them', async () => {
+it('offers the edits made beside an undecided draft on a later open, keeping that draft as an unsaved sheet, and never writes over them', async () => {
   await closedUndecided();
   const doc = await Doc.fromPath(PATH);
   try {
@@ -88,7 +88,7 @@ it('moves or clears the edits kept beside the draft whichever document wrote the
   other.destroy();
 });
 
-it('opens the edits made beside an undecided draft of a file since deleted as the new spreadsheet, and keeps the draft too', async () => {
+it('opens the edits made beside an undecided draft of a file since deleted as the new sheets, and keeps the draft too', async () => {
   await closedUndecided();
   mock.fs.delete(PATH);
   const doc = await Doc.fromPath(PATH);
@@ -106,11 +106,11 @@ it('carries both along when the file was renamed elsewhere, and offers the edits
   await puter.fs.rename(PATH, 'Plan.xlsx');
   const doc = await Doc.fromPath(PATH);
   try {
-    expect(doc.path).toBe('Spreadsheets/Plan.xlsx');
+    expect(doc.path).toBe('Sheets/Plan.xlsx');
     expect(text(doc.recoverable)).toBe('meanwhile');
     expect(loadDraft(KEY())).toBeNull();
     expect(loadDraft(liveDraftKey(KEY()))).toBeNull();
-    expect(text(loadDraft(draftKey('Spreadsheets/Plan.xlsx')))).toBe('meanwhile');
+    expect(text(loadDraft(draftKey('Sheets/Plan.xlsx')))).toBe('meanwhile');
     expect(unsaved()).toEqual([['Budget', 'recovered edits']]);
   } finally { doc.destroy(); }
 });

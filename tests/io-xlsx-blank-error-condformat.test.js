@@ -99,7 +99,7 @@ it('updates every blank/error predicate after edits, undo, sheet duplication and
   expect(wb.conditionalStyle(id, 1, 2, wb.getValue(id, 1, 2))).toEqual(paint);
   const g = { r1: 1, c1: 0, r2: 1, c2: 3 }, cells = wb.copyRange(id, g);
   const html = cellsToHtml([['#N/A', '#N/A', '#N/A', '#N/A']], cells, [[0, 1, 2, 3].map(c => wb.conditionalStyle(id, 1, c, wb.getValue(id, 1, c)))], [[0, 1, 2, 3].map(c => wb.getValue(id, 1, c))])
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const parsed = cellsFromHtmlRows(parseHtmlClipboard(html).rows);

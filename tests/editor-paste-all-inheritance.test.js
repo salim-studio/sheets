@@ -21,13 +21,13 @@ afterEach(() => {view?.destroy();view=null;vi.clearAllTimers();vi.useRealTimers(
 
 
 it.each(['internal', 'private', 'html'].flatMap(kind => ['all', 'Transposed', 'Skip blanks', 'Values only', 'Formulas only (keep formatting)'].map(mode => [kind, mode])))('replaces or keeps inherited destination formats: %s / %s', async (kind, mode) => {
-  const doc = new Doc({ name: 'Paste formats', path: 'Spreadsheets/Paste formats.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
+  const doc = new Doc({ name: 'Paste formats', path: 'Sheets/Paste formats.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
   wb.sheet(id).colStyles.set(3, { bold: true, bg: '#ffdd99', fmt: 'currency', cur: 'USD', dec: 2 });
   wb.sheet(id).rowStyles.set(4, { underline: true, wrap: true });
   wb.setCells(id, [{ r: 0, c: 0, cell: { v: 2, s: { italic: true } } }, { r: 4, c: 3, cell: { v: 99 } }]);
   const copied = wb.copyRange(id, { r1: 0, c1: 0, r2: 1, c2: 0 });
   html = cellsToHtml([['2'], ['']], copied); text = '2\n';
-  if (kind === 'html') html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (kind === 'html') html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.body.append(view.el); await vi.advanceTimersByTimeAsync(1);
   const viewport = view.el.querySelector('.grid-viewport'); viewport.focus();

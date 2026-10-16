@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import { cellsToHtml, parseHtmlClipboard, cellsFromHtmlRows } from '../src/core/clipboard.js';
 
 const parse = content => parseHtmlClipboard(`<table><tr><td>${content}</td></tr></table>`).rows[0][0];
-const external = html => html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '').replace(/ x:str(?:="[^"]*")?/g, '');
+const external = html => html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '').replace(/ x:str(?:="[^"]*")?/g, '');
 
 it('reads Office space runs while still collapsing their HTML source indentation', () => {
   const content = '<span style="mso-spacerun:yes">&nbsp; </span>alpha<span style="mso-spacerun:yes">&nbsp;\r\n  </span>beta<span style="mso-spacerun:yes">&nbsp;&nbsp;</span>';
@@ -40,6 +40,6 @@ it('escapes markup-bearing text independently of its significant spaces', () => 
 
 it('retains exact typed space-only values without relying on private payloads', () => {
   const values = [' ', '   ', ' leading', 'two  words', 'trailing '];
-  const html = cellsToHtml([values], [values.map(v => ({ v }))], null, [values]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([values], [values.map(v => ({ v }))], null, [values]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x => x.cell.v)).toEqual(values);
 });

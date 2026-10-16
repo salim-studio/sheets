@@ -7,7 +7,7 @@ function fixture(rows, ref, predicate) {
   X.utils.book_append_sheet(book, X.utils.aoa_to_sheet(rows), 'Data');
   const content = X.write(book, { type: 'string', bookType: 'fods' });
   const definition = `<table:database-ranges><table:database-range table:name="Native" table:target-range-address="$Data.${ref}" table:contains-header="true" table:display-filter-buttons="true"><table:filter>${predicate}</table:filter></table:database-range></table:database-ranges>`;
-  return workbookFromFile(new TextEncoder().encode(content.replace('</office:spreadsheet>', () => definition + '</office:spreadsheet>')), 'native.fods');
+  return workbookFromFile(new TextEncoder().encode(content.replace('</office:sheets>', () => definition + '</office:sheets>')), 'native.fods');
 }
 const condition = (field, operator, value, extra = '') => `<table:filter-condition table:field-number="${field}" table:operator="${operator}" table:value="${value}"${extra}/>`;
 const rows = [[null, 'Name', 'Amount', 'Flag'], [null, 'a', 3, 'x'], [null, 'b', 9, 'y'], [null, 'c', 12, 'x']];

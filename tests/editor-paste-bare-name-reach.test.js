@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Mine', path: 'Spreadsheets/Mine.xlsx' });
+  const doc = new Doc({ name: 'Mine', path: 'Sheets/Mine.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'secret-salary');

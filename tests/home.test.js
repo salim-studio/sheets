@@ -26,7 +26,7 @@ describe('home screen lifecycle', () => {
     document.body.append(view.el);
     view.destroy?.();
     view.el.remove();
-    resolve([{ path: 'Spreadsheets/Late.xlsx', name: 'Late.xlsx' }]);
+    resolve([{ path: 'Sheets/Late.xlsx', name: 'Late.xlsx' }]);
     await vi.advanceTimersByTimeAsync(0);
     expect(view.el.querySelector('.file-name')).toBeNull();
   });
@@ -35,11 +35,11 @@ describe('home screen lifecycle', () => {
     let resolve;
     vi.spyOn(P, 'listFiles')
       .mockImplementationOnce(() => new Promise((done) => { resolve = done; }))
-      .mockResolvedValueOnce([{ path: 'Spreadsheets/New.xlsx', name: 'New.xlsx' }]);
+      .mockResolvedValueOnce([{ path: 'Sheets/New.xlsx', name: 'New.xlsx' }]);
     const view = homeView({});
     document.body.append(view.el);
     await view.reload();
-    resolve([{ path: 'Spreadsheets/Old.xlsx', name: 'Old.xlsx' }]);
+    resolve([{ path: 'Sheets/Old.xlsx', name: 'Old.xlsx' }]);
     await vi.advanceTimersByTimeAsync(0);
     expect(view.el.querySelector('.file-name').textContent).toBe('New');
     view.destroy?.();
@@ -48,9 +48,9 @@ describe('home screen lifecycle', () => {
 
 describe('duplicating files from the home screen', () => {
   it.each(['xlsx', 'csv'])('does not overwrite a %s copy created after the list loaded', async (ext) => {
-    const path = `Spreadsheets/Budget.${ext}`;
-    const racedPath = `Spreadsheets/Budget copy.${ext}`;
-    const copyPath = `Spreadsheets/Budget copy 2.${ext}`;
+    const path = `Sheets/Budget.${ext}`;
+    const racedPath = `Sheets/Budget copy.${ext}`;
+    const copyPath = `Sheets/Budget copy 2.${ext}`;
     const otherFile = new Blob(['Keep this other workbook']);
     const files = new Map();
     vi.spyOn(P, 'listFiles').mockResolvedValue([{ path, name: `Budget.${ext}`, size: 3, modified: 1 }]);

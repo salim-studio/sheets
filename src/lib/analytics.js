@@ -12,5 +12,5 @@ const EXPORT_FORMATS = new Set(['xlsx', 'xls', 'xlsm', 'csv', 'tsv', 'ods', 'htm
 
 export function trackExport(filename, method) {
   const extension = /\.([a-z0-9]+)$/i.exec(String(filename))?.[1].toLowerCase();
-  trackEvent('Spreadsheet Exported', { format: EXPORT_FORMATS.has(extension) ? extension : 'other', method });
+  trackEvent('Sheets Exported', { format: EXPORT_FORMATS.has(extension) ? extension : 'other', method });
 }

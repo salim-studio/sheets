@@ -6,5 +6,5 @@ import { parseAppHash } from '../src/lib/links.js';
 it('lands an edit address that names no file on the list', () => {
   expect(parseAppHash('#/edit/')).toEqual({ route: 'home' });
   expect(parseAppHash('#/edit/?range=Sheet1!A1')).toEqual({ route: 'home' });
-  expect(parseAppHash('#/edit/Spreadsheets%2FBudget.xlsx')).toEqual({ route: 'edit', path: 'Spreadsheets/Budget.xlsx', range: null });
+  expect(parseAppHash('#/edit/Sheets%2FBudget.xlsx')).toEqual({ route: 'edit', path: 'Sheets/Budget.xlsx', range: null });
 });

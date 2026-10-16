@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function open() {
-  const doc = new Doc({ name: 'Hidden', path: 'Spreadsheets/Hidden.xlsx' });
+  const doc = new Doc({ name: 'Hidden', path: 'Sheets/Hidden.xlsx' });
   const { wb } = doc;
   const first = wb.activeSheetId;
   const second = wb.addSheet('Sheet2').id;

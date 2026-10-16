@@ -34,7 +34,7 @@ afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; v
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open(cell) {
-  const doc = new Doc({ name: 'Notes', path: 'Spreadsheets/Notes.xlsx' });
+  const doc = new Doc({ name: 'Notes', path: 'Sheets/Notes.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 1, 0, 'Home page');

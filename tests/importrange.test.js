@@ -33,12 +33,12 @@ describe('IMPORTRANGE helpers', () => {
   });
 
   it('resolves names to files in the app folder and keeps paths', () => {
-    expect(resolveImportPath('Budget', 'Spreadsheets', ensureXlsx)).toBe('Spreadsheets/Budget.xlsx');
-    expect(resolveImportPath(' Budget.xlsx ', 'Spreadsheets', ensureXlsx)).toBe('Spreadsheets/Budget.xlsx');
-    expect(resolveImportPath('/nj/Documents/data.csv', 'Spreadsheets', ensureXlsx)).toBe('/nj/Documents/data.csv');
-    expect(resolveImportPath('Work/Plan', 'Spreadsheets', ensureXlsx)).toBe('Work/Plan.xlsx');
-    expect(resolveImportPath('/nj/Documents/Quarter 1/Plan', 'Spreadsheets', ensureXlsx)).toBe('/nj/Documents/Quarter 1/Plan.xlsx');
-    expect(resolveImportPath('', 'Spreadsheets', ensureXlsx)).toBeNull();
+    expect(resolveImportPath('Budget', 'Sheets', ensureXlsx)).toBe('Sheets/Budget.xlsx');
+    expect(resolveImportPath(' Budget.xlsx ', 'Sheets', ensureXlsx)).toBe('Sheets/Budget.xlsx');
+    expect(resolveImportPath('/nj/Documents/data.csv', 'Sheets', ensureXlsx)).toBe('/nj/Documents/data.csv');
+    expect(resolveImportPath('Work/Plan', 'Sheets', ensureXlsx)).toBe('Work/Plan.xlsx');
+    expect(resolveImportPath('/nj/Documents/Quarter 1/Plan', 'Sheets', ensureXlsx)).toBe('/nj/Documents/Quarter 1/Plan.xlsx');
+    expect(resolveImportPath('', 'Sheets', ensureXlsx)).toBeNull();
   });
 
   it('parses ranges with and without a sheet', () => {
@@ -88,7 +88,7 @@ describe('IMPORTDATA', () => {
     expect(result[149999]).toEqual([1]);
   });
 
-  it('returns a spreadsheet error for an input beyond the cell limit', () => {
+  it('returns a sheets error for an input beyond the cell limit', () => {
     expect(rowsFromDelimited('1\n'.repeat(200001), ',', helpers)).toEqual({ error: '#NUM!' });
   });
 

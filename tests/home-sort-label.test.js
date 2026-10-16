@@ -47,6 +47,6 @@ it.each([
   btn.click();
   menuItem('Name').click();
   expect(btn.textContent).toContain('Name');
-  expect(btn.getAttribute('aria-label')).toBe('Sort spreadsheets by: Name');
+  expect(btn.getAttribute('aria-label')).toBe('Sort sheets by: Name');
   view.destroy?.();
 });

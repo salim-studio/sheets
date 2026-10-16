@@ -21,7 +21,7 @@ function book() {
 
 // A text cell starting with =, +, -, @, a tab or a carriage return is run as a formula by
 // programs that open the exported file (Excel with DDE, say). Such text is written with a
-// leading apostrophe and quoted, as spreadsheet programs do; numbers are left alone.
+// leading apostrophe and quoted, as sheets programs do; numbers are left alone.
 it('marks formula-shaped text with an apostrophe in CSV and TSV exports, leaving numbers as they are', () => {
   const { wb, id } = book();
   const csv = sheetToCsv(wb, id).replace(/^﻿/, '');

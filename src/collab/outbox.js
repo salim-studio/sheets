@@ -5,7 +5,7 @@
  * changes apply on top of. A memory store stands in where IndexedDB is missing (and in tests).
  */
 
-const DB = 'spreadsheet-collab';
+const DB = 'sheets-collab';
 const STORE = 'outbox';
 
 export function memoryOutbox() {

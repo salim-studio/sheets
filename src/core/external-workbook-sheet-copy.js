@@ -21,7 +21,7 @@ function boundedTableRows(wb, owner, formula, tables) {
 
 function requireLocation(location) {
   if (typeof location === 'string' && location.trim()) return;
-  const error = new Error('Save the source spreadsheet before copying a sheet that references its other sheets.');
+  const error = new Error('Save the source sheets before copying a sheet that references its other sheets.');
   error.code = 'EXTERNAL_SOURCE_LOCATION_REQUIRED';
   throw error;
 }

@@ -1,6 +1,6 @@
 /**
- * Email from the spreadsheet: the app's one shared, app-owned Puter worker (deployed to
- * https://spreadsheet-email.puter.work; src/lib/mail.js is the calling side). Adapted from the Calendar
+ * Email from the sheets: the app's one shared, app-owned Puter worker (deployed to
+ * https://sheets-email.puter.work; src/lib/mail.js is the calling side). Adapted from the Calendar
  * app's invitation worker (src/calendar/src/workers/email-worker.js), whose sending arrangement it keeps.
  *
  * Outbound mail has to be authorized by a worker's own token, so the sending capability lives here, in a
@@ -235,7 +235,7 @@ function readAttachment(a) {
 
 function readWorkbook(src) {
   const wb = src && typeof src.workbook === 'object' && src.workbook ? src.workbook : {};
-  return { name: line(wb.name, 200) || 'Untitled spreadsheet' };
+  return { name: line(wb.name, 200) || 'Untitled sheets' };
 }
 
 /* ---- The messages --------------------------------------------------------- */
@@ -244,12 +244,12 @@ const FRAME_OPEN =
   `<div style="background:#f6f7f9;padding:24px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">` +
   `<div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:24px">`;
 const FRAME_CLOSE =
-  `<p style="margin:24px 0 0;font-size:12px;color:#9ca3af">Sent from Spreadsheet on Puter at the request of the person named above.</p></div></div>`;
+  `<p style="margin:24px 0 0;font-size:12px;color:#9ca3af">Sent from Sheets on Puter at the request of the person named above.</p></div></div>`;
 
 function button(href, label) {
   return (
     `<a href="${escapeHtml(href)}" style="display:inline-block;margin:20px 0 4px;padding:10px 20px;border-radius:8px;` +
-    `background:#356d49;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none">${escapeHtml(label)}</a>`
+    `background:#0E7A4D;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none">${escapeHtml(label)}</a>`
   );
 }
 
@@ -263,7 +263,7 @@ function title(t) {
 
 function note(message) {
   return message
-    ? `<p style="margin:16px 0 0;padding:12px 14px;border-left:3px solid #356d49;background:#f6f7f9;color:#111827;font-size:14px;white-space:pre-wrap">${escapeBlock(message)}</p>`
+    ? `<p style="margin:16px 0 0;padding:12px 14px;border-left:3px solid #0E7A4D;background:#f6f7f9;color:#111827;font-size:14px;white-space:pre-wrap">${escapeBlock(message)}</p>`
     : '';
 }
 
@@ -275,7 +275,7 @@ function compose(kind, req, sender) {
     return {
       subject: req.subject || line(`${who} sent you ${what}`, 200),
       text: [`${who} sent you ${what}. It is attached to this email (${req.attachment.filename}).`, req.message ? `\n${req.message}` : ''].join('\n'),
-      html: FRAME_OPEN + intro(`<strong>${escapeHtml(who)}</strong> sent you a copy of a spreadsheet.`) + title(wb) +
+      html: FRAME_OPEN + intro(`<strong>${escapeHtml(who)}</strong> sent you a copy of a sheets.`) + title(wb) +
         `<p style="margin:0;color:#6b7280;font-size:13px">Attached: ${escapeHtml(req.attachment.filename)}</p>` + note(req.message) + FRAME_CLOSE,
     };
   }
@@ -283,9 +283,9 @@ function compose(kind, req, sender) {
     const can = req.access === 'edit' ? 'edit' : 'view';
     return {
       subject: line(`${who} shared “${wb}” with you`, 200),
-      text: [`${who} shared a spreadsheet with you: you can ${can} it.`, '', wb, req.message ? `\n${req.message}\n` : '', `Open it: ${req.link}`].join('\n'),
-      html: FRAME_OPEN + intro(`<strong>${escapeHtml(who)}</strong> shared a spreadsheet with you. You can ${can} it.`) + title(wb) +
-        note(req.message) + button(req.link, 'Open the spreadsheet') + FRAME_CLOSE,
+      text: [`${who} shared a sheets with you: you can ${can} it.`, '', wb, req.message ? `\n${req.message}\n` : '', `Open it: ${req.link}`].join('\n'),
+      html: FRAME_OPEN + intro(`<strong>${escapeHtml(who)}</strong> shared a sheets with you. You can ${can} it.`) + title(wb) +
+        note(req.message) + button(req.link, 'Open the sheets') + FRAME_CLOSE,
     };
   }
   // A mention, or an assignment.

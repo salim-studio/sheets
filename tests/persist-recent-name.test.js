@@ -11,7 +11,7 @@ vi.mock('../src/lib/session.js', () => ({ session: { init: async () => {}, signe
 vi.mock('../src/lib/recent.js', async (importOriginal) => ({ ...(await importOriginal()), rememberRecent: mocks.rememberRecent }));
 vi.mock('../src/lib/puter.js', () => ({
   hasSDK: () => true, isSignedIn: async () => true, onAuth() {}, onLaunchedWithItems() {}, onWindowClose() {}, setWindowTitle() {}, isNotFound: () => false, samePath: (a, b) => a === b,
-  inAppFolder: (path) => String(path).startsWith('Spreadsheets/'),
+  inAppFolder: (path) => String(path).startsWith('Sheets/'),
 }));
 
 let handlers;

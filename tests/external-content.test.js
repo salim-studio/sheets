@@ -55,10 +55,10 @@ describe('document trust', () => {
     const imported = await Doc.fromBrowserFile(new File([await bytes.arrayBuffer()], 'device.xlsx'));
     expect(imported.wb.externalAllowed).toBe(false);
     // The app's own folder is trusted; a subfolder or another folder is not.
-    mock.fs.set('Spreadsheets/Mine.xlsx', { blob: bytes, size: bytes.size, modified: 1 });
-    mock.fs.set('Spreadsheets/Inbox/theirs.xlsx', { blob: bytes, size: bytes.size, modified: 1 });
-    expect((await Doc.fromPath('Spreadsheets/Mine.xlsx')).wb.externalAllowed).toBe(true);
-    expect((await Doc.fromPath('Spreadsheets/Inbox/theirs.xlsx')).wb.externalAllowed).toBe(false);
+    mock.fs.set('Sheets/Mine.xlsx', { blob: bytes, size: bytes.size, modified: 1 });
+    mock.fs.set('Sheets/Inbox/theirs.xlsx', { blob: bytes, size: bytes.size, modified: 1 });
+    expect((await Doc.fromPath('Sheets/Mine.xlsx')).wb.externalAllowed).toBe(true);
+    expect((await Doc.fromPath('Sheets/Inbox/theirs.xlsx')).wb.externalAllowed).toBe(false);
   });
 
   it('keeps a document made here trusted once it has a file', async () => {

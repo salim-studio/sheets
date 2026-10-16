@@ -7,7 +7,7 @@ const pasted = html => cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x =>
 it('preserves aligned indentation in external HTML while retaining ordinary cell padding', () => {
   const values = ['Address', 25, 'Centered', 'שלום', true];
   const cells = values.map((v, i) => ({ v, s: { indent: 2, ...(i === 2 ? { align: 'center' } : {}) } }));
-  const html = cellsToHtml([values.map(String)], [cells], null, [values]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([values.map(String)], [cells], null, [values]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const doc = new DOMParser().parseFromString(html, 'text/html'), tds = doc.querySelectorAll('td');
   expect(tds[0].style.paddingLeft).toBe('26px');
   expect(tds[1].style.paddingRight).toBe('26px');

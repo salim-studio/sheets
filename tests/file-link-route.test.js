@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-// A shared spreadsheet's #/file/<uid> link said the file did not exist, or had not been shared, whenever
+// A shared sheets's #/file/<uid> link said the file did not exist, or had not been shared, whenever
 // the look-up failed at all: offline, or a server that did not answer, said the same as a refusal.
 const mocks = vi.hoisted(() => ({ fromPath: vi.fn(), editor: vi.fn(), home: vi.fn(), toast: vi.fn(), statByUid: vi.fn() }));
 vi.mock('../src/lib/doc.js', () => ({ Doc: { fromPath: mocks.fromPath, fromBrowserFile: vi.fn(), fromDraft: vi.fn() } }));
@@ -47,7 +47,7 @@ it('opens the file at the address the drive gives it', async () => {
 it.each([
   ['a file that is not there', () => mocks.statByUid.mockResolvedValue(null)],
   ['a refusal', () => mocks.statByUid.mockRejectedValue({ code: 'access_denied', message: 'Access denied' })],
-])('says the spreadsheet is not there, or not shared, for %s', async (_, setup) => {
+])('says the sheets is not there, or not shared, for %s', async (_, setup) => {
   setup();
   history.replaceState(null, '', '#/file/u1');
   await import('../src/main.js');

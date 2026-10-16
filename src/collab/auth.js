@@ -11,17 +11,17 @@ import { hash, keyPair, sign } from './protocol.js';
 const credentials = new WeakMap();
 const LIFETIME = 24 * 60 * 60 * 1000;
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
-export const PROOF_HEADER = 'x-spreadsheet-proof';
+export const PROOF_HEADER = 'x-sheets-proof';
 
 async function loadCredential(puter, parent, refused) {
   // App KV is private to this account; credentials survive reloads, as minting is rate limited.
   const context = await hash(parent);
-  const key = `spreadsheet-collab-auth-v1:${context}`;
+  const key = `sheets-collab-auth-v1:${context}`;
   const saved = await puter.kv.get(key);
   if (saved && saved.expires > Date.now() + 60_000 && (!refused || saved.token !== refused.token)) return saved;
   const keys = saved?.keys ?? (await keyPair());
   const fingerprint = (await hash(JSON.stringify(keys.publicKey))).slice(0, 32);
-  const file = await puter.fs.write(`spreadsheet/identity/${context}-${fingerprint}.json`, JSON.stringify({ version: 1, publicKey: keys.publicKey }), {
+  const file = await puter.fs.write(`sheets/identity/${context}-${fingerprint}.json`, JSON.stringify({ version: 1, publicKey: keys.publicKey }), {
     overwrite: true, dedupeName: false, createMissingParents: true,
   });
   const issued = Date.now();

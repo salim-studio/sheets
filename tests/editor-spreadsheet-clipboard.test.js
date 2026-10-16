@@ -26,8 +26,8 @@ beforeEach(() => {
 });
 afterEach(() => {view?.destroy();view=null;vi.clearAllTimers();vi.useRealTimers();vi.restoreAllMocks();vi.unstubAllGlobals();document.body.replaceChildren();});
 
-it.each(['all','Values only','Transposed','Formatting only'])('preserves spreadsheet representations through %s and undo', async mode => {
-  const doc=new Doc({name:'Representations',path:'Spreadsheets/Representations.xlsx'}), wb=doc.wb,id=wb.activeSheetId;
+it.each(['all','Values only','Transposed','Formatting only'])('preserves sheets representations through %s and undo', async mode => {
+  const doc=new Doc({name:'Representations',path:'Sheets/Representations.xlsx'}), wb=doc.wb,id=wb.activeSheetId;
   wb.setCells(id,[{r:0,c:0,cell:{v:'old',s:{italic:true,valign:'top'}}}]);wb.clearHistory();
   view=editorView({doc,goHome:vi.fn(),openPath:vi.fn(),newDoc:vi.fn(),templateDoc:vi.fn(),importFile:vi.fn()});
   document.body.append(view.el);await vi.advanceTimersByTimeAsync(1);
@@ -57,7 +57,7 @@ it.each(['all','Values only','Transposed','Formatting only'])('preserves spreads
 it('pastes cached external links through the editor and restores the previous graph on undo', async () => {
   const links = value => ({version:1,books:[{target:'https://example.com/source.xlsx',sheets:[{name:'Data',cells:{'0,0':value}}]}]});
   const wb = new Workbook({externalWorkbooks:links(99)}), id = wb.activeSheetId;
-  const doc = new Doc({wb,name:'Links',path:'Spreadsheets/Links.xlsx'});
+  const doc = new Doc({wb,name:'Links',path:'Sheets/Links.xlsx'});
   view=editorView({doc,goHome:vi.fn(),openPath:vi.fn(),newDoc:vi.fn(),templateDoc:vi.fn(),importFile:vi.fn()});
   document.body.append(view.el);await vi.advanceTimersByTimeAsync(1);
   view.goTo('Sheet1!B2');const viewport=view.el.querySelector('.grid-viewport');viewport.focus();

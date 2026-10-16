@@ -15,7 +15,7 @@ vi.mock('../src/ui/modal.js', () => ({ promptDialog: vi.fn(async () => 'Plan'), 
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); vi.useFakeTimers(); document.body.replaceChildren(); });
 afterEach(() => { closeMenu(); vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); document.body.replaceChildren(); });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 
 /** A draft of edits to Budget.xlsx that awaited a decision, with the edits made meanwhile kept beside it. */
@@ -44,13 +44,13 @@ async function act(action) {
 // from the list carried or cleared the draft alone, stranding those edits under the old address.
 it('carries the edits kept beside a draft along when the file is renamed from the list', async () => {
   draftWithSibling();
-  vi.spyOn(P, 'renameFile').mockResolvedValue({ path: 'Spreadsheets/Plan.xlsx', name: 'Plan.xlsx' });
+  vi.spyOn(P, 'renameFile').mockResolvedValue({ path: 'Sheets/Plan.xlsx', name: 'Plan.xlsx' });
   const view = await act('Rename…');
   expect(P.renameFile).toHaveBeenCalledWith(PATH, 'Plan.xlsx');
   expect(loadDraft(draftKey(PATH))).toBeNull();
   expect(loadDraft(liveDraftKey(draftKey(PATH)))).toBeNull();
-  expect(text(loadDraft(draftKey('Spreadsheets/Plan.xlsx')))).toBe('recovered edits');
-  expect(text(loadDraft(liveDraftKey(draftKey('Spreadsheets/Plan.xlsx'))))).toBe('meanwhile');
+  expect(text(loadDraft(draftKey('Sheets/Plan.xlsx')))).toBe('recovered edits');
+  expect(text(loadDraft(liveDraftKey(draftKey('Sheets/Plan.xlsx'))))).toBe('meanwhile');
   view.destroy();
 });
 

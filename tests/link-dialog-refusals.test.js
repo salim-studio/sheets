@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function open(cell) {
-  const doc = new Doc({ name: 'Links', path: 'Spreadsheets/Links.xlsx' });
+  const doc = new Doc({ name: 'Links', path: 'Sheets/Links.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   [['Name', 'Qty'], ['a', '1'], ['b', '2']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

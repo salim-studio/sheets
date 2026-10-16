@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; v
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 it('commits the open cell edit before the Named ranges dialog opens', async () => {
-  const doc = new Doc({ name: 'Names', path: 'Spreadsheets/Names.xlsx' });
+  const doc = new Doc({ name: 'Names', path: 'Sheets/Names.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 1, 1, '10');

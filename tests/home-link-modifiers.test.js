@@ -13,13 +13,13 @@ afterEach(() => { closeMenu(); vi.clearAllTimers(); vi.useRealTimers(); vi.resto
 
 describe('file links on the home screen', () => {
   it('leave a modifier click to the browser so the file can open in a new tab', async () => {
-    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', modified: Date.now(), size: 1000 }]);
+    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', modified: Date.now(), size: 1000 }]);
     const openPath = vi.fn();
     const view = homeView({ openPath });
     document.body.append(view.el);
     await vi.advanceTimersByTimeAsync(0);
     const link = view.el.querySelector('a.file-main');
-    expect(link.getAttribute('href')).toBe('#/edit/Spreadsheets%2FBudget.xlsx');
+    expect(link.getAttribute('href')).toBe('#/edit/Sheets%2FBudget.xlsx');
     for (const init of [{ metaKey: true }, { ctrlKey: true }, { shiftKey: true }, { button: 1 }]) {
       const e = new MouseEvent('click', { bubbles: true, cancelable: true, ...init });
       link.dispatchEvent(e);
@@ -29,7 +29,7 @@ describe('file links on the home screen', () => {
     const plain = new MouseEvent('click', { bubbles: true, cancelable: true });
     link.dispatchEvent(plain);
     expect(plain.defaultPrevented).toBe(true);
-    expect(openPath).toHaveBeenCalledWith('Spreadsheets/Budget.xlsx');
+    expect(openPath).toHaveBeenCalledWith('Sheets/Budget.xlsx');
     view.destroy?.();
   });
 });

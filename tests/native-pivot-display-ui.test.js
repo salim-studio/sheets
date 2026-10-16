@@ -141,7 +141,7 @@ it('exports the same displayed font, fill and borders as a standalone HTML page'
   const html = sheetToHtml(wb, id), doc = new DOMParser().parseFromString(html, 'text/html'), td = doc.querySelector('td');
   expect(td.style.backgroundColor).toBe('rgb(170, 204, 238)');
   expect(td.style.fontWeight).toBe('bold'); expect(td.style.borderBottom).toContain('2px solid');
-  expect(html).not.toContain('data-spreadsheet'); expect(wb.toJSON()).toEqual(before);
+  expect(html).not.toContain('data-sheets'); expect(wb.toJSON()).toEqual(before);
 });
 
 it('copies public displayed paint while retaining the original embedded cell styles', async () => {
@@ -155,7 +155,7 @@ it('copies public displayed paint while retaining the original embedded cell sty
   expect(node.querySelector('td').style.backgroundColor).toBe('rgb(170, 204, 238)');
   const privateData = parseHtmlClipboard(data['text/html']);
   expect(privateData.cells[0][0].s).not.toHaveProperty('bg');
-  const stripped = data['text/html'].replace(/\sdata-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const stripped = data['text/html'].replace(/\sdata-sheets-[\w-]+="[^"]*"/g, '');
   const foreign = parseHtmlClipboard(stripped);
   expect(cellsFromHtmlRows(foreign.rows)[0].cell.s).toMatchObject({ bg: '#aaccee', bold: true, bb: true });
   expect(wb.toJSON()).toEqual(before); expect(wb.getValue(id, 0, 0)).toBe('Region');

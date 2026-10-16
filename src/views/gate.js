@@ -18,7 +18,7 @@ export function errorView(title, message, onRetry) {
 
 /**
  * A file on Puter was asked for without a session. `onSignIn` opens Puter's
- * dialog (and resolves when it closes); `onSkip` starts a new spreadsheet.
+ * dialog (and resolves when it closes); `onSkip` starts a new sheet.
  */
 export function signInView({ title, message, onSignIn, onSkip }) {
   /**
@@ -53,6 +53,6 @@ export function signInView({ title, message, onSignIn, onSkip }) {
       el('p.auth-sub', {}, message),
       el('div.row', { style: { justifyContent: 'center' } },
         cta,
-        el('button.btn.btn-outline', { type: 'button', onclick: onSkip }, 'New spreadsheet')),
+        el('button.btn.btn-outline', { type: 'button', onclick: onSkip }, 'New sheets')),
       status));
 }

@@ -5,20 +5,20 @@
  *  auth      sign-in state and the current user
  *  env       'app' inside the Puter desktop, 'web' on a standalone page
  *  settings  a small JSON document in puter.kv (theme, regional format); this browser's storage without a session, and a copy there for boots that cannot reach the store
- *  files     spreadsheets as real files in the app's own folder on Puter FS
+ *  files     sheets as real files in the app's own folder on Puter FS
  *  pickers   Puter's Open / Save dialogs, feature-detected
  *  sharing   who else may open a file, and the files others shared with this user
  *
- * Files are never stored in KV. Spreadsheets are .xlsx blobs written to
- * `Spreadsheets/<name>.xlsx`, so they show up as ordinary files a user can
+ * Files are never stored in KV. Sheets are .xlsx blobs written to
+ * `Sheets/<name>.xlsx`, so they show up as ordinary files a user can
  * move, share, or open with any other app.
  */
 
 import { optionState } from './option-state.js';
 import { trackEvent, trackExport } from './analytics.js';
 
-export const FOLDER = 'Spreadsheets';
-export const SETTINGS_KEY = 'spreadsheet:settings:v1';
+export const FOLDER = 'Sheets';
+export const SETTINGS_KEY = 'sheets:settings:v1';
 
 const sdk = () => (typeof puter !== 'undefined' ? puter : null);
 
@@ -205,7 +205,7 @@ function ensureFolder() {
   return folderReady;
 }
 
-/** Spreadsheet files in the app folder, newest first. */
+/** Sheets files in the app folder, newest first. */
 export async function listFiles() {
   let items;
   try {
@@ -286,7 +286,7 @@ export async function fileExists(path) {
 /* ---------- One file, one address ---------- */
 
 // The SDK resolves a relative path under the app's own data folder and reports
-// every file by its absolute path there (/user/AppData/<app>/Spreadsheets/Budget.xlsx):
+// every file by its absolute path there (/user/AppData/<app>/Sheets/Budget.xlsx):
 // a listing, a stat, a write result, the picker and "Open with" all speak that
 // spelling, while the app writes under the relative one. Records keyed by path
 // (drafts, the outside-content decision, history, recents) must not split
@@ -376,7 +376,7 @@ export async function resolveAppFolder() {
 /**
  * A name that does not collide with an existing file in the folder: one
  * listing, rather than a look-up per candidate, however many "Untitled
- * spreadsheet N" files there already are. The check is advisory; the write
+ * sheets N" files there already are. The check is advisory; the write
  * that follows dedupes on the server as well.
  */
 export async function uniqueName(base) {
@@ -439,7 +439,7 @@ export function canShare() {
 /** Puter's levels of access, from the least to the most. */
 const MODE_RANK = { see: 0, list: 1, read: 2, write: 3, manage: 4 };
 
-/** Is a spreadsheet's name one the app opens? (The folder listing keeps the same kinds.) */
+/** Is a sheets's name one the app opens? (The folder listing keeps the same kinds.) */
 const isSheetName = (name) => /\.(xlsx|xlsm|xls|csv|tsv|ods)$/i.test(String(name || ''));
 
 /**
@@ -486,7 +486,7 @@ export async function shareAccess(path) {
 }
 
 /**
- * The spreadsheets other people have shared with this user, newest first: { name, path, uid, mode,
+ * The sheets other people have shared with this user, newest first: { name, path, uid, mode,
  * owner, modified, size }. A shared file sits at a masked path (/<owner>/<uid>/<name>), which opens
  * like any other; shared folders are left out, as the list shows files. [] when sharing is not here.
  */
@@ -549,9 +549,9 @@ export function shareProblem(err) {
     case 'recipient_not_accepting_shares': return 'That person is not accepting shares.';
     case 'email_not_allowed': return 'That email address cannot receive an invitation.';
     case 'cannot_share_with_self': return 'That is you. Enter someone else’s username or email address.';
-    case 'cannot_share_with_owner': return 'That person owns this spreadsheet already.';
-    case 'forbidden': return 'Only the owner of this spreadsheet, or someone they let manage it, can share it.';
-    case 'subject_does_not_exist': return 'This spreadsheet cannot be shared from here. Only files you own, or may manage, can be shared.';
+    case 'cannot_share_with_owner': return 'That person owns this sheet already.';
+    case 'forbidden': return 'Only the owner of this sheet, or someone they let manage it, can share it.';
+    case 'subject_does_not_exist': return 'This sheet cannot be shared from here. Only files you own, or may manage, can be shared.';
     case 'share_daily_limit_reached': return 'You have shared as much as Puter allows in one day. Try again tomorrow.';
     case 'phone_verification_required': return 'Puter needs a verified phone number on your account before you can share files.';
     case 'card_verification_required': return 'Puter needs a verified card on your account before you can share files.';

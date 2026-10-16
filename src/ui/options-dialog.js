@@ -151,7 +151,7 @@ export function openOptionsDialog(ctx, { section = 'general' } = {}) {
           row(['theme appearance dark light'], el('div.opt-field', {}, el('label.opt-label', { for: themeId }, 'Theme'), themeSelect)),
           ctx.openLocale && button('Regional format…', () => ctx.openLocale(), ['locale number date format region'])),
         group('Starting up',
-          check('startScreen', 'Show the start screen when the app opens', 'Your spreadsheets and templates. Off: the app opens straight onto a new, blank workbook.')),
+          check('startScreen', 'Show the start screen when the app opens', 'Your sheets and templates. Off: the app opens straight onto a new, blank workbook.')),
         group('New workbooks',
           text('fontName', 'Font', 'The Normal style of a new workbook, used by every cell not formatted otherwise.', { list: FONTS }),
           number('fontSize', 'Font size', null, { min: 1, max: 409, step: 0.5, suffix: 'pt' }),

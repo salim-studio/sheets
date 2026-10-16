@@ -60,7 +60,7 @@ it('retains serial dates and Persian formats through edit, Undo, external HTML a
     wb.applyStyle(id,{r1:r,r2:r,c1:0,c2:0},{fmt:'custom',code});
     wb.setInput(id,r,1,`=TEXT(A${r+1},"${code}")`);
     const display = formatWithCode(value,code);
-    const html = cellsToHtml([[display]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html = cellsToHtml([[display]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const cell = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(value); expect(cell.s.code).toBe(code);
   }

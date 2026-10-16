@@ -15,13 +15,13 @@ it('keeps external sources stable after opening, editing, Save As, undo and anot
   const id = doc.wb.activeSheetId;
   doc.wb.setInput(id,1,0,'edit');
   expect(await doc.saveAs('Copy')).toBeNull();
-  const copy = await workbookFromFile(mock.fs.get('Spreadsheets/Copy.xlsx').blob);
+  const copy = await workbookFromFile(mock.fs.get('Sheets/Copy.xlsx').blob);
   expect(copy.externalWorkbooks.books[0].target).toBe('/drive/Data/Source%20A.xlsx');
   expect(copy.getValue(copy.activeSheetId,0,0)).toBe(7);
   doc.wb.undo();
   expect(doc.wb.externalWorkbooks.books[0].target).toBe('/drive/Data/Source%20A.xlsx');
   expect(await doc.save()).toBe(true);
-  const again = await workbookFromFile(mock.fs.get('Spreadsheets/Copy.xlsx').blob);
+  const again = await workbookFromFile(mock.fs.get('Sheets/Copy.xlsx').blob);
   expect(again.externalWorkbooks.books[0].target).toBe('/drive/Data/Source%20A.xlsx');
   const original = await workbookFromFile(mock.fs.get(path).blob);
   expect(original.externalWorkbooks.books[0].target).toBe('../Data/Source%20A.xlsx');
@@ -34,7 +34,7 @@ it.each(['sparkline','external name'])('checks outside-content formulas in %s me
     json.externalWorkbooks={version:1,books:[{target:'https://example.com/source.xlsx',sheets:[{name:'Data',cells:{'0,0':1}}],names:[{name:'Network',ref:'IF(IMPORTDATA("https://example.com/data.csv"),Data!A1,Data!A1)'}]}]};
     json.sheets[0].cells['0,2']={f:'[1]Data!Network'};
   }
-  const blob=await workbookToXlsx(new Workbook(json)),path=`Spreadsheets/${kind}.xlsx`;
+  const blob=await workbookToXlsx(new Workbook(json)),path=`Sheets/${kind}.xlsx`;
   mock.fs.set(path,{blob,size:blob.size,modified:Date.now()/1000});
   doc=await Doc.fromPath(path);expect(doc.wb.externalAllowed).toBe(false);
   const calls=[];doc.wb.setAsyncProvider('IMPORTDATA',async url=>{calls.push(url);return [[1]];});

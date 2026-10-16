@@ -23,7 +23,7 @@ const leaf = (flags, label) => sheetLeaves(flags).find((it) => it.label === labe
 describe('menu and palette definitions', () => {
   it('offer every tab-menu action for the active sheet, greyed as the tab menu greys them', () => {
     const lone = { sheet: { only: true, first: true, last: true, protected: false, holdsWork: false } };
-    expect(sheetLeaves(lone).map((it) => it.label)).toEqual(['New sheet', 'Duplicate sheet', 'Move or Copy sheet…', 'Copy sheet to another spreadsheet…', 'Rename sheet…', 'Sheet color…', 'Move sheet left', 'Move sheet right', 'Protect sheet', 'Hide sheet', 'Delete sheet', 'Select all sheets']);
+    expect(sheetLeaves(lone).map((it) => it.label)).toEqual(['New sheet', 'Duplicate sheet', 'Move or Copy sheet…', 'Copy sheet to another sheets…', 'Rename sheet…', 'Sheet color…', 'Move sheet left', 'Move sheet right', 'Protect sheet', 'Hide sheet', 'Delete sheet', 'Select all sheets']);
     for (const label of ['Move sheet left', 'Move sheet right', 'Hide sheet', 'Delete sheet', 'Select all sheets']) expect(leaf(lone, label).disabled, label).toBe(true);
     for (const label of ['Rename sheet…', 'Duplicate sheet', 'Move or Copy sheet…', 'Sheet color…', 'Protect sheet']) expect(leaf(lone, label).disabled, label).toBeFalsy();
     const middle = { sheet: { only: false, first: false, last: false, protected: true, holdsWork: true } };
@@ -36,8 +36,8 @@ describe('menu and palette definitions', () => {
 
   it('list the sheet actions in the palette and leave out what the tab menu greys', () => {
     const labels = (flags) => paletteCommands(flags).filter((c) => /sheet/i.test(c.label) && c.section === 'Insert').map((c) => c.label);
-    expect(labels({})).toEqual(['New sheet', 'Duplicate sheet', 'Move or Copy sheet…', 'Copy sheet to another spreadsheet…', 'Rename sheet…', 'Sheet color…', 'Move sheet left', 'Move sheet right', 'Protect sheet', 'Hide sheet', 'Delete sheet', 'Select all sheets']);
-    expect(labels({ sheet: { only: true, first: true, last: true, protected: true, holdsWork: true } })).toEqual(['New sheet', 'Duplicate sheet', 'Move or Copy sheet…', 'Copy sheet to another spreadsheet…', 'Rename sheet…', 'Sheet color…', 'Unprotect sheet']);
+    expect(labels({})).toEqual(['New sheet', 'Duplicate sheet', 'Move or Copy sheet…', 'Copy sheet to another sheets…', 'Rename sheet…', 'Sheet color…', 'Move sheet left', 'Move sheet right', 'Protect sheet', 'Hide sheet', 'Delete sheet', 'Select all sheets']);
+    expect(labels({ sheet: { only: true, first: true, last: true, protected: true, holdsWork: true } })).toEqual(['New sheet', 'Duplicate sheet', 'Move or Copy sheet…', 'Copy sheet to another sheets…', 'Rename sheet…', 'Sheet color…', 'Unprotect sheet']);
   });
 });
 
@@ -63,7 +63,7 @@ describe('the editor', () => {
 
   /** Sheet1 holds a value, Sheet2 is empty; the editor starts on Sheet1. */
   async function setup() {
-    const doc = new Doc({ name: 'Tabs', path: 'Spreadsheets/Tabs.xlsx' });
+    const doc = new Doc({ name: 'Tabs', path: 'Sheets/Tabs.xlsx' });
     const wb = doc.wb;
     const first = wb.activeSheetId;
     const second = wb.addSheet('Sheet2').id;

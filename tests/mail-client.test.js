@@ -130,11 +130,11 @@ describe('the mailer', () => {
     const world = loadEmailWorker();
     const puter = bridged(world);
     const mailer = createMailer({ getPuter: () => puter });
-    await mailer.sendLink({ workbookName: 'B', recipients: ['ana@example.com'], link: 'https://spreadsheet.puter.com/#/file/u1', access: 'edit', message: 'hi' });
+    await mailer.sendLink({ workbookName: 'B', recipients: ['ana@example.com'], link: 'https://sheets.puter.com/#/file/u1', access: 'edit', message: 'hi' });
     expect(JSON.parse(puter.workers.exec.mock.calls[0][1].body)).toEqual({
-      workbook: { name: 'B' }, recipients: [{ email: 'ana@example.com' }], link: 'https://spreadsheet.puter.com/#/file/u1', access: 'edit', message: 'hi',
+      workbook: { name: 'B' }, recipients: [{ email: 'ana@example.com' }], link: 'https://sheets.puter.com/#/file/u1', access: 'edit', message: 'hi',
     });
-    await mailer.sendMentions({ workbookName: 'B', recipients: [{ email: 'ana@puter.email', name: 'ana' }], link: 'https://spreadsheet.puter.com/#/file/u1?range=A1',
+    await mailer.sendMentions({ workbookName: 'B', recipients: [{ email: 'ana@puter.email', name: 'ana' }], link: 'https://sheets.puter.com/#/file/u1?range=A1',
       comment: { id: '{11111111-2222-3333-4444-555555555555}', text: '@ana hi', cell: 'Sheet1!A1', extra: 'dropped' } });
     expect(JSON.parse(puter.workers.exec.mock.calls[1][1].body).comment).toEqual({ id: '{11111111-2222-3333-4444-555555555555}', text: '@ana hi', cell: 'Sheet1!A1' });
     expect(world.sent.map((m) => m.to)).toEqual(['ana@example.com', 'ana@puter.email']);

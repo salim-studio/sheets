@@ -8,7 +8,7 @@ import { stampClipboardHtml } from './helpers/clipboard.js';
 // "lead", "a  b" as "a b" and "trail  " as "trail", and a\r\nb as a\n\nb since only \n became a <br>. The
 // values snapshot on the same table carried the originals but was not consulted for those cells.
 const TEXTS = ['  lead', 'a  b', 'trail  ', 'a\r\nb', 'x y', 'plain', 'two\nlines'];
-const strip = (html) => html.replace(/ data-spreadsheet-(cells|values|origin)="[^"]*"/g, '');
+const strip = (html) => html.replace(/ data-sheets-(cells|values|origin)="[^"]*"/g, '');
 const values = (html) => parseHtmlClipboard(html).rows[0].map((cell) => cell.value);
 const tds = (html) => [...new DOMParser().parseFromString(html, 'text/html').querySelectorAll('td')];
 
@@ -30,7 +30,7 @@ describe('spaces and line ends in copied text', () => {
   });
 
   it('lets the values snapshot restore what a bare x:str lost, and leaves a named x:str and typed numbers alone', () => {
-    const html = stampClipboardHtml(`<table data-spreadsheet-values='[["  lead","a  b","kept",7]]'><tr><td x:str>lead</td><td x:str>a b</td><td x:str="kept">other</td><td x:num="7.5">7.5</td></tr></table>`);
+    const html = stampClipboardHtml(`<table data-sheets-values='[["  lead","a  b","kept",7]]'><tr><td x:str>lead</td><td x:str>a b</td><td x:str="kept">other</td><td x:num="7.5">7.5</td></tr></table>`);
     expect(values(html)).toEqual(['  lead', 'a  b', 'kept', 7.5]);
   });
 });

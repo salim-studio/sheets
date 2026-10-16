@@ -29,7 +29,7 @@ async function withoutSidecar(blob, kind) {
   return X.write(back, { type: 'array', bookType: 'xlsx' });
 }
 
-it.each(['xlsx', 'ods'])('writes inherited formats into native %s cells for other spreadsheet apps', async (kind) => {
+it.each(['xlsx', 'ods'])('writes inherited formats into native %s cells for other sheets apps', async (kind) => {
   const wb = book(), id = wb.activeSheetId;
   wb.clearRange(id, { r1: 7, r2: 7, c1: 1, c2: 1 }, { contents: false, styles: true });
   const bytes = await withoutSidecar(await save(wb, kind), kind);

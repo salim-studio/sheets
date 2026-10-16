@@ -459,7 +459,7 @@ export function codeIsFraction(value, code) {
 }
 
 // System formats follow the app's regional setting.
-// Derive a field pattern from locale data, then use spreadsheet
+// Derive a field pattern from locale data, then use sheets
 // serial arithmetic (including day zero and February 29, 1900) to render it.
 const systemPatterns = new Map();
 function systemDateTokens(kind) {

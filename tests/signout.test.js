@@ -54,21 +54,21 @@ describe('signing out', () => {
   });
 
   // Sign out left every account-scoped record in localStorage: the drafts hold whole unsaved
-  // spreadsheets, and the recents the names and drive paths of the account's files, so the next
+  // sheets, and the recents the names and drive paths of the account's files, so the next
   // person on a shared computer could read them from devtools. They go with the sign-out now.
   it('removes the account’s drafts, recents and decisions from this browser', async () => {
     setStorageUser({ uuid: 'abc-123' });
     const mine = accountStorageKey('');
-    localStorage.setItem(`spreadsheet:draft${mine}Spreadsheets/Plan.xlsx`, '{"workbook":"secret"}');
-    localStorage.setItem(`spreadsheet:recent${mine}`, '["Spreadsheets/Plan.xlsx"]');
-    localStorage.setItem('spreadsheet:zoom', '1.25'); // a device setting, not the account's data
+    localStorage.setItem(`sheets:draft${mine}Sheets/Plan.xlsx`, '{"workbook":"secret"}');
+    localStorage.setItem(`sheets:recent${mine}`, '["Sheets/Plan.xlsx"]');
+    localStorage.setItem('sheets:zoom', '1.25'); // a device setting, not the account's data
     const pending = confirmSignOut();
     [...document.querySelectorAll('.modal-panel button')].find((b) => b.textContent === 'Sign out').click();
     await pending;
     expect(P.signOut).toHaveBeenCalledTimes(1);
-    expect(localStorage.getItem(`spreadsheet:draft${mine}Spreadsheets/Plan.xlsx`)).toBeNull();
-    expect(localStorage.getItem(`spreadsheet:recent${mine}`)).toBeNull();
-    expect(localStorage.getItem('spreadsheet:zoom')).toBe('1.25');
+    expect(localStorage.getItem(`sheets:draft${mine}Sheets/Plan.xlsx`)).toBeNull();
+    expect(localStorage.getItem(`sheets:recent${mine}`)).toBeNull();
+    expect(localStorage.getItem('sheets:zoom')).toBe('1.25');
     setGuestStorage();
   });
 
@@ -77,13 +77,13 @@ describe('signing out', () => {
     const theirs = accountStorageKey('');
     setStorageUser({ uuid: 'abc-123' });
     const mine = accountStorageKey('');
-    localStorage.setItem(`spreadsheet:draft${theirs}Spreadsheets/Plan.xlsx`, 'theirs');
-    localStorage.setItem(`spreadsheet:draft${mine}Spreadsheets/Plan.xlsx`, 'mine');
+    localStorage.setItem(`sheets:draft${theirs}Sheets/Plan.xlsx`, 'theirs');
+    localStorage.setItem(`sheets:draft${mine}Sheets/Plan.xlsx`, 'mine');
     const pending = confirmSignOut();
     [...document.querySelectorAll('.modal-panel button')].find((b) => b.textContent === 'Sign out').click();
     await pending;
-    expect(localStorage.getItem(`spreadsheet:draft${mine}Spreadsheets/Plan.xlsx`)).toBeNull();
-    expect(localStorage.getItem(`spreadsheet:draft${theirs}Spreadsheets/Plan.xlsx`)).toBe('theirs');
+    expect(localStorage.getItem(`sheets:draft${mine}Sheets/Plan.xlsx`)).toBeNull();
+    expect(localStorage.getItem(`sheets:draft${theirs}Sheets/Plan.xlsx`)).toBe('theirs');
     setGuestStorage();
   });
 });

@@ -33,7 +33,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 const LONG = 'x'.repeat(66);
 
 async function mount() {
-  const doc = new Doc({ name: 'Fit', path: 'Spreadsheets/Fit.xlsx' });
+  const doc = new Doc({ name: 'Fit', path: 'Sheets/Fit.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (const [r, text] of [[0, 'Item'], [1, 'ab'], [2, 'cd'], [3, LONG]]) wb.setInput(id, r, 0, text);

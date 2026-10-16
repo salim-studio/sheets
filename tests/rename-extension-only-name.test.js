@@ -41,9 +41,9 @@ const fileMenu = (label) => { view.el.querySelector('[data-menu="file"]').click(
 const leave = () => { view.destroy(); view = null; };
 const appInert = () => document.getElementById('app').hasAttribute('inert');
 
-for (const [item, title, method] of [['Rename…', 'Rename spreadsheet', 'rename'], ['Save a copy…', 'Save a copy', 'saveAs']]) {
+for (const [item, title, method] of [['Rename…', 'Rename sheets', 'rename'], ['Save a copy…', 'Save a copy', 'saveAs']]) {
   it(`${title} refuses a name that is only the .xlsx extension, in the dialog`, async () => {
-    const doc = mount('Spreadsheets/Budget.xlsx');
+    const doc = mount('Sheets/Budget.xlsx');
     const call = vi.spyOn(doc, method).mockResolvedValue(null);
     fileMenu(item);
     await vi.advanceTimersByTimeAsync(1);

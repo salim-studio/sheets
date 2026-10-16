@@ -38,7 +38,7 @@ it.each([
   expect(cell.v).toBe(45000); expect(styleToNumFmt(cell.s)).toBe(code);
   expect(formatWithCode(cell.v, styleToNumFmt(cell.s))).toBe(display);
   const exported = cellsToHtml([[display]], [[cell]], null, [[cell.v]]);
-  const again = cellsFromHtmlRows(parseHtmlClipboard(exported.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'')).rows)[0].cell;
+  const again = cellsFromHtmlRows(parseHtmlClipboard(exported.replace(/ data-sheets-[\w-]+="[^"]*"/g,'')).rows)[0].cell;
   expect(again.v).toBe(45000); expect(styleToNumFmt(again.s)).toBe(code);
 });
 

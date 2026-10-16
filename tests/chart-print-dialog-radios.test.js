@@ -64,7 +64,7 @@ it('labels each print option group, gives it one tab stop, and moves the choice 
 });
 
 it('keeps a group reachable when the remembered choice is no longer offered', () => {
-  localStorage.setItem('spreadsheet:print', JSON.stringify({ fit: 'nonsense' }));
+  localStorage.setItem('sheets:print', JSON.stringify({ fit: 'nonsense' }));
   const wb = new Workbook();
   const ctx = { wb, sheetId: () => wb.activeSheetId, selection: () => S.single(0, 0), range: () => ({ r1: 0, c1: 0, r2: 0, c2: 0 }), grid: { focus() {} } };
   openPrintDialog(ctx);

@@ -2,7 +2,7 @@
  * The app's own addresses. Documents open at #/edit/<path>; adding
  * ?range=Sheet!A1:B9 opens the file with those cells selected, which is what
  * "Copy link to this range" hands out. #/file/<uid> opens a file by its id,
- * which is what a shared spreadsheet's link hands out: the people it is shared
+ * which is what a shared sheets's link hands out: the people it is shared
  * with reach it at an address of their own, not at the owner's path; with
  * ?range= it opens at those cells (a comment's link in a mention email).
  */

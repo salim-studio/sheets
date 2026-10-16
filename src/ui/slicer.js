@@ -224,7 +224,7 @@ export function createSlicerControl(doc, change) {
   } };
 }
 
-/** Internal rich clipboard data plus a plain-value fallback for other spreadsheet applications. */
+/** Internal rich clipboard data plus a plain-value fallback for other sheets applications. */
 const clipboardBooks = new WeakMap();
 function clipboardBook(wb) {
   if (!wb) return null;

@@ -28,7 +28,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function open() {
-  const doc = new Doc({ name: 'Focus', path: 'Spreadsheets/Focus.xlsx' });
+  const doc = new Doc({ name: 'Focus', path: 'Sheets/Focus.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   [['Name', 'Qty'], ['a', '1'], ['b', '2']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

@@ -33,7 +33,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function mount(prep) {
-  const doc = new Doc({ name: 'Shift', path: 'Spreadsheets/Shift.xlsx' });
+  const doc = new Doc({ name: 'Shift', path: 'Sheets/Shift.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) wb.setInput(id, r, c, `r${r}c${c}`);

@@ -20,7 +20,7 @@ it('preserves inherited border descriptors and formulas in a private clipboard s
 });
 it('transfers row and column border appearance through external HTML and format-only paste', () => {
   const { wb, cells } = copied();
-  const html = cellsToHtml([['15'], ['']], cells).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([['15'], ['']], cells).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html);
   expect(parsed.cells).toBeUndefined();
   expect(parsed.rows[0][0].style.btBorder).toEqual(edge);

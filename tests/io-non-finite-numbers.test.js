@@ -46,8 +46,8 @@ it('keeps such cells as error cells through .ods and .xlsx round trips, not as f
 });
 
 it('reads a non-numeric office:value of a float cell in an .ods as #NUM!', async () => {
-  const NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet"';
-  const fods = `<?xml version="1.0"?><office:document ${NS}><office:body><office:spreadsheet><table:table table:name="Data"><table:table-row><table:table-cell office:value-type="float" office:value="abc"><text:p>abc</text:p></table:table-cell><table:table-cell office:value-type="float" office:value="1e999"><text:p>inf</text:p></table:table-cell><table:table-cell office:value-type="float" office:value="3"><text:p>3</text:p></table:table-cell></table:table-row></table:table></office:spreadsheet></office:body></office:document>`;
+  const NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets"';
+  const fods = `<?xml version="1.0"?><office:document ${NS}><office:body><office:sheets><table:table table:name="Data"><table:table-row><table:table-cell office:value-type="float" office:value="abc"><text:p>abc</text:p></table:table-cell><table:table-cell office:value-type="float" office:value="1e999"><text:p>inf</text:p></table:table-cell><table:table-cell office:value-type="float" office:value="3"><text:p>3</text:p></table:table-cell></table:table-row></table:table></office:sheets></office:body></office:document>`;
   const wb = await workbookFromFile(new TextEncoder().encode(fods), 'bad.fods');
   const id = wb.activeSheetId;
   expect(wb.getCell(id, 0, 0)).toMatchObject({ v: NUM, f: null });

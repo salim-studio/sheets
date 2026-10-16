@@ -2,13 +2,13 @@ import { expect, it } from 'vitest';
 import { rebasePivotWorkbookTarget } from '../src/core/native-pivot-sheet-copy.js';
 import { relativeWorkbookTarget } from '../src/ui/copysheet.js';
 it.each([
-  ['Spreadsheets/Original #1.xlsx', 'Spreadsheets/Copy.xlsx', 'Original%20%231.xlsx'],
+  ['Sheets/Original #1.xlsx', 'Sheets/Copy.xlsx', 'Original%20%231.xlsx'],
   ['/user/Input/原稿.xlsx', '/user/Output/Copy.xlsx', '../Input/%E5%8E%9F%E7%A8%BF.xlsx'],
   ['a/b/source.xlsx', 'a/c/d/target.xlsx', '../../b/source.xlsx'],
   ['a/../Data/source.xlsx', 'Data/target.xlsx', 'source.xlsx'],
-  ['/user/Source.xlsx', 'Spreadsheets/Target.xlsx', null],
-  [null, 'Spreadsheets/Target.xlsx', null],
-  ['https://example.com/source.xlsx', 'Spreadsheets/Target.xlsx', null],
+  ['/user/Source.xlsx', 'Sheets/Target.xlsx', null],
+  [null, 'Sheets/Target.xlsx', null],
+  ['https://example.com/source.xlsx', 'Sheets/Target.xlsx', null],
 ])('creates a relative workbook URI for %s from %s', (source, destination, expected) => {
   expect(relativeWorkbookTarget(source, destination)).toBe(expected);
 });

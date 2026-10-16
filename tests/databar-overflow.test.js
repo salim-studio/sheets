@@ -78,7 +78,7 @@ it('paints finite grid and print gradients and preserves large clipboard values'
     expect(printed[r].querySelector('td').style.backgroundImage).toBe(cell.style.backgroundImage);
     const copied = wb.copyRange(id, { r1: r, c1: 0, r2: r, c2: 0 });
     const html = cellsToHtml([[String(value)]], copied, [[look]], [[value]]);
-    for (const markup of [html, html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '')]) {
+    for (const markup of [html, html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '')]) {
       const parsed = parseHtmlClipboard(markup);
       const cell = parsed.cells?.[0][0] || cellsFromHtmlRows(parsed.rows)[0].cell;
       expect(cell.v).toBe(value);

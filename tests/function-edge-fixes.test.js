@@ -318,7 +318,7 @@ describe('XLOOKUP and XMATCH binary search modes', () => {
 });
 
 describe('error function precision', () => {
-  // ERF, ERFC and the normal distribution used a seven-digit approximation; a spreadsheet's
+  // ERF, ERFC and the normal distribution used a seven-digit approximation; a sheets's
   // statistics deserve the full fifteen.
   const near = (got, want) => expect(Math.abs(got - want)).toBeLessThanOrEqual(1e-12 * Math.max(1, Math.abs(want)));
   it('match reference values to twelve digits or better', () => {

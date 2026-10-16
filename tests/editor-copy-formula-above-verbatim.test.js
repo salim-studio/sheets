@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function mount(cells) {
-  const doc = new Doc({ name: 'Above', path: 'Spreadsheets/Above.xlsx' });
+  const doc = new Doc({ name: 'Above', path: 'Sheets/Above.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (const [r, c, text] of cells) wb.setInput(id, r, c, text);

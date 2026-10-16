@@ -33,7 +33,7 @@ const menuItem = (label) => [...document.querySelectorAll('.menu-item')].find((n
 
 /** A1:A3 hold 1, 2, 3; A4 (where a sum would land) is protected unless `protect` is false. */
 async function mount({ protect = true } = {}) {
-  const doc = new Doc({ name: 'Sums', path: 'Spreadsheets/Sums.xlsx' });
+  const doc = new Doc({ name: 'Sums', path: 'Sheets/Sums.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (let r = 0; r < 3; r++) wb.setInput(id, r, 0, String(r + 1));

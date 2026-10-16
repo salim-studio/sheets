@@ -9,7 +9,7 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 
 async function openDocument() {
   const doc = Doc.blank();
@@ -29,7 +29,7 @@ it('saves after the file was renamed away and back elsewhere, its bytes unchange
   const { doc, conflicts } = await openDocument();
   await vi.advanceTimersByTimeAsync(5000);
   await puter.fs.rename(PATH, 'Other.xlsx');
-  await puter.fs.rename('Spreadsheets/Other.xlsx', 'Budget.xlsx');
+  await puter.fs.rename('Sheets/Other.xlsx', 'Budget.xlsx');
   expect(mock.fs.get(PATH).modified * 1000).toBeGreaterThan(doc.remoteModified);
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'edited after the rename');
   try {

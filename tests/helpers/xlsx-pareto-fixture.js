@@ -23,7 +23,7 @@ export function paretoXlsx({ externalImage = false, columnOnly = false, reverseA
   add('xl/drawings/_rels/cost.xml.rels', rels(rel('plot', 'chart', '../charts/pareto.xml')
     + rel('art', 'image', externalImage ? 'https://example.com/image.png' : '../media/art.png', externalImage)));
   const point = (tag, col, row, x, y) => `<xdr:${tag}><xdr:col>${col}</xdr:col><xdr:colOff>${x * 9525}</xdr:colOff><xdr:row>${row}</xdr:row><xdr:rowOff>${y * 9525}</xdr:rowOff></xdr:${tag}>`;
-  add('xl/drawings/cost.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}">`
+  add('xl/drawings/cost.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}">`
     + `<xdr:twoCellAnchor>${point('from', 3, 2, 10, 4)}${point('to', 3, 5, 710, 34)}<xdr:graphicFrame><c:chart r:id="plot"/></xdr:graphicFrame></xdr:twoCellAnchor>`
     + `<xdr:twoCellAnchor>${point('from', 3, 0, 40, 10)}${point('to', 3, 1, 640, 20)}<xdr:pic><xdr:nvPicPr><xdr:cNvPr name="Artwork" descr="Cost analysis illustration"/></xdr:nvPicPr><xdr:blipFill><a:blip r:embed="art"/></xdr:blipFill><xdr:spPr><a:xfrm flipH="1"/></xdr:spPr></xdr:pic></xdr:twoCellAnchor></xdr:wsDr>`);
   add('xl/media/art.png', Uint8Array.from(atob('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a8ioAAAAASUVORK5CYII='), c => c.charCodeAt(0)));

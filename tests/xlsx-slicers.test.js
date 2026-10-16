@@ -97,7 +97,7 @@ function drawingFixture(viewName = 'Locations') {
   const book = fixture();
   change(book, 'sheets/view.xml', '<extLst>', '<drawing r:id="draw"/><extLst>');
   change(book, 'sheets/_rels/view.xml.rels', '</Relationships>', `<Relationship Id="draw" Type="${R}/drawing" Target="../art/view.xml"/></Relationships>`);
-  const D = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing', A = 'http://schemas.openxmlformats.org/drawingml/2006/main', SLE = 'http://schemas.microsoft.com/office/drawing/2010/slicer';
+  const D = 'http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing', A = 'http://schemas.openxmlformats.org/drawingml/2006/main', SLE = 'http://schemas.microsoft.com/office/drawing/2010/slicer';
   book.files['art/view.xml'] = text(`<d:wsDr xmlns:d="${D}" xmlns:a="${A}" xmlns:s="${SLE}"><d:absoluteAnchor><d:pos x="9525" y="19050"/><d:ext cx="2857500" cy="1428750"/><d:graphicFrame><d:nvGraphicFramePr><d:cNvPr id="2" name="Frame"/></d:nvGraphicFramePr><a:graphic><a:graphicData uri="${SLE}"><s:slicer name="${viewName}"/></a:graphicData></a:graphic></d:graphicFrame></d:absoluteAnchor></d:wsDr>`);
   return book;
 }

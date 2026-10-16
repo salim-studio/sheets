@@ -6,7 +6,7 @@ import { editorView } from '../src/views/editor.js';
 import { Doc } from '../src/lib/doc.js';
 import * as P from '../src/lib/puter.js';
 
-// File > Share… on a new spreadsheet nobody had typed in said "Save the spreadsheet first": the flush it
+// File > Share… on a new sheet nobody had typed in said "Save the sheets first": the flush it
 // ran has nothing to write for a book that never changed, so the file the dialog shares was never made.
 vi.mock('../src/lib/session.js', () => ({ session: { settings: {}, username: 'me', signedOut: false, addEventListener() {}, removeEventListener() {} } }));
 vi.mock('../src/ui/toast.js', () => ({ toast: vi.fn() }));
@@ -41,9 +41,9 @@ function openShareFromFileMenu() {
   item('Share with people…').click();
 }
 
-it('saves a blank, never-changed spreadsheet and opens the share dialog for it', async () => {
+it('saves a blank, never-changed sheets and opens the share dialog for it', async () => {
   const doc = Doc.blank();
-  const save = vi.spyOn(doc, 'save').mockImplementation(async () => { doc.path = 'Spreadsheets/Untitled spreadsheet.xlsx'; doc.uid = 'u-1'; return true; });
+  const save = vi.spyOn(doc, 'save').mockImplementation(async () => { doc.path = 'Sheets/Untitled sheets.xlsx'; doc.uid = 'u-1'; return true; });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await vi.advanceTimersByTimeAsync(5);
@@ -56,7 +56,7 @@ it('saves a blank, never-changed spreadsheet and opens the share dialog for it',
 
 it('shares a .csv as the .xlsx its edits are saved to, not as the .csv', async () => {
   const doc = new Doc({ name: 'data', path: 'Desktop/data.csv', uid: 'c-1' });
-  const save = vi.spyOn(doc, 'save').mockImplementation(async () => { doc.path = 'Spreadsheets/data.xlsx'; doc.uid = 'x-1'; return true; });
+  const save = vi.spyOn(doc, 'save').mockImplementation(async () => { doc.path = 'Sheets/data.xlsx'; doc.uid = 'x-1'; return true; });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await vi.advanceTimersByTimeAsync(5);
@@ -64,5 +64,5 @@ it('shares a .csv as the .xlsx its edits are saved to, not as the .csv', async (
   openShareFromFileMenu();
   await vi.advanceTimersByTimeAsync(5);
   expect(save).toHaveBeenCalled();
-  expect(P.shareAccess).toHaveBeenCalledWith('Spreadsheets/data.xlsx');
+  expect(P.shareAccess).toHaveBeenCalledWith('Sheets/data.xlsx');
 });

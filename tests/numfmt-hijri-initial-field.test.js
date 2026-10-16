@@ -35,7 +35,7 @@ it('retains initial-field semantics through edits, HTML and metadata-free XLSX',
     wb.setInput(id,r,0,String(value)); wb.applyStyle(id,{r1:r,c1:0,r2:r,c2:0},{fmt:'custom',code});
     wb.setInput(id,r,1,`=TEXT(A${r+1},"${code}")`);
     const expected = formatWithCode(value,code);
-    const html = cellsToHtml([[expected]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html = cellsToHtml([[expected]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const cell = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(value); expect(cell.s.code).toBe(code);
   }

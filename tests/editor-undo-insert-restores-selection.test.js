@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function mount() {
-  const doc = new Doc({ name: 'Undo', path: 'Spreadsheets/Undo.xlsx' });
+  const doc = new Doc({ name: 'Undo', path: 'Sheets/Undo.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (let r = 0; r < 6; r++) wb.setInput(id, r, 1, String(r + 1));

@@ -31,7 +31,7 @@ const NAMES = {
   '★': 'black star', '☆': 'white star', '½': 'vulgar fraction one half', '¼': 'vulgar fraction one quarter', '¾': 'vulgar fraction three quarters',
   '₹': 'indian rupee sign', '₽': 'ruble sign', '₿': 'bitcoin sign', '№': 'numero sign', '℃': 'degree celsius', '℉': 'degree fahrenheit',
 };
-const RECENT_KEY = 'spreadsheet:recent-symbols';
+const RECENT_KEY = 'sheets:recent-symbols';
 const recentSymbols = () => { try { const list = JSON.parse(localStorage.getItem(RECENT_KEY)); return Array.isArray(list) ? list.filter((s) => typeof s === 'string').slice(0, 16) : []; } catch { return []; } };
 const remember = (ch) => { try { localStorage.setItem(RECENT_KEY, JSON.stringify([ch, ...recentSymbols().filter((s) => s !== ch)].slice(0, 16))); } catch { /* optional storage */ } };
 const codeOf = (ch) => `U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`;

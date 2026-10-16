@@ -14,9 +14,9 @@ function file(mode, tables) {
       <number:date-style style:name="ND"><number:year number:style="long"/><number:text>-</number:text><number:month number:style="long"/><number:text>-</number:text><number:day number:style="long"/></number:date-style>
       <style:style style:name="date" style:family="table-cell" style:data-style-name="ND"/>`;
   const root = mode === 'fods' ? 'document' : 'document-content';
-  const content = new TextEncoder().encode(`<?xml version="1.0"?><office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+  const content = new TextEncoder().encode(`<?xml version="1.0"?><office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
     ${mode === 'fods' ? `<office:styles>${definitions}</office:styles>` : ''}
-    <office:body><office:spreadsheet>${tables}</office:spreadsheet></office:body></office:${root}>`);
+    <office:body><office:sheets>${tables}</office:sheets></office:body></office:${root}>`);
   if (mode === 'fods') return content;
   const book = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet([[0]]), 'Data');

@@ -28,7 +28,7 @@ import { runTool, describeCall, callTarget, changesWorkbook, qualified } from '.
 import { attachmentProblem, attachmentKind, attachmentsTooLarge, formatSize, ATTACH_ACCEPT, MAX_ATTACHMENTS } from '../core/aiattach.js';
 import { readAttachment } from './aiattachments.js';
 
-const SETTINGS_KEY = 'spreadsheet:ai';
+const SETTINGS_KEY = 'sheets:ai';
 export const MIN_WIDTH = 300;
 export const MAX_WIDTH = 720;
 const DEFAULT_WIDTH = 380;
@@ -179,7 +179,7 @@ export function createAiPanel(ctx, env, { onToggle, onBusy } = {}) {
   log.append(empty);
 
   const input = el('textarea.ai-input', {
-    rows: 3, spellcheck: true, placeholder: 'Ask about or change this spreadsheet…', 'aria-label': 'Message the assistant',
+    rows: 3, spellcheck: true, placeholder: 'Ask about or change this sheet…', 'aria-label': 'Message the assistant',
     enterKeyHint: 'send',
   });
   const sendBtn = el('button.ai-send', { type: 'submit', html: icon('arrowUp', 18, 2.2), 'aria-label': 'Send', title: 'Send (Enter)' });

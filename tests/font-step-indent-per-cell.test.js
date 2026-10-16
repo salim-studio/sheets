@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; v
 const menuItem = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open(styles, prepare = () => {}) {
-  const doc = new Doc({ name: 'Steps', path: 'Spreadsheets/Steps.xlsx' });
+  const doc = new Doc({ name: 'Steps', path: 'Sheets/Steps.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   styles.forEach((s, r) => {

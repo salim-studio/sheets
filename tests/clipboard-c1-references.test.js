@@ -7,7 +7,7 @@ import { parseHtmlClipboard, cellsFromHtmlRows, cellsToHtml } from '../src/core/
 
 const office = body => `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><table><tr>${body}</tr></table></html>`;
 const values = html => cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x => x.cell?.v);
-const foreign = html => html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+const foreign = html => html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
 const controls = Array.from({length:32}, (_, i) => String.fromCharCode(0x80 + i));
 // HTML's Windows-1252 replacement table, including its five unmapped controls.
 const visible = Array.from('€\u0081‚ƒ„…†‡ˆ‰Š‹Œ\u008dŽ\u008f\u0090‘’“”•–—˜™š›œ\u009džŸ');

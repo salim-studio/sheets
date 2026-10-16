@@ -35,7 +35,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open(merges) {
-  const doc = new Doc({ name: 'Merges', path: 'Spreadsheets/Merges.xlsx' });
+  const doc = new Doc({ name: 'Merges', path: 'Sheets/Merges.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   for (const range of merges) wb.mergeCells(id, range);

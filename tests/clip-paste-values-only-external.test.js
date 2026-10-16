@@ -59,7 +59,7 @@ describe('Paste special → Values only in the editor', () => {
   it('writes the text and typed values of a web table, with no link and no formula', async () => {
     const clipboard = { read: async () => [{ types: ['text/html'], getType: async () => ({ text: async () => HTML }) }] };
     vi.stubGlobal('navigator', { onLine: true, clipboard });
-    const doc = new Doc({ name: 'Values', path: 'Spreadsheets/Values.xlsx' });
+    const doc = new Doc({ name: 'Values', path: 'Sheets/Values.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setCells(id, [{ r: 0, c: 0, cell: { v: 'old', s: { italic: true } } }]);

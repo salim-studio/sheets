@@ -15,12 +15,12 @@ function fixture(format, local, paired) {
   let bytes = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
     <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
       xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
-      office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-      <office:body><office:spreadsheet><table:table table:name="Data">
+      office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+      <office:body><office:sheets><table:table table:name="Data">
         <table:table-row><table:table-cell office:value-type="float" office:value="42"/>
         <table:table-cell office:value-type="float" office:value="17"/></table:table-row>
         ${local ? definitions : ''}
-      </table:table>${local ? '' : definitions}</office:spreadsheet></office:body>
+      </table:table>${local ? '' : definitions}</office:sheets></office:body>
     </office:${root}>`);
   if (format === 'ods') {
     const book = X.utils.book_new(); X.utils.book_append_sheet(book, X.utils.aoa_to_sheet([[0]]), 'Data');

@@ -23,7 +23,7 @@ it('preserves recovered native clipboard values and formats through native-only 
     });
   }
   const id=wb.activeSheetId, cells=expected.map((_,r)=>[wb.getCell(id,r,1)]), values=expected.map(({v})=>[v]);
-  const html=cellsToHtml(expected.map((_,r)=>[wb.getDisplay(id,r,1)]),cells,null,values).replace(/ data-spreadsheet-\w+="[^"]*"/g,'');
+  const html=cellsToHtml(expected.map((_,r)=>[wb.getDisplay(id,r,1)]),cells,null,values).replace(/ data-sheets-\w+="[^"]*"/g,'');
   const copied=cellsFromHtmlRows(parseHtmlClipboard(html,native.text).rows).map(x=>x.cell.v);
   expect(copied).toEqual(expected.map(x=>x.v));
 });

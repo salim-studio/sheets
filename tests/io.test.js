@@ -1,7 +1,7 @@
 import { DEFAULT_FONT_COLOR } from '../src/core/font-color.js';
 import { describe, it, expect } from 'vitest';
 import { Workbook } from '../src/core/workbook.js';
-import { workbookToXlsx, workbookToOds, workbookFromFile, sheetToCsv, rangeToCsv, sheetToTsv, sheetToHtml, META_SHEET, isSpreadsheetFile, stripExtension, decodeText } from '../src/core/io.js';
+import { workbookToXlsx, workbookToOds, workbookFromFile, sheetToCsv, rangeToCsv, sheetToTsv, sheetToHtml, META_SHEET, isSheetsFile, stripExtension, decodeText } from '../src/core/io.js';
 import { parseCellRef, parseRange } from '../src/core/cell.js';
 import * as XLSX from '../src/vendor/xlsx.mjs';
 
@@ -172,10 +172,10 @@ describe('csv export', () => {
 });
 
 describe('file names', () => {
-  it('recognizes spreadsheet extensions', () => {
-    expect(isSpreadsheetFile('a.xlsx')).toBe(true);
-    expect(isSpreadsheetFile('A.CSV')).toBe(true);
-    expect(isSpreadsheetFile('a.png')).toBe(false);
+  it('recognizes sheets extensions', () => {
+    expect(isSheetsFile('a.xlsx')).toBe(true);
+    expect(isSheetsFile('A.CSV')).toBe(true);
+    expect(isSheetsFile('a.png')).toBe(false);
     expect(stripExtension('Budget 2026.xlsx')).toBe('Budget 2026');
     expect(stripExtension('noext')).toBe('noext');
   });
@@ -295,7 +295,7 @@ describe('TSV and web page export', () => {
     expect(html).toContain('Rent &lt;big&gt;');
     expect(html).toContain('$1,500');
     expect(html).not.toContain('Hidden');
-    expect(html).not.toContain('data-spreadsheet-cells');
+    expect(html).not.toContain('data-sheets-cells');
     expect(html).toMatch(/<td\b[^>]* style="[^"]*font-weight:\s*(600|bold)[^"]*">Item<\/td>/);
     expect(html.endsWith('</body></html>')).toBe(true);
     expect(sheetToHtml(new Workbook(), new Workbook().sheets[0].id)).toContain('This sheet is empty');

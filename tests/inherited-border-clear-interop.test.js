@@ -58,7 +58,7 @@ it('carries explicit cleared edges through private and external HTML clipboard f
   const copied = wb.copyRange(id, { r1: 4, c1: 2, r2: 4, c2: 2 });
   const html = cellsToHtml([['7']], copied);
   expect(parseHtmlClipboard(html).cells).toEqual(copied);
-  const foreign = parseHtmlClipboard(html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, ''));
+  const foreign = parseHtmlClipboard(html.replace(/ data-sheets-[\w-]+="[^"]*"/g, ''));
   for (const key of ['bt', 'bb', 'bl', 'br']) expect(foreign.rows[0][0].style[key]).toBe(false);
   wb.pasteCells(id, [[cellsFromHtmlRows(foreign.rows)[0].cell]], 20, 2);
   plain(wb, 20, 2); expect(wb.getValue(id, 20, 2)).toBe(7);

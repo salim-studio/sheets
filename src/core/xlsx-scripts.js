@@ -6,10 +6,10 @@
  */
 import { normalizeScripts, serializeScripts } from './scripts.js';
 
-export const SCRIPTS_RELATIONSHIP = 'https://puter.com/spreadsheet/relationships/scripts';
+export const SCRIPTS_RELATIONSHIP = 'https://puter.com/sheets/relationships/scripts';
 export const SCRIPTS_PART = '/puter/scripts.json';
-export const SCRIPTS_CONTENT_TYPE = 'application/vnd.puter.spreadsheet.scripts+json';
-const FORMAT = 'puter-spreadsheet-scripts';
+export const SCRIPTS_CONTENT_TYPE = 'application/vnd.puter.sheets.scripts+json';
+const FORMAT = 'puter-sheets-scripts';
 
 const escapeAttr = (text) => String(text).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 

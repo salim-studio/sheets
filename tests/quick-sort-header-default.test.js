@@ -33,7 +33,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 
 /** Column A holds `texts`; the editor selects `where` and runs Sort range A to Z from the Data menu. */
 async function sorted(texts, where) {
-  const doc = new Doc({ name: 'Sort', path: 'Spreadsheets/Sort.xlsx' });
+  const doc = new Doc({ name: 'Sort', path: 'Sheets/Sort.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   texts.forEach((t, r) => wb.setInput(id, r, 0, t));

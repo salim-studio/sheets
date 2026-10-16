@@ -5,8 +5,8 @@ import { workbookFromFile, workbookToXlsx, workbookToOds } from '../src/core/io.
 const tableNS = 'urn:oasis:names:tc:opendocument:xmlns:table:1.0';
 const flatOds = (tables) => new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
   <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
-    xmlns:table="${tableNS}" office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-    <office:body><office:spreadsheet>${tables}</office:spreadsheet></office:body>
+    xmlns:table="${tableNS}" office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+    <office:body><office:sheets>${tables}</office:sheets></office:body>
   </office:document>`);
 const table = (name, cells) => `<table:table table:name="${name}"><table:table-row>${cells}</table:table-row></table:table>`;
 const num = (v, formula = null) => `<table:table-cell office:value-type="float" office:value="${v}"${formula ? ` table:formula="${formula.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"` : ''}><text:p>${v}</text:p></table:table-cell>`;

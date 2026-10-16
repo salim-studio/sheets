@@ -25,7 +25,7 @@ beforeEach(() => {
 });
 afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 async function mount({ normalFont = null } = {}) {
-  const doc = new Doc({ name: 'Reports', path: 'Spreadsheets/Reports.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
+  const doc = new Doc({ name: 'Reports', path: 'Sheets/Reports.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
   const main = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
   const xml = (tag, body, attrs = '') => `<${tag} xmlns="${main}" ${attrs}>${body}</${tag}>`;
   if (normalFont) { wb.normalFont = normalFont; wb.normalStyle = new Workbook({ normalFont }).normalStyle; }

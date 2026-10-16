@@ -38,7 +38,7 @@ describe('editor commands while a cell is being edited', () => {
   afterEach(() => { view?.destroy(); view = null; });
 
   async function open() {
-    const doc = new Doc({ name: 'Edits', path: 'Spreadsheets/Edits.xlsx' });
+    const doc = new Doc({ name: 'Edits', path: 'Sheets/Edits.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 1, 0, 'old');

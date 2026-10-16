@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const BUDGET = 'Spreadsheets/Budget.xlsx';
+const BUDGET = 'Sheets/Budget.xlsx';
 const labels = async (file) => (await listVersions(file)).map((v) => v.label).sort();
 const historyFolders = async () => (await P.listDir(`${P.FOLDER}/.versions`)).filter((it) => it.is_dir).map((it) => it.name).sort();
 async function bytesOf(value) {
@@ -43,7 +43,7 @@ async function budgetWithHistory() {
 it('keeps the history when the file is renamed outside the app', async () => {
   const before = await budgetWithHistory();
   await puter.fs.rename(BUDGET, 'Q3.xlsx'); // the desktop renames it while the app is not looking
-  const doc = await Doc.fromPath('Spreadsheets/Q3.xlsx');
+  const doc = await Doc.fromPath('Sheets/Q3.xlsx');
   try {
     expect(doc.uid).toBe(before.uid);
     expect(await labels(doc.file)).toEqual(['', 'Q1 final']);
@@ -105,7 +105,7 @@ it('keeps to the name when the drive gave the file no id', async () => {
 it('never writes to the drive while a history is read', async () => {
   const before = await budgetWithHistory();
   await puter.fs.rename(BUDGET, 'Q3.xlsx');
-  const doc = await Doc.fromPath('Spreadsheets/Q3.xlsx');
+  const doc = await Doc.fromPath('Sheets/Q3.xlsx');
   try {
     const folders = await historyFolders();
     mock.calls.length = 0;

@@ -11,12 +11,12 @@ function file(rows, extension = 'fods') {
  xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"
  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
  xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2"
- office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+ office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
  <office:automatic-styles>
   <number:number-style style:name="N1"><number:number number:decimal-places="2" number:min-integer-digits="1"/></number:number-style>
   <style:style style:name="ce1" style:family="table-cell" style:data-style-name="N1"/>
  </office:automatic-styles>
- <office:body><office:spreadsheet><table:table table:name="Data">${rows}</table:table></office:spreadsheet></office:body>
+ <office:body><office:sheets><table:table table:name="Data">${rows}</table:table></office:sheets></office:body>
 </office:${root}>`);
   if (extension === 'fods') return xml;
   const book = XLSX.utils.book_new();

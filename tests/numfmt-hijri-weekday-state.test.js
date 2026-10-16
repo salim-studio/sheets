@@ -33,7 +33,7 @@ it('retains B2 field order through editing, HTML and metadata-free XLSX', async 
     wb.setInput(id, r, 1, `=TEXT(A${r+1},"${code}")`);
     const expected = formatWithCode(45583, code);
     expect(wb.getDisplay(id,r,0)).toBe(expected);
-    const html = cellsToHtml([[expected]], [[wb.getCell(id,r,0)]], null, [[45583]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html = cellsToHtml([[expected]], [[wb.getCell(id,r,0)]], null, [[45583]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const cell = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(45583); expect(cell.s.code).toBe(code);
   }

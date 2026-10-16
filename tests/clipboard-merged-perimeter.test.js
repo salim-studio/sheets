@@ -2,7 +2,7 @@
 import { expect, it } from 'vitest';
 import { parseHtmlClipboard } from '../src/core/clipboard.js';
 
-it('distributes a spanning HTML cell\'s side borders to its spreadsheet perimeter',()=>{
+it('distributes a spanning HTML cell\'s side borders to its sheets perimeter',()=>{
  const p=parseHtmlClipboard('<table><tr><td rowspan="3" colspan="2" style="border-top:1px solid red;border-bottom:3px double blue;border-left:2px dashed green;border-right:3px solid black">Merged</td></tr><tr></tr><tr></tr></table>');
  expect(p.merges).toEqual([{r1:0,c1:0,r2:2,c2:1}]);
  expect(p.rows[0][0].text).toBe('Merged');

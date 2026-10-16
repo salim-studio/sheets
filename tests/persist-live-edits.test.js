@@ -11,7 +11,7 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 const KEY = () => draftKey(PATH);
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 const cellA1 = (doc) => doc.wb.getValue(doc.wb.activeSheetId, 0, 0);
@@ -82,7 +82,7 @@ it('keeps the recovered draft on offer when the edits made meanwhile are saved',
   } finally { doc.destroy(); }
 });
 
-it('offers the edits made meanwhile on a later open, and keeps the recovered draft they were made beside as an unsaved spreadsheet', async () => {
+it('offers the edits made meanwhile on a later open, and keeps the recovered draft they were made beside as an unsaved sheet', async () => {
   await fileWithDraft();
   const doc = await openAndEdit();
   doc.destroy(); // the tab closed before deciding, edits and all
@@ -101,7 +101,7 @@ it('carries the edits made meanwhile along with the recovered draft when the fil
   const doc = await openAndEdit();
   try {
     expect(await doc.rename('Plan')).toBeNull();
-    const moved = draftKey('Spreadsheets/Plan.xlsx');
+    const moved = draftKey('Sheets/Plan.xlsx');
     expect(text(loadDraft(moved))).toBe('recovered edits');
     expect(text(loadDraft(liveDraftKey(moved)))).toBe('meanwhile');
     expect(loadDraft(KEY())).toBeNull();

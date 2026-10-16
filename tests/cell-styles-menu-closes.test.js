@@ -27,7 +27,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('closes the Cell styles menu once a style is picked, with the style applied and focus back on the grid', async () => {
-  const doc = new Doc({ name: 'Styles', path: 'Spreadsheets/Styles.xlsx' });
+  const doc = new Doc({ name: 'Styles', path: 'Sheets/Styles.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Report');

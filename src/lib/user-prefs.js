@@ -1,5 +1,5 @@
 /**
- * Preferences that belong to the person, not to a spreadsheet (AutoCorrect's lists, the custom dictionary):
+ * Preferences that belong to the person, not to a sheets (AutoCorrect's lists, the custom dictionary):
  * kept in this browser under the signed-in account's scope, so each account on a shared browser has its own,
  * and copied to puter.kv where there is a session, so they follow the account to another device.
  *
@@ -15,8 +15,8 @@ const canUseKv = () => {
 };
 
 const storage = () => { try { return globalThis.localStorage || null; } catch { return null; } };
-const localKey = (name) => `${accountStorageKey(`spreadsheet:pref-${name}`)}value`;
-const kvKey = (name) => `spreadsheet:pref:${name}`;
+const localKey = (name) => `${accountStorageKey(`sheets:pref-${name}`)}value`;
+const kvKey = (name) => `sheets:pref:${name}`;
 
 /** The stored value ({ at, value } on disk), or `fallback`. */
 export function loadPref(name, fallback = null) {

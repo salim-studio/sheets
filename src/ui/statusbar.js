@@ -130,7 +130,7 @@ export function summarizeAll(wb, sheetId, ranges) {
 }
 
 /** What the status bar shows, as chosen from its right-click menu (Customize Status Bar). */
-const PREFS_KEY = 'spreadsheet:status-bar';
+const PREFS_KEY = 'sheets:status-bar';
 export const STATUS_OPTIONS = [
   ['mode', 'Cell Mode', true], ['a11y', 'Accessibility Checker', true], ['address', 'Selection Address', false], ['size', 'Sheet Size', false], ['avg', 'Average', true], ['count', 'Count', true], ['numCount', 'Numerical Count', false],
   ['min', 'Minimum', false], ['max', 'Maximum', false], ['sum', 'Sum', true], ['views', 'View Shortcuts', true], ['zoomSlider', 'Zoom Slider', true], ['zoom', 'Zoom', true],

@@ -53,7 +53,7 @@ it('preserves precise values and full codes through TEXT, clipboard, edits and n
     const cell = { v: value, f: null, s: { fmt: 'custom', code } };
     const html = cellsToHtml([[expected[r]]], [[cell]], null, [[value]]);
     expect(parseHtmlClipboard(html).cells).toEqual([[cell]]);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const copied = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(copied.v).toBe(value);
     expect(copied.s.code).toBe(code);

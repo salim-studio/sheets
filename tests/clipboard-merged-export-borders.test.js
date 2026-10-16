@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import { cellsToHtml, copyMergeLayout, parseHtmlClipboard } from '../src/core/clipboard.js';
 
 const edge = (key, bs, bc) => ({ [key]: true, [`${key}Border`]: { bs, bc } });
-const foreign = html => parseHtmlClipboard(html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, ''));
+const foreign = html => parseHtmlClipboard(html.replace(/ data-sheets-[\w-]+="[^"]*"/g, ''));
 const first = html => new DOMParser().parseFromString(html, 'text/html').querySelector('td');
 function block(height, width) {
   const cells = Array.from({ length: height }, () => Array.from({ length: width }, () => null));

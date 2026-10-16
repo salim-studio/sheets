@@ -85,7 +85,7 @@ export function createChangesPane(ctx) {
 
   async function clearHistory() {
     if (!wb.changeHistory?.length) return;
-    const ok = await confirmDialog({ title: 'Clear change history?', message: 'The list of changes kept with this spreadsheet will be emptied for everyone who opens it. The cells themselves stay as they are, and saved versions are kept.', confirmLabel: 'Clear history' });
+    const ok = await confirmDialog({ title: 'Clear change history?', message: 'The list of changes kept with this sheet will be emptied for everyone who opens it. The cells themselves stay as they are, and saved versions are kept.', confirmLabel: 'Clear history' });
     if (!ok) return;
     clearChangeHistory(wb);
     limit = PAGE;

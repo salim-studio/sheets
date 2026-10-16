@@ -24,7 +24,7 @@ it('keeps Constantia invoice text and column geometry in native XLSX and externa
     expect(style.font).toBe('constantia');
     expect([0, 1, 2, 3].map(c => wb.colWidth(s.id, c))).toEqual([21, 245, 117, 139]);
     const html = cellsToHtml([['INVOICE']], [[wb.getCell(s.id, 0, 0)]], [[style]])
-      .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+      .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     expect(new DOMParser().parseFromString(html, 'text/html').querySelector('td').style.fontFamily).toBe('\"Constantia\"');
     const rows = parseHtmlClipboard(html).rows;
     expect(cellsFromHtmlRows(rows)[0].cell.s.font).toBe('constantia');

@@ -102,6 +102,6 @@ describe('copying a cell in a whole-column format', () => {
     expect(html).toContain('background-color:#ffff00');
     expect(html).toContain('mso-number-format');
     // The embedded copy is the cells as the sheet stores them, so an in-app paste is unchanged.
-    expect(html).toContain(`data-spreadsheet-cells="${JSON.stringify(cells).replace(/"/g, '&quot;')}"`);
+    expect(html).toContain(`data-sheets-cells="${JSON.stringify(cells).replace(/"/g, '&quot;')}"`);
   });
 });

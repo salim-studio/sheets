@@ -28,7 +28,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('offers a list of amounts in the format the column gives its cells', async () => {
-  const doc = new Doc({ name: 'Prices', path: 'Spreadsheets/Prices.xlsx' });
+  const doc = new Doc({ name: 'Prices', path: 'Sheets/Prices.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   const name = wb.sheet(id).name;

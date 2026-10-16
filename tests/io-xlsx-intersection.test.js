@@ -82,7 +82,7 @@ it('shifts both operands on copy/paste and preserves native error values through
   wb.setInput(id, 5, 7, '=A1 B2');
   expect(wb.getValue(id, 5, 7)).toEqual({ error: '#NULL!' });
   const cells = wb.copyRange(id, { r1: 5, c1: 7, r2: 5, c2: 7 });
-  const html = cellsToHtml([['#NULL!']], cells, null, [[{ error: '#NULL!' }]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([['#NULL!']], cells, null, [[{ error: '#NULL!' }]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try { expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell.v).toEqual({ error: '#NULL!' }); }
   finally { vi.unstubAllGlobals(); }

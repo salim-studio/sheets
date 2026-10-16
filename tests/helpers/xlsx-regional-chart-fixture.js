@@ -28,7 +28,7 @@ export function regionalChartXlsx({ secondary = false } = {}) {
   add('xl/worksheets/_rels/sheet1.xml.rels', rel('drawing', 'drawing', '../drawings/region.xml'));
   add('xl/drawings/_rels/region.xml.rels', rel('chart', 'chart', '../charts/region.xml'));
   const point = (name, col, y) => `<xdr:${name}><xdr:col>${col}</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>1</xdr:row><xdr:rowOff>${y * 9525}</xdr:rowOff></xdr:${name}>`;
-  add('xl/drawings/region.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}"><xdr:twoCellAnchor>${point('from', 0, 13)}${point('to', 12, 326)}<xdr:graphicFrame><c:chart r:id="chart"/></xdr:graphicFrame></xdr:twoCellAnchor></xdr:wsDr>`);
+  add('xl/drawings/region.xml', `<xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="${ns}"><xdr:twoCellAnchor>${point('from', 0, 13)}${point('to', 12, 326)}<xdr:graphicFrame><c:chart r:id="chart"/></xdr:graphicFrame></xdr:twoCellAnchor></xdr:wsDr>`);
   const ref = f => `<c:numRef><c:f>${f}</c:f><c:numCache><c:ptCount val="1"/><c:pt idx="0"><c:v>999</c:v></c:pt></c:numCache></c:numRef>`;
   const fill = color => `<a:solidFill><a:srgbClr val="${color}"/></a:solidFill>`;
   const series = ['F07F70', '7DB2B9', 'CADA54'].map((color, i) => `<c:ser><c:tx><c:strRef><c:f>'Regional sales'!$A$${i + 4}</c:f></c:strRef></c:tx><c:spPr><a:ln w="25400">${fill(color)}</a:ln></c:spPr><c:marker><c:symbol val="none"/></c:marker><c:cat>${ref("'Regional sales'!$B$3:$E$3")}</c:cat><c:val>${ref(`'Regional sales'!$B$${i + 4}:$E$${i + 4}`)}</c:val></c:ser>`).join('');

@@ -38,7 +38,7 @@ it('keeps text, conversion errors and formulas live through native XLSX, edits a
 it('preserves numeric text and conversion errors through external HTML', () => {
   const values = [['1e309%'], ['1.234567890123459'], [{ error: '#VALUE!' }]];
   const cells = values.map(row => row.map(v => ({ v })));
-  const html = cellsToHtml(values.map(row => row.map(v => v?.error || String(v))), cells, null, values).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml(values.map(row => row.map(v => v?.error || String(v))), cells, null, values).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows);

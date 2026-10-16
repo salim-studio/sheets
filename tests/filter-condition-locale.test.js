@@ -38,7 +38,7 @@ async function mount(locale, entries) {
   view = null;
   document.body.innerHTML = '<div id="app"></div>';
   setLocale(locale);
-  const doc = new Doc({ name: 'List', path: 'Spreadsheets/List.xlsx' });
+  const doc = new Doc({ name: 'List', path: 'Sheets/List.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Amount');

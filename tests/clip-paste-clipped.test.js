@@ -29,7 +29,7 @@ describe('pasting past the sheet edge', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount() {
-    const doc = new Doc({ name: 'Edge', path: 'Spreadsheets/Edge.xlsx' });
+    const doc = new Doc({ name: 'Edge', path: 'Sheets/Edge.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '1'); wb.setInput(id, 1, 0, '2'); wb.setInput(id, 2, 0, '3');

@@ -47,7 +47,7 @@ describe('local drafts', () => {
 
   it('retains the last recoverable draft when a later edit is too large to store', () => {
     const wb = new Workbook();
-    const key = draftKey('Spreadsheets/Large.xlsx');
+    const key = draftKey('Sheets/Large.xlsx');
     wb.setInput(wb.activeSheetId, 0, 0, 'recoverable work');
     expect(saveDraft(key, wb, 'Large')).toBe(true);
     const previous = loadDraft(key);
@@ -60,16 +60,16 @@ describe('local drafts', () => {
   it('stores, lists, moves, and clears drafts', () => {
     const wb = new Workbook();
     wb.setInput(wb.sheets[0].id, 0, 0, 'hello');
-    const key = draftKey('Spreadsheets/A.xlsx');
+    const key = draftKey('Sheets/A.xlsx');
     expect(saveDraft(key, wb, 'A')).toBe(true);
     const back = loadDraft(key);
     expect(back.name).toBe('A');
     expect(back.workbook.sheets[0].cells['0,0'].v).toBe('hello');
-    expect(listDrafts().map((d) => d.path)).toEqual(['Spreadsheets/A.xlsx']);
-    moveDraft(key, draftKey('Spreadsheets/B.xlsx'));
+    expect(listDrafts().map((d) => d.path)).toEqual(['Sheets/A.xlsx']);
+    moveDraft(key, draftKey('Sheets/B.xlsx'));
     expect(loadDraft(key)).toBeNull();
-    expect(loadDraft(draftKey('Spreadsheets/B.xlsx')).name).toBe('A');
-    clearDraft(draftKey('Spreadsheets/B.xlsx'));
+    expect(loadDraft(draftKey('Sheets/B.xlsx')).name).toBe('A');
+    clearDraft(draftKey('Sheets/B.xlsx'));
     expect(listDrafts()).toEqual([]);
     expect(draftKey(null, 'Untitled')).toContain('new:Untitled');
   });
@@ -108,7 +108,7 @@ describe('the document keeps a draft until the file holds the edits', () => {
 
   it.each([
     [null, 'writeDraft'], [null, 'destroy'],
-    ['Spreadsheets/Shared.xlsx', 'writeDraft'], ['Spreadsheets/Shared.xlsx', 'destroy'],
+    ['Sheets/Shared.xlsx', 'writeDraft'], ['Sheets/Shared.xlsx', 'destroy'],
   ])('does not clear another document\'s draft at %s during %s', (path, action) => {
     const clean = new Doc({ path });
     const editing = new Doc({ path });
@@ -121,7 +121,7 @@ describe('the document keeps a draft until the file holds the edits', () => {
     } finally { clean.destroy(); editing.destroy(); }
   });
 
-  it.each([null, 'Spreadsheets/Shared.xlsx'])('keeps another tab\'s newer draft when saving %s', async (path) => {
+  it.each([null, 'Sheets/Shared.xlsx'])('keeps another tab\'s newer draft when saving %s', async (path) => {
     const saving = new Doc({ path });
     const editing = new Doc({ path });
     try {
@@ -138,7 +138,7 @@ describe('the document keeps a draft until the file holds the edits', () => {
   });
 
   it('discards only the recovery snapshot that was offered', () => {
-    const reopened = new Doc({ path: 'Spreadsheets/Shared.xlsx' });
+    const reopened = new Doc({ path: 'Sheets/Shared.xlsx' });
     const editing = new Doc({ path: reopened.path });
     try {
       editing.wb.setInput(editing.wb.activeSheetId, 0, 0, 'Offered for recovery');
@@ -173,7 +173,7 @@ describe('the document keeps a draft until the file holds the edits', () => {
   });
 
   it.each(['restore', 'discard'])('can %s a legacy draft without a revision ID', async (action) => {
-    const doc = new Doc({ path: 'Spreadsheets/Legacy.xlsx' });
+    const doc = new Doc({ path: 'Sheets/Legacy.xlsx' });
     try {
       const wb = new Workbook();
       wb.setInput(wb.activeSheetId, 0, 0, 'Legacy recovery');
@@ -202,7 +202,7 @@ describe('the document keeps a draft until the file holds the edits', () => {
       expect(loadDraft(doc.draftKey)?.workbook.sheets[0].cells['0,0'].v).toBe('Unsaved edit');
       expect(loadDraft(oldKey)).toBeNull();
       await doc.save();
-      expect(doc.path).toBe('Spreadsheets/Named draft.xlsx');
+      expect(doc.path).toBe('Sheets/Named draft.xlsx');
       expect(listDrafts()).toEqual([]);
     } finally { doc.destroy(); }
   });
@@ -241,7 +241,7 @@ describe('the document keeps a draft until the file holds the edits', () => {
   });
 
   it('writes a draft after an edit, clears it after a save, and offers a newer draft on reopen', async () => {
-    const path = 'Spreadsheets/Plan.xlsx';
+    const path = 'Sheets/Plan.xlsx';
     const wb = new Workbook();
     const doc = new Doc({ wb, name: 'Plan', path });
     // The file is on the drive, as it is for any document that knows when it was last written.

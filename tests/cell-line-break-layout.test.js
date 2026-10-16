@@ -53,7 +53,7 @@ it.each(['\n', '\r\n', '\r'])('honors wrapping without changing stored %j text o
 
 it.each([false, true])('retains raw line endings and wrap=%s in external HTML and native XLSX', async wrap => {
   const raw = 'alpha\r\nbeta\rgamma\nend', cell = { v: raw, f: null, s: { wrap } };
-  const html = cellsToHtml([[raw]], [[cell]], null, [[raw]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([[raw]], [[cell]], null, [[raw]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html);
   const back = cellsFromHtmlRows(parsed.rows)[0].cell;
   expect(back.v).toBe(raw);

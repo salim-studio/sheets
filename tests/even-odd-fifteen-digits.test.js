@@ -19,9 +19,9 @@ describe('EVEN and ODD at fifteen significant digits', () => {
   });
 
   it('take a number at 15 significant digits, as the other stepping functions do', () => {
-    expect(calc('EVEN(2.000000000000001)')).toBe(2); // 16 significant digits: 2 to a spreadsheet
+    expect(calc('EVEN(2.000000000000001)')).toBe(2); // 16 significant digits: 2 to a sheets
     expect(calc('ODD(3.000000000000001)')).toBe(3);
-    // 0.3/0.1 is 2.9999999999999996 in binary and 3 to a spreadsheet: 3*20 = 60, already even.
+    // 0.3/0.1 is 2.9999999999999996 in binary and 3 to a sheets: 3*20 = 60, already even.
     expect(calc('EVEN(0.3/0.1*20)')).toBe(60);
     expect(calc('ODD(0.3/0.1*20+1)')).toBe(61);
   });

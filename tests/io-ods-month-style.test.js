@@ -11,17 +11,17 @@ function monthFile(textual, width) {
  xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
  xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"
  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
- office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+ office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
  <office:automatic-styles>
   <number:date-style style:name="N1">${month}</number:date-style>
   <number:date-style style:name="N2"><number:year number:style="long"/><number:text>-</number:text>${month}<number:text>-</number:text><number:day number:style="long"/></number:date-style>
   <style:style style:name="ce1" style:family="table-cell" style:data-style-name="N1"/>
   <style:style style:name="ce2" style:family="table-cell" style:data-style-name="N2"/>
  </office:automatic-styles>
- <office:body><office:spreadsheet><table:table table:name="Data"><table:table-row>
+ <office:body><office:sheets><table:table table:name="Data"><table:table-row>
   <table:table-cell table:style-name="ce1" office:value-type="date" office:date-value="2024-01-15"><text:p>cached month</text:p></table:table-cell>
   <table:table-cell table:style-name="ce2" office:value-type="date" office:date-value="2024-01-15"><text:p>cached date</text:p></table:table-cell>
- </table:table-row></table:table></office:spreadsheet></office:body>
+ </table:table-row></table:table></office:sheets></office:body>
 </office:document>`);
 }
 

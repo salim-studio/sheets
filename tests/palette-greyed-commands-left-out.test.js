@@ -63,7 +63,7 @@ describe('the palette in the editor', () => {
   afterEach(() => { document.querySelector('.palette-root')?.remove(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('has no Merge cells for a single date cell, and no decimal steps either', async () => {
-    const doc = new Doc({ name: 'Palette', path: 'Spreadsheets/Palette.xlsx' });
+    const doc = new Doc({ name: 'Palette', path: 'Sheets/Palette.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '2024-01-15');

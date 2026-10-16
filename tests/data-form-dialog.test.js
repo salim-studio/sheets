@@ -27,7 +27,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Stock', path: 'Spreadsheets/Stock.xlsx' });
+  const doc = new Doc({ name: 'Stock', path: 'Sheets/Stock.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   const rows = [['Name', 'Qty', 'Price', 'Total'], ['Apple', '3', '2', '=B2*C2'], ['Banana', '10', '1', '=B3*C3'], ['Cherry', '150', '0.5', '=B4*C4']];

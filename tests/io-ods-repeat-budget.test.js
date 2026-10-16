@@ -6,8 +6,8 @@ function file(rows) {
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
  xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
- office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:body><office:spreadsheet><table:table table:name="Data">${rows}</table:table></office:spreadsheet></office:body>
+ office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
+ <office:body><office:sheets><table:table table:name="Data">${rows}</table:table></office:sheets></office:body>
 </office:document>`);
 }
 const block = (rows, cols) => `<table:table-row table:number-rows-repeated="${rows}"><table:table-cell table:number-columns-repeated="${cols}" office:value-type="float" office:value="1"><text:p>1</text:p></table:table-cell></table:table-row>`;

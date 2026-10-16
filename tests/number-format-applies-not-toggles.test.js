@@ -33,7 +33,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 
 /** A1:A3 selected with A1 active, A1 already in `fmt` and the others plain. */
 async function setup(texts) {
-  const doc = new Doc({ name: 'Formats', path: 'Spreadsheets/Formats.xlsx' });
+  const doc = new Doc({ name: 'Formats', path: 'Sheets/Formats.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   texts.forEach((t, r) => wb.setInput(id, r, 0, t));

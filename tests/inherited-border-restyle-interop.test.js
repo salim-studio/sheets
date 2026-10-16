@@ -32,7 +32,7 @@ it.each([false, true])('round-trips actual restyling twice, including blank inhe
 it.each([false, true])('carries restyled borders through clipboard and export (foreign HTML=%s)', async foreign => {
   const wb = book(), id = wb.activeSheetId, cells = wb.copyRange(id, block);
   let html = cellsToHtml(cells.map((row, i) => row.map((_, j) => wb.getDisplay(id, block.r1 + i, block.c1 + j))), cells);
-  if (foreign) html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (foreign) html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html), destination = new Workbook(), destId = destination.activeSheetId;
   if (foreign) destination.setCells(destId, cellsFromHtmlRows(parsed.rows).map(({ i, j, cell }) => ({ r: i + 2, c: j + 4, cell })));
   else destination.pasteCells(destId, parsed.cells, 2, 4);

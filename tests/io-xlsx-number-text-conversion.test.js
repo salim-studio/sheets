@@ -37,7 +37,7 @@ it('preserves text results and live formulas through native-only saves, edits, U
 it('keeps converted numbers as typed text in external HTML copies', () => {
   const values=[['1000000000000000','0.0000001','1E+20','0.333333333333333']];
   const cells=[values[0].map(v=>({v}))];
-  const html=cellsToHtml(values,cells,null,values).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const html=cellsToHtml(values,cells,null,values).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   vi.stubGlobal('DOMParser',new JSDOM('').window.DOMParser);
   try {
     expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x=>x.cell.v)).toEqual(values[0]);

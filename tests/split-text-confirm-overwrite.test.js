@@ -37,7 +37,7 @@ const dialog = () => modal()?.querySelector('[role="dialog"]') ?? null;
 const button = (label) => [...(modal()?.querySelectorAll('button') ?? [])].find((b) => b.textContent === label);
 
 async function mount(cells) {
-  const doc = new Doc({ name: 'Split', path: 'Spreadsheets/Split.xlsx' });
+  const doc = new Doc({ name: 'Split', path: 'Sheets/Split.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (const [r, c, text] of cells) wb.setInput(id, r, c, text);

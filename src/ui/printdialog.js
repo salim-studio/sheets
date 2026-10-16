@@ -14,7 +14,7 @@ import * as S from '../core/selection.js';
 import { accountStorageKey } from '../lib/account-storage.js';
 import { createPrintPreview } from './print-preview.js';
 
-const STORAGE_KEY = 'spreadsheet:print';
+const STORAGE_KEY = 'sheets:print';
 
 function loadPrefs(key) {
   try { return { ...PRINT_DEFAULTS, ...(JSON.parse(localStorage.getItem(key) || '{}') || {}) }; } catch { return { ...PRINT_DEFAULTS }; }

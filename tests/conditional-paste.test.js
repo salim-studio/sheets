@@ -110,7 +110,7 @@ it('retains live rules in HTML between app tabs, but ignores stale or malformed 
   const other = new Workbook(); paste(other, { ...parsed, origin: parsed.origin }, 2, 4); expect(look(other, 3, 4)).toEqual({ bg: '#ffaaaa' });
   expect(parseHtmlClipboard(html.replace('>3<', '>30<'), '30\n4\n5').conditionalFormats).toBeUndefined();
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  doc.querySelector('table').setAttribute('data-spreadsheet-rules', JSON.stringify([{ ...copied.conditionalFormats[0], range: g(-1, 0) }]));
+  doc.querySelector('table').setAttribute('data-sheets-rules', JSON.stringify([{ ...copied.conditionalFormats[0], range: g(-1, 0) }]));
   expect(parseHtmlClipboard(doc.body.innerHTML, '3\n4\n5').conditionalFormats).toBeUndefined();
 });
 it('keeps pasted expressions and split statistical domains in native XLSX without sidecar metadata', async () => {

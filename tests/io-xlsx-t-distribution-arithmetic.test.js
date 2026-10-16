@@ -44,7 +44,7 @@ it('preserves one/two-sided tails, density subnormals and errors across XLSX edi
 it('retains external numeric HTML inputs for tail and density calculations', () => {
   const values = [[6e153], [5e102]];
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

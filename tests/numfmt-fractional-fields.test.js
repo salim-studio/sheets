@@ -73,7 +73,7 @@ it('preserves numeric values, fractional formats and formulas through edits, cli
     expect(wb.getDisplay(id, r, 0)).toBe(display);
     const html = cellsToHtml([[display]], [[wb.getCell(id, r, 0)]], null, [[serial]]);
     expect(parseHtmlClipboard(html).cells[0][0].v).toBe(serial);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(serial); expect(pasted.s.code).toBe(code);
   }

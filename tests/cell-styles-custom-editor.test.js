@@ -36,7 +36,7 @@ const partBox = (root, label) => [...root.querySelectorAll('.style-part')].find(
 const menuItem = (label) => [...document.querySelectorAll('.menu-item')].find((n) => (n.querySelector('.menu-label')?.textContent ?? n.textContent) === label);
 
 async function mount() {
-  const doc = new Doc({ name: 'Styles', path: 'Spreadsheets/Styles.xlsx' });
+  const doc = new Doc({ name: 'Styles', path: 'Sheets/Styles.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Total');
@@ -152,17 +152,17 @@ describe('cell styles management in the editor', () => {
 describe('Merge Styles', () => {
   const other = () => new Workbook({ cellStyles: [{ name: 'Brand', style: { italic: true } }, { name: 'Accent', style: { bold: true } }] });
 
-  it('copies another spreadsheet’s styles in, asking before same-named ones are replaced', async () => {
+  it('copies another sheets’s styles in, asking before same-named ones are replaced', async () => {
     const wb = new Workbook({ cellStyles: [{ name: 'Brand', style: { bold: true } }] });
-    const io = { listFiles: async () => [{ name: 'Other.xlsx', path: 'Spreadsheets/Other.xlsx' }, { name: 'Mine.xlsx', path: 'Spreadsheets/Mine.xlsx' }],
-      readFile: vi.fn(async () => new Uint8Array([1])), open: vi.fn(async () => other()), currentPath: 'Spreadsheets/Mine.xlsx' };
+    const io = { listFiles: async () => [{ name: 'Other.xlsx', path: 'Sheets/Other.xlsx' }, { name: 'Mine.xlsx', path: 'Sheets/Mine.xlsx' }],
+      readFile: vi.fn(async () => new Uint8Array([1])), open: vi.fn(async () => other()), currentPath: 'Sheets/Mine.xlsx' };
     openMergeStylesDialog({ wb, run: vi.fn() }, io);
     await flush();
     const box = dialog('Merge Styles');
     expect([...box.querySelectorAll('[role="option"]')].map((o) => o.textContent)).toEqual(['Other.xlsx']);
     button(box, 'Merge').click();
     await flush();
-    expect(io.readFile).toHaveBeenCalledWith('Spreadsheets/Other.xlsx');
+    expect(io.readFile).toHaveBeenCalledWith('Sheets/Other.xlsx');
     const ask = [...document.querySelectorAll('.modal-root:not(.closing) [role="dialog"]')].at(-1);
     expect(ask.textContent).toMatch(/already has styles named Brand/);
     button(ask, 'Keep mine').click();

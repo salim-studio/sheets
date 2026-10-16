@@ -42,7 +42,7 @@ describe('the editor mid-edit', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('greys those items out in the menu bar and re-enables them once the edit is committed', async () => {
-    const doc = new Doc({ name: 'Menus', path: 'Spreadsheets/Menus.xlsx' });
+    const doc = new Doc({ name: 'Menus', path: 'Sheets/Menus.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'first');

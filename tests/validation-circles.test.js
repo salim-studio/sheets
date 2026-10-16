@@ -36,7 +36,7 @@ describe('in the editor', () => {
   afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('circles invalid data from the Data Validation arrow, drops a circle once its cell is fixed, and clears them', async () => {
-    const doc = new Doc({ name: 'Circles', path: 'Spreadsheets/Circles.xlsx' });
+    const doc = new Doc({ name: 'Circles', path: 'Sheets/Circles.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '50'); wb.setInput(id, 1, 0, '3'); wb.setInput(id, 2, 0, '-4');

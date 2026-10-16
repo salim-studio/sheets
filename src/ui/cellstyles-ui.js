@@ -2,7 +2,7 @@
  * Cell styles, managed: the gallery (built-in presets, the workbook's own styles and the themed ones, with
  * New Cell Style… and Merge Styles… under them), each style's Modify…, Duplicate… and Delete (right-click a
  * sample, or the menu key on it), the Style dialog that names a style and chooses which parts of a format it
- * carries, and Merge Styles, which copies the styles of another spreadsheet into this one.
+ * carries, and Merge Styles, which copies the styles of another sheets into this one.
  */
 
 import { el, fieldId } from './dom.js';
@@ -202,7 +202,7 @@ export function openStyleDialog(ctx, { mode = 'new', ref = null } = {}) {
   const title = mode === 'modify' ? 'Modify Cell Style' : mode === 'duplicate' ? 'Duplicate Cell Style' : 'New Cell Style';
   const content = el('form.style-dialog', { onsubmit: submit },
     el('label.field', {}, el('span.field-label', {}, 'Style name'), nameInput),
-    builtin && el('p.field-hint', {}, 'A built-in style keeps its name; your changes apply to this spreadsheet.'),
+    builtin && el('p.field-hint', {}, 'A built-in style keeps its name; your changes apply to this sheet.'),
     el('fieldset.style-parts', {}, el('legend', {}, mode === 'new' ? 'Style includes (taken from the active cell)' : 'Style includes'), ...rows),
     preview,
     alert,
@@ -275,14 +275,14 @@ export function mergeCellStyles(wb, other, { replace = false } = {}) {
 }
 
 /**
- * Merge Styles…: pick a spreadsheet (from the app's folder, Puter's file picker, or this device), then its
+ * Merge Styles…: pick a sheets (from the app's folder, Puter's file picker, or this device), then its
  * styles are merged in, asking first whether same-named styles should be replaced.
  * `io` carries the host's file access: { listFiles, pickFile, readFile, displayName, open(bytes, name), currentPath }.
  */
 export function openMergeStylesDialog(ctx, io) {
   const { wb } = ctx;
-  const status = el('p.small.muted', { role: 'status' }, 'Loading spreadsheets…');
-  const list = el('div.merge-styles-list', { role: 'listbox', 'aria-label': 'Spreadsheets', tabindex: 0 });
+  const status = el('p.small.muted', { role: 'status' }, 'Loading sheets…');
+  const list = el('div.merge-styles-list', { role: 'listbox', 'aria-label': 'Sheets', tabindex: 0 });
   let files = [];
   let chosen = -1;
   const { alert, refuse } = fieldAlert('merge-styles');
@@ -306,9 +306,9 @@ export function openMergeStylesDialog(ctx, io) {
     list.replaceChildren(...files.map((f, i) => el('div.merge-styles-file', {
       id: `${listId}-${i}`, role: 'option', 'aria-selected': 'false', onclick: () => choose(i), ondblclick: () => mergeFrom(f),
     }, f.name)));
-    status.textContent = files.length ? 'Choose the spreadsheet whose styles to copy into this one.' : 'No other spreadsheets in your Spreadsheets folder. Browse for one instead.';
+    status.textContent = files.length ? 'Choose the sheets whose styles to copy into this one.' : 'No other sheets in your Sheets folder. Browse for one instead.';
     if (files.length) choose(0);
-  }).catch(() => { status.textContent = 'Your spreadsheets could not be listed. Browse for one instead.'; });
+  }).catch(() => { status.textContent = 'Your sheets could not be listed. Browse for one instead.'; });
 
   async function mergeFrom(file) {
     let other;
@@ -323,7 +323,7 @@ export function openMergeStylesDialog(ctx, io) {
     if (clashes.length) {
       const named = clashes.length > 3 ? `${clashes.slice(0, 3).join(', ')} and ${clashes.length - 3} more` : clashes.join(', ');
       const answer = await confirmDialog({
-        title: 'Merge Styles', message: `This spreadsheet already has styles named ${named}. Replace them with the ones from ${file.name}?`,
+        title: 'Merge Styles', message: `This sheet already has styles named ${named}. Replace them with the ones from ${file.name}?`,
         confirmLabel: 'Replace', cancelLabel: 'Keep mine', danger: false, dismissValue: null,
       });
       if (answer === null) return; // closed without an answer: nothing is merged
@@ -343,7 +343,7 @@ export function openMergeStylesDialog(ctx, io) {
     const file = deviceInput.files?.[0];
     if (file) mergeFrom({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
   } });
-  const content = el('form', { onsubmit: (e) => { e.preventDefault(); if (chosen < 0) return refuse(list, 'Choose a spreadsheet, or browse for one'); mergeFrom(files[chosen]); } },
+  const content = el('form', { onsubmit: (e) => { e.preventDefault(); if (chosen < 0) return refuse(list, 'Choose a sheets, or browse for one'); mergeFrom(files[chosen]); } },
     status, list, alert, deviceInput,
     el('div.row.style-dialog-actions', {},
       browse,

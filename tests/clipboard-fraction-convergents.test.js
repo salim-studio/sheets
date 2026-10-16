@@ -11,7 +11,7 @@ it('copies convergent displays while preserving precise numeric values and forma
   expect(displays).toEqual(['0/1', '-0    ', '2/3', '0/1 ', '2378/5741']);
   const html = cellsToHtml([displays], [cells], null, [values]);
   expect(parseHtmlClipboard(html).cells).toEqual([cells]);
-  const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const restored = cellsFromHtmlRows(parseHtmlClipboard(external).rows).map(x => x.cell);
   expect(restored.map(c => c.v)).toEqual(values);
   expect(restored.map(c => c.s.code)).toEqual(codes);

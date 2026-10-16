@@ -31,7 +31,7 @@ it('preserves explicit calendar semantics through edits, HTML and metadata-free 
     wb.setInput(id,r,1,`=TEXT(A${r+1},"${code}")`);
     const expected=formatWithCode(value,code);
     expect(wb.getDisplay(id,r,0)).toBe(expected);
-    const html=cellsToHtml([[expected]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html=cellsToHtml([[expected]],[[wb.getCell(id,r,0)]],null,[[value]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const cell=cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(value); expect(cell.s.code).toBe(code);
   }

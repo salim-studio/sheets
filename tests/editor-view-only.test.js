@@ -7,7 +7,7 @@ import { Doc } from '../src/lib/doc.js';
 import * as P from '../src/lib/puter.js';
 import { toast } from '../src/ui/toast.js';
 
-// A spreadsheet shared with the user only to view opened as if it could be edited: nothing said so until
+// A sheets shared with the user only to view opened as if it could be edited: nothing said so until
 // a save was refused, as "Not saved: Forbidden".
 
 vi.mock('../src/lib/session.js', () => ({ session: { settings: {}, user: { username: 'me' }, username: 'me', signedOut: false, addEventListener() {}, removeEventListener() {} } }));
@@ -48,7 +48,7 @@ const open = async (path, mode) => {
   return doc;
 };
 
-it('says View only on a spreadsheet shared with the user to view', async () => {
+it('says View only on a sheets shared with the user to view', async () => {
   const doc = await open('/ana/u1/Team.xlsx', 'read');
   expect(doc.viewOnly).toBe(true);
   expect(view.el.querySelector('.save-status').textContent).toBe('View only');
@@ -60,8 +60,8 @@ it('says nothing of the kind on one shared to edit, or on the user’s own', asy
   expect(doc.viewOnly).toBe(false);
   expect(view.el.querySelector('.save-status').textContent).toBe('Saved');
   view.destroy();
-  doc = await open('/me/Spreadsheets/Mine.xlsx', 'read');
-  expect(listShared).toHaveBeenCalledOnce(); // for the first spreadsheet only
+  doc = await open('/me/Sheets/Mine.xlsx', 'read');
+  expect(listShared).toHaveBeenCalledOnce(); // for the first sheets only
   expect(doc.viewOnly).toBe(false);
   expect(toast).not.toHaveBeenCalled();
 });

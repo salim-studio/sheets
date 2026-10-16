@@ -8,7 +8,7 @@ export function openMoveSheetDialog(ctx, id) {
   if (!source || source.hidden || source.externalCache) return null;
   if (ctx.grid?.editing && !ctx.grid.commitEdit()) return null;
 
-  const book = el('select.input', { 'aria-label': 'To workbook' }, el('option', { value: 'current' }, ctx.doc?.name || 'This spreadsheet'));
+  const book = el('select.input', { 'aria-label': 'To workbook' }, el('option', { value: 'current' }, ctx.doc?.name || 'This sheet'));
   const destinations = el('select.input.sheet-destinations', { 'aria-label': 'Before sheet', size: 8 });
   const copy = el('input', { type: 'checkbox' });
   const name = el('span', { dir: 'auto' }, source.name);
@@ -67,7 +67,7 @@ export function openMoveSheetDialog(ctx, id) {
     el('label.field', {}, el('span.field-label', {}, 'Before sheet'), destinations),
     el('label.check', {}, copy, el('span', {}, 'Create a copy')),
     error,
-    ctx.run && el('div.row', {}, el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { modal.close(); ctx.run('copySheetTo', id); } }, 'Copy to another spreadsheet…')),
+    ctx.run && el('div.row', {}, el('button.btn.btn-ghost.btn-sm', { type: 'button', onclick: () => { modal.close(); ctx.run('copySheetTo', id); } }, 'Copy to another sheets…')),
     el('div.row.row-end', {},
       el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Cancel'), submitButton));
   const modal = openModal({ title: 'Move or Copy', className: 'move-sheet', content, initialFocus: destinations,

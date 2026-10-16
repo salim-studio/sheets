@@ -32,8 +32,8 @@ it.each(['fods', 'ods'].flatMap((format) => cases.map(([input, expected, value, 
     const content = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
       <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
         xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
-        office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-        <office:body><office:spreadsheet>${tables}</office:spreadsheet></office:body>
+        office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+        <office:body><office:sheets>${tables}</office:sheets></office:body>
       </office:${root}>`);
     let bytes = content;
     if (format === 'ods') {

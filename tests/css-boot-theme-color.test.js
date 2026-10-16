@@ -12,7 +12,7 @@ function boot(file, theme) {
   const dom = new JSDOM(html, {
     runScripts: 'dangerously',
     url: 'http://localhost/',
-    beforeParse(window) { if (theme) window.localStorage.setItem('spreadsheet:theme', theme); },
+    beforeParse(window) { if (theme) window.localStorage.setItem('sheets:theme', theme); },
   });
   return dom.window.document;
 }

@@ -24,15 +24,15 @@ export function paletteCommands(flags = {}) {
   // row whose command does nothing would run in silence.
   const noDecimals = ['date', 'time', 'datetime', 'text', 'custom'].includes(flags.style?.fmt);
   const list = [
-    c('New spreadsheet', 'File', 'filePlus', 'new'),
+    c('New sheets', 'File', 'filePlus', 'new'),
     flags.templates && c('New from template…', 'File', 'sparkle', 'newFromTemplate'),
     flags.pick && c('Open from Puter…', 'File', 'folderOpen', 'open', null, { shortcut: `${M}+O` }),
     c('Import from device…', 'File', 'upload', 'import', null, { keywords: 'xlsx csv ods upload file' }),
-    c('Import into this spreadsheet…', 'File', 'sheet', 'importSheets', null, { keywords: 'add sheets from file' }),
+    c('Import into this sheet…', 'File', 'sheet', 'importSheets', null, { keywords: 'add sheets from file' }),
     c('Import from URL…', 'File', 'external', 'importUrl', null, { keywords: 'web address fetch csv xlsx download link' }),
     c('Save', 'File', 'save', 'save', null, { shortcut: `${M}+S` }),
     c('Save a copy…', 'File', 'duplicate', 'saveAs'),
-    c('Rename spreadsheet…', 'File', 'pencil', 'rename'),
+    c('Rename sheets…', 'File', 'pencil', 'rename'),
     flags.share && c('Share…', 'File', 'share', 'share', null, { keywords: 'invite collaborate people access permission send email username' }),
     flags.mail && c('Send a copy…', 'File', 'sendCopy', 'sendCopy', null, { keywords: 'email mail attachment attach send xlsx pdf csv' }),
     flags.mail && flags.share && c('Send a link…', 'File', 'sendLink', 'sendLink', null, { keywords: 'email mail link invite share view edit' }),
@@ -48,7 +48,7 @@ export function paletteCommands(flags = {}) {
     c('Save as PDF…', 'File', 'fileDown', 'exportPdf', null, { keywords: 'export print' }),
     c('Print…', 'File', 'printer', 'print', null, { shortcut: `${M}+P` }),
     c('Options…', 'File', 'options', 'options', null, { shortcut: `${M}+,`, keywords: 'preferences settings enter direction fill handle autosave' }),
-    c('Back to all spreadsheets', 'File', 'back', 'home'),
+    c('Back to all sheets', 'File', 'back', 'home'),
 
     flags.canUndo !== false && c('Undo', 'Edit', 'undo', 'undo', null, { shortcut: `${M}+Z` }),
     flags.canRedo !== false && c('Redo', 'Edit', 'redo', 'redo', null, { shortcut: `${M}+Shift+Z` }),
@@ -165,7 +165,7 @@ export function paletteCommands(flags = {}) {
     flags.grouped && c('Fill across worksheets…', 'Edit', 'layers', 'fillAcrossSheets', null, { keywords: 'group copy same cells other sheets contents formats' }),
     c('Duplicate sheet', 'Insert', 'duplicate', 'duplicateSheet', null, { keywords: 'tab copy' }),
     c('Move or Copy sheet…', 'Insert', 'layers', 'moveOrCopySheet', null, { keywords: 'tab order reorder duplicate destination' }),
-    c('Copy sheet to another spreadsheet…', 'Insert', 'copy', 'copySheetTo', null, { keywords: 'tab move export file workbook' }),
+    c('Copy sheet to another sheets…', 'Insert', 'copy', 'copySheetTo', null, { keywords: 'tab move export file workbook' }),
     // The sheet tab's other actions, for the active sheet; what the tab menu greys out is left out here.
     c('Rename sheet…', 'Insert', 'pencil', 'renameSheet', null, { keywords: 'tab name' }),
     c('Sheet color…', 'Insert', 'fill', 'sheetColor', null, { keywords: 'tab colour' }),
@@ -220,7 +220,7 @@ export function paletteCommands(flags = {}) {
     c('Alternating colors', 'Format', 'rows', 'bands', null, { keywords: 'banding stripes zebra' }),
     c('Cell styles…', 'Format', 'paint', 'cellStylesMenu', null, { keywords: 'title heading total good bad' }),
     !flags.editing && c('New cell style…', 'Format', 'plus', 'newCellStyle', null, { keywords: 'named style create define by example' }),
-    !flags.editing && c('Merge cell styles…', 'Format', 'paint', 'mergeCellStyles', null, { keywords: 'copy styles from another workbook spreadsheet import' }),
+    !flags.editing && c('Merge cell styles…', 'Format', 'paint', 'mergeCellStyles', null, { keywords: 'copy styles from another workbook sheets import' }),
     c('Paint format', 'Format', 'paint', 'paintFormat', null, { keywords: 'copy formatting brush' }),
     // A single unmerged cell has nothing to merge; one row nothing to merge vertically, one column nothing horizontally.
     flags.merged ? c('Unmerge cells', 'Format', 'unmerge', 'merge', null, { keywords: 'merge split' }) : !flags.singleCell && c('Merge cells', 'Format', 'merge', 'merge', null, { keywords: 'unmerge' }),
@@ -298,7 +298,7 @@ export function paletteCommands(flags = {}) {
   return list.filter((item) => item && !(flags.grouped && item.cmd && GROUP_BLOCKED_COMMANDS.has(item.cmd)));
 }
 
-const RECENT_KEY = 'spreadsheet:palette:recent';
+const RECENT_KEY = 'sheets:palette:recent';
 const RECENT_MAX = 8;
 
 /** Labels of the actions used most recently, newest first. */

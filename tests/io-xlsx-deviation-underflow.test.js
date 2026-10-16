@@ -39,7 +39,7 @@ it('preserves variance, database criteria, array kinds, dependency edits and shi
 
 it('retains referenced booleans and numbers through external HTML, distinct from computed-array inputs', () => {
   const values=[[0,false,3]],shown=[['0','FALSE','3']];
-  const html=cellsToHtml(shown,[values[0].map(v=>({v}))],null,values).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const html=cellsToHtml(shown,[values[0].map(v=>({v}))],null,values).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   vi.stubGlobal('DOMParser',new JSDOM('').window.DOMParser);
   try {
     const wb=new Workbook(),id=wb.activeSheetId;

@@ -80,7 +80,7 @@ describe('the editor', () => {
   afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount(prep, cell) {
-    const doc = new Doc({ name: 'Split', path: 'Spreadsheets/Split.xlsx' });
+    const doc = new Doc({ name: 'Split', path: 'Sheets/Split.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     prep(wb, id);

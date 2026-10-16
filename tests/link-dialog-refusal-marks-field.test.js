@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function open() {
-  const doc = new Doc({ name: 'Links', path: 'Spreadsheets/Links.xlsx' });
+  const doc = new Doc({ name: 'Links', path: 'Sheets/Links.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   view = editorView({ doc, goHome() {}, openPath() {}, newDoc() {}, importFile() {} });

@@ -19,7 +19,7 @@ export const ERROR_RULES = [
   ['listDataValidation', 'Data entered in a table is invalid', true],
 ];
 
-const OPTIONS_KEY = 'spreadsheet:error-checking';
+const OPTIONS_KEY = 'sheets:error-checking';
 let cachedOptions = null; // read once: the grid asks for every cell it draws
 /** The app-wide choices: background checking on or off, and each rule. */
 export function errorCheckingOptions() {

@@ -70,7 +70,7 @@ it('copies literal formulas privately and their computed numeric values external
   vi.stubGlobal('DOMParser',new JSDOM('').window.DOMParser);
   try {
     expect(parseHtmlClipboard(html).cells[0][0].f).toBe(cell.f);
-    const external=html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const external=html.replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     expect(cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell.v).toBe(value);
   } finally {vi.unstubAllGlobals();}
 });

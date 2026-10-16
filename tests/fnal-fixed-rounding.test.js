@@ -19,7 +19,7 @@ describe('FIXED and DOLLAR rounding', () => {
     expect(calc('FIXED(-2.4999999995,0)')).toBe('-2');
     expect(calc('FIXED(2.5,0)')).toBe('3');
     expect(calc('FIXED(-2.5,0)')).toBe('-3');
-    // 1.005 and 8.325 are halves to a spreadsheet though not in binary; they round up as ROUND rounds them.
+    // 1.005 and 8.325 are halves to a sheets though not in binary; they round up as ROUND rounds them.
     expect(calc('FIXED(1.005,2)')).toBe('1.01');
     expect(calc('FIXED(8.325,2)')).toBe(calc('TEXT(8.325,"0.00")'));
     expect(calc('FIXED(1234.567,1)')).toBe('1,234.6');

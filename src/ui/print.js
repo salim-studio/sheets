@@ -1256,7 +1256,7 @@ export function buildPrintRoot(wb, sheetId, docName, opts = {}) {
       const regularText = { header: String(p.header || '').trim(),
         footer: String(p.footer || '').trim() || (p.native ? '' : marginBoxes ? 'Page &[Page] of &[Pages]' : '&[Date]') };
       const { header, footer } = printPageText({ ...p, ...regularText }, 0);
-      const info = { file: docName || 'Spreadsheet', tab: sh.name, now, palette: wb.colorPalette, normalFont: wb.normalFont };
+      const info = { file: docName || 'Sheets', tab: sh.name, now, palette: wb.colorPalette, normalFont: wb.normalFont };
       const showSheetName = wb.sheets.length > 1 || sheets.length > 1;
       const i = pageRules.length;
       const section = el('section.print-section', { className: i > 0 ? 'print-section page-break' : 'print-section' });
@@ -1270,7 +1270,7 @@ export function buildPrintRoot(wb, sheetId, docName, opts = {}) {
       if (marginBoxes || p.richHeaderText) {
         if (p.title !== false) {
           section.append(el('div.print-head', {},
-            el('span.print-title', {}, docName || 'Spreadsheet'),
+            el('span.print-title', {}, docName || 'Sheets'),
             showSheetName && el('span.print-sub', {}, sh.name)));
         }
         section.append(content);
@@ -1279,7 +1279,7 @@ export function buildPrintRoot(wb, sheetId, docName, opts = {}) {
         const variants = p.differentFirst || p.differentOddEven;
         section.append(...[
           p.title !== false && el('div.print-head', { style: !variants && header ? flowTextAlignment(p) : null },
-            ...sectionSpans(variants ? '' : header, info, 'span.print-title', docName || 'Spreadsheet'),
+            ...sectionSpans(variants ? '' : header, info, 'span.print-title', docName || 'Sheets'),
             showSheetName && el('span.print-sub', {}, sh.name)),
           (variants || p.title === false) && flowPageText('header', header, info, p),
           content,

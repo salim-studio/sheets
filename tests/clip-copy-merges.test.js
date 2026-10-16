@@ -51,7 +51,7 @@ describe('merges of a copied block', () => {
     const html = cellsToHtml([[wb.getDisplay(id, 0, 0), '']], cells, null, null, null, { merges: wb.sheet(id).merges, rows, cols });
     expect(parseHtmlClipboard(html)).toEqual({ cells, merges: [range] });
     // Read back as foreign markup, the span fills the rectangle out again.
-    const plain = parseHtmlClipboard(html.replace(/ data-spreadsheet-cells="[^"]*"/, ''));
+    const plain = parseHtmlClipboard(html.replace(/ data-sheets-cells="[^"]*"/, ''));
     expect(plain.rows[0].map((cell) => cell.text)).toEqual(['Title', '']);
   });
 

@@ -3,7 +3,7 @@ import { workbookFromFile, workbookToOds, workbookToXlsx } from '../src/core/io.
 import { writeXlsxValidations } from '../src/core/xlsx-validation.js';
 import * as X from '../src/vendor/xlsx.mjs';
 
-const NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet"';
+const NS = 'xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets"';
 
 /** A flat .ods as LibreOffice writes a sheet with two validated columns: every row names both rules. */
 function twoColumns(rows, { gapAt = -1 } = {}) {
@@ -13,10 +13,10 @@ function twoColumns(rows, { gapAt = -1 } = {}) {
       : `<table:table-cell table:content-validation-name="v1" office:value-type="float" office:value="${r}"><text:p>${r}</text:p></table:table-cell>`;
     body += `<table:table-row>${first}<table:table-cell table:content-validation-name="v2" office:value-type="string"><text:p>x${r}</text:p></table:table-cell></table:table-row>`;
   }
-  return new TextEncoder().encode(`<?xml version="1.0"?><office:document ${NS}><office:body><office:spreadsheet><table:content-validations>`
+  return new TextEncoder().encode(`<?xml version="1.0"?><office:document ${NS}><office:body><office:sheets><table:content-validations>`
     + '<table:content-validation table:name="v1" table:condition="of:cell-content-is-in-list(&quot;1&quot;;&quot;2&quot;)" table:allow-empty-cell="true" table:base-cell-address="$Data.$A$1"/>'
     + '<table:content-validation table:name="v2" table:condition="of:cell-content-is-in-list(&quot;Yes&quot;;&quot;No&quot;)" table:allow-empty-cell="true" table:base-cell-address="$Data.$B$1"/>'
-    + `</table:content-validations><table:table table:name="Data"><table:table-column table:number-columns-repeated="2"/>${body}</table:table></office:spreadsheet></office:body></office:document>`);
+    + `</table:content-validations><table:table table:name="Data"><table:table-column table:number-columns-repeated="2"/>${body}</table:table></office:sheets></office:body></office:document>`);
 }
 
 // A validated column arrives one cell per row, and with two validated columns the rows

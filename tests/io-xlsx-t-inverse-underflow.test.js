@@ -45,6 +45,6 @@ it('preserves inverse errors as formulas internally and typed errors in external
   const cell = wb.getCell(id, 0, 0), value = wb.getValue(id, 0, 0);
   const html = cellsToHtml([['#NUM!']], [[cell]], null, [[value]]);
   expect(parseHtmlClipboard(html).cells[0][0].f).toBe(cell.f);
-  const foreign = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const foreign = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(foreign).rows)[0].cell.v).toEqual({ error: '#NUM!' });
 });

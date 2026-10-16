@@ -49,7 +49,7 @@ describe('letter-only Excel number format codes', () => {
   it('reads a year cell back from the markup this app writes', () => {
     const html = cellsToHtml([['2023']], [[{ v: 45000, s: { fmt: 'custom', code: 'yyyy' } }]], null, [[45000]]);
     expect(html).toContain('mso-number-format:&quot;yyyy&quot;');
-    const { cell, shown } = pasted(html.replace(/ data-spreadsheet-(cells|values)="[^"]*"/g, ''));
+    const { cell, shown } = pasted(html.replace(/ data-sheets-(cells|values)="[^"]*"/g, ''));
     expect(cell(0)).toEqual({ v: 45000, f: null, s: { fmt: 'custom', code: 'yyyy', wrap: false, valign: 'middle' } });
     expect(shown(0)).toBe('2023');
   });

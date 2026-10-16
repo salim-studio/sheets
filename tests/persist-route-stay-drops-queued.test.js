@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({ editor: vi.fn(), home: vi.fn(), fromBrowserFil
 vi.mock('../src/lib/doc.js', () => {
   // Constructable, since the sample route builds a document itself (`new Doc(...)`).
   function Doc(options = {}) {
-    return Object.assign(new EventTarget(), { path: null, name: options.name ?? 'Untitled spreadsheet', wb: options.wb ?? null, draftKept: true, _changed() {} });
+    return Object.assign(new EventTarget(), { path: null, name: options.name ?? 'Untitled sheets', wb: options.wb ?? null, draftKept: true, _changed() {} });
   }
   Doc.blank = () => mocks.doc;
   Doc.fromPath = vi.fn();
@@ -29,7 +29,7 @@ beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
   document.body.innerHTML = '<div id="app"></div>';
-  mocks.doc = Object.assign(new EventTarget(), { path: null, name: 'Untitled spreadsheet', draftKept: true });
+  mocks.doc = Object.assign(new EventTarget(), { path: null, name: 'Untitled sheets', draftKept: true });
   mocks.home.mockImplementation(() => ({ el: document.createElement('div'), destroy: vi.fn() }));
   // The editor's flush stands in for the leave question: each call is answered by hand.
   answers = [];

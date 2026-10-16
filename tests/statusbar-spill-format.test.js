@@ -7,7 +7,7 @@ import { createStatusBar, summarize, summarizeAll } from '../src/ui/statusbar.js
 beforeEach(() => {
   vi.stubGlobal('matchMedia', () => ({ matches: true }));
   // Minimum and Maximum are off by default; these checks cover their formatting too.
-  localStorage.setItem('spreadsheet:status-bar', JSON.stringify({ min: true, max: true }));
+  localStorage.setItem('sheets:status-bar', JSON.stringify({ min: true, max: true }));
 });
 afterEach(() => vi.unstubAllGlobals());
 const range = { r1: 1, c1: 0, r2: 2, c2: 0 };

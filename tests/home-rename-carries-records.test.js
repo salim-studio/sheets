@@ -29,12 +29,12 @@ beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: me
 afterEach(() => { closeMenu(); vi.restoreAllMocks(); document.body.replaceChildren(); delete globalThis.puter; });
 
 const settle = async (n) => { for (let i = 0; i < n; i++) await new Promise((r) => setTimeout(r, 0)); };
-const consentKey = (path) => `${accountStorageKey('spreadsheet:external')}${path}`;
+const consentKey = (path) => `${accountStorageKey('sheets:external')}${path}`;
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0'].v;
 
 async function fileInFolder(name) {
   const bytes = await Doc.blank().toXlsxBlob();
-  mock.fs.set(`Spreadsheets/${name}`, { blob: bytes, size: bytes.size, modified: 1 });
+  mock.fs.set(`Sheets/${name}`, { blob: bytes, size: bytes.size, modified: 1 });
 }
 
 /** Open the home screen and pick `action` from the first file's menu. */
@@ -56,23 +56,23 @@ it('carries the draft and the outside-content decision when a file is renamed fr
   await fileInFolder('Budget.xlsx');
   const offline = new Workbook();
   offline.setInput(offline.activeSheetId, 0, 0, 'offline edits');
-  expect(saveDraft(draftKey('Spreadsheets/Budget.xlsx'), offline, 'Budget', 'rev-1')).toBe(true);
-  const blocked = await Doc.fromPath('Spreadsheets/Budget.xlsx');
+  expect(saveDraft(draftKey('Sheets/Budget.xlsx'), offline, 'Budget', 'rev-1')).toBe(true);
+  const blocked = await Doc.fromPath('Sheets/Budget.xlsx');
   blocked.distrustExternal();
   blocked.destroy();
-  expect(localStorage.getItem(consentKey('Spreadsheets/Budget.xlsx'))).toMatch(/^0:/); // blocked, and the record names the file
+  expect(localStorage.getItem(consentKey('Sheets/Budget.xlsx'))).toMatch(/^0:/); // blocked, and the record names the file
 
   const view = await act('Rename…');
-  expect(mock.fs.has('Spreadsheets/Plan.xlsx')).toBe(true);
-  expect(mock.fs.has('Spreadsheets/Budget.xlsx')).toBe(false);
-  expect(loadDraft(draftKey('Spreadsheets/Budget.xlsx'))).toBeNull();
-  expect(text(loadDraft(draftKey('Spreadsheets/Plan.xlsx')))).toBe('offline edits');
-  expect(localStorage.getItem(consentKey('Spreadsheets/Budget.xlsx'))).toBeNull();
-  expect(localStorage.getItem(consentKey('Spreadsheets/Plan.xlsx'))).toMatch(/^0:/);
-  expect(recent.forgetRecent).toHaveBeenCalledWith('Spreadsheets/Budget.xlsx');
+  expect(mock.fs.has('Sheets/Plan.xlsx')).toBe(true);
+  expect(mock.fs.has('Sheets/Budget.xlsx')).toBe(false);
+  expect(loadDraft(draftKey('Sheets/Budget.xlsx'))).toBeNull();
+  expect(text(loadDraft(draftKey('Sheets/Plan.xlsx')))).toBe('offline edits');
+  expect(localStorage.getItem(consentKey('Sheets/Budget.xlsx'))).toBeNull();
+  expect(localStorage.getItem(consentKey('Sheets/Plan.xlsx'))).toMatch(/^0:/);
+  expect(recent.forgetRecent).toHaveBeenCalledWith('Sheets/Budget.xlsx');
   // The browser's own record answers even when the account's store cannot be reached.
   puter.kv.get = async () => { throw new Error('Network request failed'); };
-  const reopened = await Doc.fromPath('Spreadsheets/Plan.xlsx');
+  const reopened = await Doc.fromPath('Sheets/Plan.xlsx');
   expect(reopened.wb.externalAllowed).toBe(false);
   expect(text(reopened.recoverable)).toBe('offline edits');
   reopened.destroy();
@@ -81,16 +81,16 @@ it('carries the draft and the outside-content decision when a file is renamed fr
 
 it('gives a copy made from the list the original\'s outside-content decision', async () => {
   await fileInFolder('Budget.xlsx');
-  const blocked = await Doc.fromPath('Spreadsheets/Budget.xlsx');
+  const blocked = await Doc.fromPath('Sheets/Budget.xlsx');
   blocked.distrustExternal();
   blocked.destroy();
 
   const view = await act('Duplicate');
-  expect(mock.fs.has('Spreadsheets/Budget copy.xlsx')).toBe(true);
-  expect((await Doc.fromPath('Spreadsheets/Budget copy.xlsx')).wb.externalAllowed).toBe(false);
+  expect(mock.fs.has('Sheets/Budget copy.xlsx')).toBe(true);
+  expect((await Doc.fromPath('Sheets/Budget copy.xlsx')).wb.externalAllowed).toBe(false);
   // Another device sees the same for the copy.
   localStorage.clear();
-  expect((await Doc.fromPath('Spreadsheets/Budget copy.xlsx')).wb.externalAllowed).toBe(false);
+  expect((await Doc.fromPath('Sheets/Budget copy.xlsx')).wb.externalAllowed).toBe(false);
   view.destroy();
 });
 
@@ -100,11 +100,11 @@ it('sets a gone file\'s history aside when a copy takes its name', async () => {
   await fileInFolder('Budget.xlsx');
   const dead = new Workbook();
   dead.setInput(dead.activeSheetId, 0, 0, 'the dead file');
-  await saveVersion('Spreadsheets/Budget copy.xlsx', await new Doc({ wb: dead }).toXlsxBlob(), 'Q1 final');
+  await saveVersion('Sheets/Budget copy.xlsx', await new Doc({ wb: dead }).toXlsxBlob(), 'Q1 final');
 
   const view = await act('Duplicate');
-  expect(mock.fs.has('Spreadsheets/Budget copy.xlsx')).toBe(true);
-  expect(await listVersions('Spreadsheets/Budget copy.xlsx')).toEqual([]);
+  expect(mock.fs.has('Sheets/Budget copy.xlsx')).toBe(true);
+  expect(await listVersions('Sheets/Budget copy.xlsx')).toEqual([]);
   // The dead file's snapshots are kept, under a name no file's history is read from.
   const aside = (await P.listDir(`${P.FOLDER}/.versions`)).filter((it) => it.is_dir && /\(orphaned /.test(it.name));
   expect(aside.map((it) => it.name)).toEqual([expect.stringMatching(/^Budget copy \(orphaned /)]);
@@ -115,12 +115,12 @@ it('sets a gone file\'s history aside when a copy takes its name', async () => {
 // or a rename from the list would leave the history behind and a delete would leave it on the drive.
 it('carries the history when a file is renamed from the list, and removes it when the file is deleted', async () => {
   await fileInFolder('Budget.xlsx');
-  const doc = await Doc.fromPath('Spreadsheets/Budget.xlsx');
+  const doc = await Doc.fromPath('Sheets/Budget.xlsx');
   await doc.saveVersion('Q1 final');
   doc.destroy();
 
   let view = await act('Rename…');
-  const renamed = await Doc.fromPath('Spreadsheets/Plan.xlsx');
+  const renamed = await Doc.fromPath('Sheets/Plan.xlsx');
   expect((await listVersions(renamed.file)).map((v) => v.label)).toEqual(['Q1 final']);
   renamed.destroy();
   view.destroy();
@@ -132,12 +132,12 @@ it('carries the history when a file is renamed from the list, and removes it whe
 
 it('forgets the decision of a file deleted from the list', async () => {
   await fileInFolder('Budget.xlsx');
-  const blocked = await Doc.fromPath('Spreadsheets/Budget.xlsx');
+  const blocked = await Doc.fromPath('Sheets/Budget.xlsx');
   blocked.distrustExternal();
   blocked.destroy();
   const view = await act('Delete…');
-  expect(mock.fs.has('Spreadsheets/Budget.xlsx')).toBe(false);
-  expect(localStorage.getItem(consentKey('Spreadsheets/Budget.xlsx'))).toBeNull();
-  expect([...mock.kv.keys()].filter((k) => k.startsWith('spreadsheet:external:'))).toEqual([]);
+  expect(mock.fs.has('Sheets/Budget.xlsx')).toBe(false);
+  expect(localStorage.getItem(consentKey('Sheets/Budget.xlsx'))).toBeNull();
+  expect([...mock.kv.keys()].filter((k) => k.startsWith('sheets:external:'))).toEqual([]);
   view.destroy();
 });

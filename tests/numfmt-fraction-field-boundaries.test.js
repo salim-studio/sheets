@@ -498,7 +498,7 @@ it('retains field semantics in edits, formulas, clipboard and metadata-free XLSX
     if (!code.includes('%')) expect(editText(wb.getCell(id, r, 0))).toBe(String(value));
     const html = cellsToHtml([[expected]], [[wb.getCell(id, r, 0)]], null, [[value]]);
     expect(parseHtmlClipboard(html).cells[0][0].s.code).toBe(code);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(value); expect(styleToNumFmt(pasted.s)).toBe(code);
   });

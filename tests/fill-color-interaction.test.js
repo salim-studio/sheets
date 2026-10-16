@@ -43,7 +43,7 @@ it('paints reference fills consistently in cells, inherited lines, conditional/t
   } finally { grid.destroy(); }
 });
 
-it('copies native fill identity internally and exposes resolved paint to other spreadsheet applications', () => {
+it('copies native fill identity internally and exposes resolved paint to other sheets applications', () => {
   const wb = new Workbook({ sheets: [{ cells: { '1,1': { v: 'Copied', s: { bg: theme } } } }] });
   const html = cellsToHtml([['Copied']], [[wb.getCell(wb.activeSheetId, 1, 1)]]);
   expect(html).toContain('background-color:#286844');
@@ -51,7 +51,7 @@ it('copies native fill identity internally and exposes resolved paint to other s
   expect(parsed.cells[0][0].s.bg).toEqual(theme);
   wb.pasteCells(wb.activeSheetId, parsed.cells, 4, 5);
   expect(wb.styleAt(wb.activeSheetId, 4, 5).bg).toEqual(theme);
-  const external = html.replace(/ data-spreadsheet-\w+="[^"]*"/g, '');
+  const external = html.replace(/ data-sheets-\w+="[^"]*"/g, '');
   expect(parseHtmlClipboard(external).rows[0][0].style.bg).toBe('#286844');
 });
 
@@ -67,7 +67,7 @@ it('filters by the displayed color of a reference fill and identical RGB fill', 
 
 it.each([{ theme: 4, base: '#000000', rgb: 'url(https://example.com)' }, { indexed: 99, base: '#000000', rgb: '#000000' }])
 ('drops an invalid embedded fill reference at the clipboard trust boundary: %j', bg => {
-  const html = stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify([[{ v: 'Value', s: { bg, bold: true } }]])}'><tr><td>Shown</td></tr></table>`);
+  const html = stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify([[{ v: 'Value', s: { bg, bold: true } }]])}'><tr><td>Shown</td></tr></table>`);
   const parsed = parseHtmlClipboard(html);
   expect(JSON.stringify(parsed)).not.toContain('url(');
   expect(parsed.cells?.[0]?.[0]?.s?.bg).toBeUndefined();

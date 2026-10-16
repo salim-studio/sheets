@@ -17,7 +17,7 @@ afterEach(() => { closeMenu(); vi.clearAllTimers(); vi.useRealTimers(); vi.resto
 
 // A draft kept for a file lived on after the file was deleted, filling local storage for good.
 it('clears the local draft of a file deleted from the list', async () => {
-  const path = 'Spreadsheets/Budget.xlsx';
+  const path = 'Sheets/Budget.xlsx';
   const wb = new Workbook();
   wb.setInput(wb.activeSheetId, 0, 0, 'unsaved');
   expect(saveDraft(draftKey(path), wb, 'Budget', 'rev-1')).toBe(true);

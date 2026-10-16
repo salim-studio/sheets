@@ -11,7 +11,7 @@ function fixture(rows, predicate, { format = 'fods', ref, name = 'Data', before 
   const zip = format === 'ods' ? X.CFB.read(new Uint8Array(X.write(book, { type: 'array', bookType: 'ods' })), { type: 'array' }) : null;
   let content = zip ? new TextDecoder().decode(X.CFB.find(zip, 'content.xml').content) : X.write(book, { type: 'string', bookType: 'fods' });
   const definition = `<table:database-ranges><table:database-range${attrs({ name: 'NativeFilter', 'target-range-address': `$'${name.replaceAll("'", "''")}'.${ref || `$A$1:.$${X.utils.encode_col(rows[0].length - 1)}$${rows.length}`}`, 'contains-header': 'true', 'display-filter-buttons': 'true', ...rangeAttrs })}><table:filter>${predicate}</table:filter></table:database-range></table:database-ranges>`;
-  content = before ? content.replace('<office:spreadsheet>', () => '<office:spreadsheet>' + definition) : content.replace('</office:spreadsheet>', () => definition + '</office:spreadsheet>');
+  content = before ? content.replace('<office:sheets>', () => '<office:sheets>' + definition) : content.replace('</office:sheets>', () => definition + '</office:sheets>');
   let bytes = new TextEncoder().encode(content);
   if (format === 'ods') {
     X.CFB.utils.cfb_add(zip, 'content.xml', bytes);

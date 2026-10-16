@@ -83,7 +83,7 @@ it('opens a chosen pen\'s thickness and colours on a second press, and remembers
   penButton('pen-1').click(); await flush();
   [...document.querySelectorAll('.menu .swatch')].find(b => b.getAttribute('aria-label') === 'Green').click(); await flush();
   expect(penButton('pen-1').getAttribute('aria-label')).toBe('Pen: Green, 2 mm');
-  expect(JSON.parse(localStorage.getItem('spreadsheet:pens'))[0]).toMatchObject({ color: '#16a34a', width: 2 });
+  expect(JSON.parse(localStorage.getItem('sheets:pens'))[0]).toMatchObject({ color: '#16a34a', width: 2 });
 });
 
 it('adds a pen from Add Pen and draws with the highlighter half transparent', async () => {

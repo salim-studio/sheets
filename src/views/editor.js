@@ -164,10 +164,10 @@ import { detectDelimiter, workbookFromFile, rangeToCsv, CSV_MIME } from '../core
 import { cellsToHtml, copyMergeLayout, parseHtmlClipboard, cellsFromHtmlRows, isOwnHtmlClipboard } from '../core/clipboard.js';
 import { eachStoredCell, lineSpan } from '../core/sparse-range.js';
 import { MAX_ROWS, MAX_COLS, MIN_COL_WIDTH, MAX_COL_WIDTH, MIN_ROW_HEIGHT, MAX_ROW_HEIGHT, cellFromInput, safeLinkUrl } from '../core/workbook.js';
-import { isSpreadsheetFile } from '../core/filetypes.js';
+import { isSheetsFile } from '../core/filetypes.js';
 import { FUNCTION_NAMES } from '../core/formula/functions.js';
 import { RULE_TYPES } from '../core/condformat.js';
-// Formulas that reach outside the spreadsheet: pasted from a web page they could send the sheet's
+// Formulas that reach outside the sheets: pasted from a web page they could send the sheet's
 // contents anywhere, so such a paste asks first, as a file from elsewhere does (the same list serves both).
 import { formulaReachesOut, textReachesOut } from '../core/reaches-out.js';
 import * as S from '../core/selection.js';
@@ -258,7 +258,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     try { body = await P.fetchText(url); } catch (e) { return fetchError(e); }
     return String(body).length > 32767 ? { error: '#VALUE!' } : String(body);
   });
-  // IMPORTRANGE: other spreadsheets on the drive, parsed once and kept for a short while.
+  // IMPORTRANGE: other sheets on the drive, parsed once and kept for a short while.
   const imported = new Map(); // path → { at, wb: Promise<Workbook> }
   wb.setAsyncProvider('IMPORTRANGE', async (text) => {
     const [file, range] = JSON.parse(text);
@@ -377,7 +377,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     canOpen: P.canPickFiles(), // Ctrl+O only where a file picker exists
     onContextMenu: (info) => openCellContextMenu(ctx, info),
     announce: (text) => statusBar?.announce(text),
-    onZoom: () => { try { localStorage.setItem('spreadsheet:zoom', String(grid.zoom)); } catch { /* no storage */ } notify(); },
+    onZoom: () => { try { localStorage.setItem('sheets:zoom', String(grid.zoom)); } catch { /* no storage */ } notify(); },
     validate: (r, c, text) => {
       // Run before a committed entry is written. Text pasted into the entry (noted here from the viewport's
       // paste event and the formula bar, or by the grid on its own editor) that reaches out is put through
@@ -415,7 +415,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   // Draw tab: pens, eraser and lasso over the sheet (ui/ink.js).
   const ink = ctx.ink = createInk({ wb, grid, notify, subscribe: ctx.subscribe, refused: (what) => refusedByProtection(what), announce: (text) => statusBar?.announce(text) });
   try {
-    const savedZoom = parseFloat(localStorage.getItem('spreadsheet:zoom'));
+    const savedZoom = parseFloat(localStorage.getItem('sheets:zoom'));
     if (savedZoom && savedZoom !== 1 && wb.sheet(wb.activeSheetId)?.viewZoom == null) grid.setZoom(savedZoom, true);
   } catch { /* no storage */ }
   if (wb.sheet(wb.activeSheetId)?.viewZoom != null) grid.setZoom(wb.sheet(wb.activeSheetId).viewZoom, true);
@@ -431,7 +431,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
    * The sheet view each person is in is their own: remembered on this device for this file, never saved in
    * it, and taken up again when the file opens here.
    */
-  const sheetViewKey = () => (doc.path ? `spreadsheet:sheet-views:${doc.path}` : null);
+  const sheetViewKey = () => (doc.path ? `sheets:sheet-views:${doc.path}` : null);
   function rememberSheetViews() {
     const key = sheetViewKey();
     if (!key) return;
@@ -444,7 +444,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   } catch { /* no storage, or nothing remembered */ }
 
   const view = { focus: false, spell: true };
-  try { Object.assign(view, JSON.parse(localStorage.getItem('spreadsheet:view') || '{}') || {}); } catch { /* no storage */ }
+  try { Object.assign(view, JSON.parse(localStorage.getItem('sheets:view') || '{}') || {}); } catch { /* no storage */ }
   // Header visibility now follows the saved worksheet view, not a device-wide override.
   delete view.headers;
   // The formula bar's switch moved into the person's options (View ▸ Formula bar is the same switch); a device
@@ -469,7 +469,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     root.classList.toggle('no-objects', !o.showObjects);
     root.classList.toggle('no-comment-marks', o.commentIndicators === 'none');
     grid.setSpellcheck(view.spell !== false);
-    try { localStorage.setItem('spreadsheet:view', JSON.stringify(view)); } catch { /* no storage */ }
+    try { localStorage.setItem('sheets:view', JSON.stringify(view)); } catch { /* no storage */ }
   }
   const isFullscreen = () => !!document.fullscreenElement;
   async function toggleFullscreen() {
@@ -839,7 +839,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const url = targetUrl();
       if (url == null) return refuse(rangeInput, 'Enter a cell or range like A1, B2:D9, or A1#');
       if (!url) return refuse(urlInput, 'Enter a link');
-      if (!safeLinkUrl(url)) return refuse(urlInput, 'Enter a web address, email, or place in this spreadsheet');
+      if (!safeLinkUrl(url)) return refuse(urlInput, 'Enter a web address, email, or place in this sheet');
       // Saved as it was: nothing is written, so the cell keeps its kind (a typed address stays typed text,
       // a numeric label a number) and there is nothing to undo.
       if (existing && url === existing.url && textInput.value === labelNow) { modal.close(); grid.focus(); return; }
@@ -2306,7 +2306,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         if (!committed()) return;
         const ref = typeof arg === 'string' ? (cellStyle(arg) ? { builtin: arg } : { custom: arg }) : arg;
         if (ref?.builtin) {
-          if (!builtinOverride(wb, ref.builtin)) { toast('Built-in styles stay in the gallery. Modify one to change it for this spreadsheet', { icon: 'info', duration: 3200 }); return; }
+          if (!builtinOverride(wb, ref.builtin)) { toast('Built-in styles stay in the gallery. Modify one to change it for this sheet', { icon: 'info', duration: 3200 }); return; }
           deleteCellStyle(wb, ref);
           toast(`${cellStyle(ref.builtin).label} is as built in again`, { icon: 'check' });
           keepFocus();
@@ -2693,7 +2693,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         if (session.signedOut && (!await session.signIn() || destroyed)) return;
         if (!doc.path) await flush({ leaving: false });
         if (destroyed) return;
-        if (!doc.path) { toast('Save the spreadsheet first', { icon: 'info' }); return; }
+        if (!doc.path) { toast('Save the sheets first', { icon: 'info' }); return; }
         openVersionHistory(doc, { onRestored: () => { grid.refresh(); keepFocus(); } });
         return;
       }
@@ -2729,7 +2729,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         const url = await promptDialog({
           title: 'Import from URL', label: 'Address of a .csv, .tsv, .xlsx, or .ods file', placeholder: 'https://example.com/data.csv', confirmLabel: 'Import',
           validate: urlProblem,
-          hint: 'The sheets in the file are added to this spreadsheet. The address must allow access from other sites.',
+          hint: 'The sheets in the file are added to this sheet. The address must allow access from other sites.',
         });
         if (!url) { keepFocus(); return; }
         if (!committed()) return;
@@ -2868,7 +2868,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         const group = wb.sheetGroup;
         if (group && (!arg || group.includes(arg))) {
           // A grouped sheet goes with the rest of its group, in one step that one undo brings back.
-          if (group.length >= wb.visibleSheets.length) { toast('A spreadsheet needs at least one sheet. Ungroup the sheets first', { icon: 'trash', duration: 3500 }); return; }
+          if (group.length >= wb.visibleSheets.length) { toast('A sheets needs at least one sheet. Ungroup the sheets first', { icon: 'trash', duration: 3500 }); return; }
           const ok = await confirmDialog({ title: `Delete ${group.length} sheets?`, message: `${group.map((id) => wb.sheet(id)?.name).join(', ')} and everything on them will be removed. You can undo this.`, confirmLabel: 'Delete sheets' });
           if (!ok || destroyed) return;
           wb.transaction('Delete sheets', () => { for (const id of group) wb.deleteSheet(id); });
@@ -3035,14 +3035,14 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       }
       case 'zoomTo':
         grid.setZoom(Number(arg) || 1);
-        try { localStorage.setItem('spreadsheet:zoom', String(grid.zoom)); } catch { /* no storage */ }
+        try { localStorage.setItem('sheets:zoom', String(grid.zoom)); } catch { /* no storage */ }
         notify();
         keepFocus();
         return;
       case 'zoom': {
         const next = arg === 'reset' ? 1 : grid.zoom + Number(arg);
         grid.setZoom(next);
-        try { localStorage.setItem('spreadsheet:zoom', String(grid.zoom)); } catch { /* no storage */ }
+        try { localStorage.setItem('sheets:zoom', String(grid.zoom)); } catch { /* no storage */ }
         notify();
         keepFocus();
         return;
@@ -3951,7 +3951,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
           if (destroyed) return;
           // Whatever the name box accepts: a cell or range, a named range, a table, or a place on another sheet.
           const target = text?.trim();
-          if (target && !grid.selectByName(target) && goToName(target) === false) toast('That is not a cell, range, or name in this spreadsheet', { icon: 'info' });
+          if (target && !grid.selectByName(target) && goToName(target) === false) toast('That is not a cell, range, or name in this sheet', { icon: 'info' });
           keepFocus();
           return;
         }
@@ -3964,10 +3964,10 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         if (!committed()) return;
         if (session.signedOut && (!await session.signIn() || destroyed)) return;
         if (!doc.path) {
-          try { await doc.save(); } catch (e) { toast(e?.message || 'Could not save the spreadsheet', { icon: 'alert', duration: 4000 }); return; }
+          try { await doc.save(); } catch (e) { toast(e?.message || 'Could not save the sheets', { icon: 'alert', duration: 4000 }); return; }
           if (destroyed) return;
         }
-        if (!doc.path) { toast('Save the spreadsheet first, then copy a link to it', { icon: 'info', duration: 3500 }); return; }
+        if (!doc.path) { toast('Save the sheets first, then copy a link to it', { icon: 'info', duration: 3500 }); return; }
         const rg = grid.range;
         const url = rangeLink(location, doc.path, wb.sheet(grid.sheetId).name, rg);
         const what = rg.r1 === rg.r2 && rg.c1 === rg.c2 ? cellName(rg.r1, rg.c1) : rangeName(rg);
@@ -4301,7 +4301,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     const nativeSparklines = wb.copyNativeSparklines(grid.sheetId, rows, cols);
     const validations = wb.copyValidations(grid.sheetId, rows, cols);
     const html = cellsToHtml(texts, cells, looks, values, all ? origin : null, { styles, mergeLayout, conditionalFormats, validations, nativeSparklines, externalWorkbooks: wb.externalWorkbooks, sourceWorkbook: workbookPathUri(P.resolvedAbsolutePath?.(doc.path)), colorPalette: wb.colorPalette, normalFill: wb.nativeNormalFill, indentUnit: grid.indentUnit })
-      .replace('<table', `<table data-spreadsheet-copy="${copyId}"`);
+      .replace('<table', `<table data-sheets-copy="${copyId}"`);
     clip = { cells, values, notes, nativeSparklines, nativePivots: wb.copyNativePivots(grid.sheetId, rows, cols), conditionalFormats, validations, merges: mergeLayout.ranges, sourceMerges: mergeLayout.sources, partialMerge: mergeLayout.partial, origin, sheetId: grid.sheetId, text: toDelimited(texts, '\t'), html, copyId, range, rows, cols, visibleOnly: !all && !multi, multi: !!multi,
       // A cut moves its cells when it is pasted, once: until then
       // nothing changes, and Escape, another copy, editing a cell, or any other
@@ -4510,7 +4510,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   /**
    * Paste at the selection. The internal clipboard wins when the system text
    * matches what was last copied here; otherwise an HTML table (from another
-   * spreadsheet app, a web page, or this app in another tab) or plain text.
+   * sheets app, a web page, or this app in another tab) or plain text.
    * mode: 'all' | 'values' | 'formats' | 'transpose'
    */
   /**
@@ -4697,9 +4697,9 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     const copiedMerges = internal ? clip.merges || [] : parsed?.merges || [];
     // Another app's numbers combine on the old arithmetic path, which reads them in the current locale.
     if (!cells && mode === 'composed') mode = legacyMode(special, { cells: false }) ?? 'composed';
-    // Column widths travel only with cells copied in this spreadsheet, from a sheet that is still there.
+    // Column widths travel only with cells copied in this sheet, from a sheet that is still there.
     const pasteWidths = (quiet = false) => {
-      if (!internal || !clip.cols) { if (!quiet) toast('Column widths can only be pasted from cells copied in this spreadsheet', { icon: 'info', duration: 3000 }); return false; }
+      if (!internal || !clip.cols) { if (!quiet) toast('Column widths can only be pasted from cells copied in this sheet', { icon: 'info', duration: 3000 }); return false; }
       if (!wb.sheet(clip.sheetId)) { if (!quiet) toast('The copied cells\' sheet is gone', { icon: 'info' }); return false; }
       const n = clip.cols.length;
       wb.transaction('Paste column widths', () => {
@@ -4759,7 +4759,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     }
     if (mode === 'link') {
       // Links: formulas that point back at the copied cells, so they follow later edits.
-      if (!internal || !clip.rows) { toast('Links can only be pasted from cells copied in this spreadsheet', { icon: 'info', duration: 3000 }); return; }
+      if (!internal || !clip.rows) { toast('Links can only be pasted from cells copied in this sheet', { icon: 'info', duration: 3000 }); return; }
       if (!wb.sheet(clip.sheetId)) { toast('The copied cells\' sheet is gone', { icon: 'info' }); return; }
       const n = wb.pasteLinks(sheetId, r, c, clip.sheetId, clip.rows, clip.cols);
       if (n) selectBlock(clip.rows.length, clip.cols.length, false);
@@ -5367,7 +5367,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const what = missing ? `"${doc.name}" is no longer at ${doc.path}: it was deleted, or moved where it cannot be followed.`
         : unchecked ? `Whether "${doc.name}" was saved since you opened it, perhaps from another device or tab, could not be checked.`
           : `"${doc.name}" was saved, moved or renamed since you opened it, perhaps from another device or tab.`;
-      const where = missing ? 'and can be recovered from Unsaved spreadsheets on the home screen' : 'and are offered again when you open this spreadsheet here';
+      const where = missing ? 'and can be recovered from Unsaved sheets on the home screen' : 'and are offered again when you open this sheet here';
       const action = missing ? 'put the file back at the old address with them' : unchecked ? 'save them anyway' : 'keep your version and overwrite theirs';
       const content = el('div', {},
         el('p.modal-text', {}, kept
@@ -5387,8 +5387,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const why = reason ? ` (${String(reason).replace(/\.$/, '')})` : '';
       const content = el('div', {},
         el('p.modal-text', {}, kept
-          ? `Puter could not save this spreadsheet${why}. Your changes are kept in this browser, and saving is offered again when you open it here.`
-          : `Puter could not save this spreadsheet${why}, and this browser could not keep a copy of your changes either. Leaving now discards them.`),
+          ? `Puter could not save this sheet${why}. Your changes are kept in this browser, and saving is offered again when you open it here.`
+          : `Puter could not save this sheet${why}, and this browser could not keep a copy of your changes either. Leaving now discards them.`),
         el('div.row.row-end', { style: { flexWrap: 'wrap' } },
           el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Keep editing'),
           el(`button.btn${kept ? '' : '.btn-danger'}`, { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, kept ? 'Leave' : 'Leave without saving'),
@@ -5427,7 +5427,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
 
   async function renameDoc() {
     const name = await promptDialog({
-      title: 'Rename spreadsheet', label: 'Name', value: doc.name, confirmLabel: 'Rename',
+      title: 'Rename sheets', label: 'Name', value: doc.name, confirmLabel: 'Rename',
       validate: (v) => (fileBaseName(v) ? null : 'Enter a name'),
     });
     if (name == null || name === doc.name) return;
@@ -5438,7 +5438,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   }
 
   /**
-   * Sharing hands out a file: an unsaved spreadsheet is saved first, as for a link to a range. Saved by hand,
+   * Sharing hands out a file: an unsaved sheet is saved first, as for a link to a range. Saved by hand,
    * not flushed: a flush has nothing to write for a blank book that was never changed. A file that is not an
    * .xlsx (a .csv opened from the drive) is saved as one first, where its edits go from now on: shared as it
    * was, it would never see them. Resolves whether there is a file to share now.
@@ -5447,10 +5447,10 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     if (grid.editing && !grid.commitEdit()) return false;
     if (session.signedOut && (!await session.signIn() || destroyed)) return false;
     if (!doc.path || !doc.isXlsxPath) {
-      try { await doc.save(); } catch (e) { toast(e?.message || 'Could not save the spreadsheet', { icon: 'alert', duration: 4000 }); return false; }
+      try { await doc.save(); } catch (e) { toast(e?.message || 'Could not save the sheets', { icon: 'alert', duration: 4000 }); return false; }
       if (destroyed) return false;
     }
-    if (!doc.path) { toast('Save the spreadsheet first, then share it', { icon: 'info' }); return false; }
+    if (!doc.path) { toast('Save the sheets first, then share it', { icon: 'info' }); return false; }
     return true;
   }
 
@@ -5459,7 +5459,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     if (session.signedOut && (!await session.signIn() || destroyed)) return;
     const name = await promptDialog({
       title: 'Save a copy', label: 'Name', value: `${doc.name} copy`, confirmLabel: 'Save copy',
-      hint: `Saved to ${P.FOLDER}/ in your Puter cloud. You will continue in the copy.`,
+      hint: `Saved to ${P.FOLDER}/ in your cloud. You will continue in the copy.`,
       validate: (v) => (fileBaseName(v) ? null : 'Enter a name'),
     });
     if (name == null) return;
@@ -5608,7 +5608,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   /**
    * A file dropped anywhere on the app while this sheet is open: on the
    * assistant, it and any dropped with it go with the next message; elsewhere
-   * an image lands at the active cell, a spreadsheet opens as a new document.
+   * an image lands at the active cell, a sheets opens as a new document.
    */
   async function acceptDrop(f, { files, x, y } = {}) {
     if (overAssistant(x, y)) {
@@ -5619,10 +5619,10 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     }
     if (grid.editing && !grid.commitEdit()) return;
     if (f.type.startsWith('image/')) { replaceImageId = null; await insertImageFile(f); return; }
-    if (isSpreadsheetFile(f.name)) { if (await flush() && !destroyed) importFile(f); return; }
-    toast(`Cannot open ${f.name}. Drop a spreadsheet (.xlsx, .csv, .ods, …) or an image`, { icon: 'info', duration: 3200 });
+    if (isSheetsFile(f.name)) { if (await flush() && !destroyed) importFile(f); return; }
+    toast(`Cannot open ${f.name}. Drop a sheets (.xlsx, .csv, .ods, …) or an image`, { icon: 'info', duration: 3200 });
   }
-  // Import into this spreadsheet: a dialog places the file's sheets (new sheets, the current sheet, appended rows, or at the selected cell).
+  // Import into this sheet: a dialog places the file's sheets (new sheets, the current sheet, appended rows, or at the selected cell).
   const sheetsInput = el('input', {
     type: 'file', accept: '.xlsx,.xlsm,.xls,.csv,.tsv,.ods,.txt', hidden: true, 'aria-hidden': 'true', tabindex: -1,
     onchange: async () => {
@@ -5754,7 +5754,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   // after Tab the browser moves on from there; after a choice or a press elsewhere the grid takes focus back.
   const menubar = createMenubar({ flags: commandFlags, run, onClose: (reason) => { if (reason !== 'escape' && reason !== 'tab') keepFocus(); } });
   const topbar = el('div.topbar', {},
-    el('button.icon-btn', { type: 'button', html: icon('back', 20), 'aria-label': 'Back to all spreadsheets', title: 'All spreadsheets', onclick: () => run('home') }),
+    el('button.icon-btn', { type: 'button', html: icon('back', 20), 'aria-label': 'Back to all sheets', title: 'All sheets', onclick: () => run('home') }),
     el('span.brand-mark.desktop-only', { html: icon('brand', 16, 2.2), 'aria-hidden': 'true' }),
     quickAccess,
     el('div.topbar-menus', {}, menubar.el),
@@ -5763,7 +5763,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       // The Comments button beside Share: the sheet's comment threads in the Comments pane.
       el('button.icon-btn.desktop-only.topbar-comments', { type: 'button', html: icon('chat', 20), 'aria-label': 'Comments', title: 'Comments', onclick: () => run('toggleComments') }),
       peopleBar?.el,
-      ...(P.canShare() ? [el('button.btn.share-btn.desktop-only', { type: 'button', title: 'Share this spreadsheet', onclick: () => run('share') },
+      ...(P.canShare() ? [el('button.btn.share-btn.desktop-only', { type: 'button', title: 'Share this sheet', onclick: () => run('share') },
       el('span', { html: icon('share', 16) }), el('span', {}, 'Share'))] : []), avatar));
   const header = el('header.editor-header', {}, topbar);
 
@@ -5784,8 +5784,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       status.className = 'save-status signed-out';
       status.disabled = false;
       status.replaceChildren(el('span', { html: icon('cloudOff', 14, 2) }), el('span.save-label', {}, noCopy ? 'Sign in to save. This browser could not keep a copy' : 'Sign in to save'));
-      status.title = noCopy ? 'Not saved, and this browser could not keep a copy of the changes. Sign in to Puter to save this spreadsheet to your own cloud' : 'Not saved. Sign in to Puter to save this spreadsheet to your own cloud';
-      status.setAttribute('aria-label', noCopy ? 'Not saved, and this browser could not keep a copy. Sign in to Puter to save this spreadsheet' : 'Not saved. Sign in to Puter to save this spreadsheet');
+      status.title = noCopy ? 'Not saved, and this browser could not keep a copy of the changes. Sign in to Puter to save this sheet to your own cloud' : 'Not saved. Sign in to Puter to save this sheet to your own cloud';
+      status.setAttribute('aria-label', noCopy ? 'Not saved, and this browser could not keep a copy. Sign in to Puter to save this sheet' : 'Not saved. Sign in to Puter to save this sheet');
       return;
     }
     status.disabled = true;
@@ -5816,7 +5816,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     titleBtn.title = titleTip();
     groupBadge.hidden = !wb.sheetGroup;
     const group = wb.sheetGroup ? ' [Group]' : '';
-    document.title = `${doc.name}${group} · Spreadsheet`;
+    document.title = `${doc.name}${group} · Sheets`;
     P.setWindowTitle(`${doc.name}${group}`);
     refreshStatus();
   }
@@ -5933,7 +5933,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   // Content from other files or the web waits for a yes in a file from elsewhere.
   const externalNotice = el('div.notice-bar', { role: 'status', hidden: true },
     el('span.notice-icon', { html: icon('alert', 16, 2) }),
-    el('span.notice-text', {}, 'This spreadsheet pulls in content from other files or the web, or asks the AI. Nothing has been loaded or asked yet.'),
+    el('span.notice-text', {}, 'This sheet pulls in content from other files or the web, or asks the AI. Nothing has been loaded or asked yet.'),
     el('span.notice-actions', {},
       el('button.btn.btn-sm', { type: 'button', onclick: () => { externalNotice.hidden = true; keepFocus(); } }, 'Keep blocked'),
       el('button.btn.btn-sm.btn-primary', { type: 'button', onclick: () => { doc.allowExternal(); externalNotice.hidden = true; grid.refresh(); notify(); keepFocus(); } }, 'Allow')));
@@ -6077,7 +6077,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     // One activation per editor session, including typing, pasting and AI-made data changes.
     if (!trackedEdit && e.detail?.type === 'cells' && wb.dirty) {
       trackedEdit = true;
-      trackEvent('Spreadsheet Edited');
+      trackEvent('Sheets Edited');
     }
     if (e.detail?.type === 'merge-paste') {
       const message = e.detail.reason === 'table' ? 'Merged cells cannot be pasted into a table’s header or data rows.'
@@ -6091,7 +6091,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const message = e.detail.reason === 'bounds' ? 'The whole pivot table must fit within the sheet limits.'
         : e.detail.reason === 'name' ? `The destination sheet already has a pivot table named “${e.detail.name}”.`
         : e.detail.reason === 'table-overlap' ? 'A pivot table cannot overlap a table. Choose another range.'
-        : e.detail.reason === 'copy-limit' ? 'The copied pivot tables exceed this spreadsheet’s storage limit.'
+        : e.detail.reason === 'copy-limit' ? 'The copied pivot tables exceed this sheet’s storage limit.'
         : e.detail.reason === 'copy-layout' ? 'The pivot table cannot keep its layout at this destination. Choose an unmerged range or paste values only.'
         : e.detail.reason === 'clear-partial' ? `Select the entire pivot table “${e.detail.name}” to delete it.`
         : e.detail.reason === 'move-partial' ? `Select the entire pivot table “${e.detail.name}” to move it.`
@@ -6370,8 +6370,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const restore = await confirmDialog({
         title: 'Unsaved changes found',
         message: doc.recoverableMayBeOlder
-          ? `This spreadsheet was edited here at ${stamp}, but those changes never reached Puter, and the file has been saved since. Restoring replaces what is in the file now with those older edits; discarding keeps the file as it is.`
-          : `This spreadsheet was edited here at ${stamp}, but those changes never reached Puter. Restore them? Discarding keeps the file as it is now.`,
+          ? `This sheet was edited here at ${stamp}, but those changes never reached Puter, and the file has been saved since. Restoring replaces what is in the file now with those older edits; discarding keeps the file as it is.`
+          : `This sheet was edited here at ${stamp}, but those changes never reached Puter. Restore them? Discarding keeps the file as it is now.`,
         confirmLabel: 'Restore', cancelLabel: 'Discard', danger: false, dismissValue: null,
       });
       // The editor was left while the question was up (the router closes the dialog as dismissed after the
@@ -6395,7 +6395,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   if (initialRange) setTimeout(() => followInternalLink(`#${initialRange}`), 0);
 
   /**
-   * Someone else's spreadsheet (its address starts with another user's name, as a shared one's does) may be
+   * Someone else's sheets (its address starts with another user's name, as a shared one's does) may be
    * shared with this user only to view. Puter says so only in the list of what is shared with them, and a save
    * would be refused: the status says View only from the start, and a notice says how to keep changes.
    */
@@ -6499,7 +6499,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       grid.destroy();
       session.removeEventListener?.('change', onSession);
       doc.destroy();
-      document.title = 'Spreadsheet';
+      document.title = 'Sheets';
     },
   };
 }

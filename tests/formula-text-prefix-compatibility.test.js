@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest';
-import { compareSpreadsheetText } from '../src/core/formula/text-comparison.js';
+import { compareSheetsText } from '../src/core/formula/text-comparison.js';
 import { FUNCTIONS } from '../src/core/formula/functions.js';
 import { calcValues } from './helpers/calc.js';
 import oracle from './fixtures/reference-text-prefix-compatibility.json';
 
 it.each(oracle.cases)('preserves native canonical versus compatibility prefixes: $a / $b', ({ a, b, expected, exact, countA, countB }) => {
-  expect(Math.sign(compareSpreadsheetText(a, b))).toBe(expected);
-  expect(Math.sign(compareSpreadsheetText(b, a)) || 0).toBe(-expected || 0);
+  expect(Math.sign(compareSheetsText(a, b))).toBe(expected);
+  expect(Math.sign(compareSheetsText(b, a)) || 0).toBe(-expected || 0);
   const cells = { A1: a, B1: b };
   expect(calcValues('A1=B1', cells)).toBe(expected === 0);
   expect(calcValues('A1<B1', cells)).toBe(expected < 0);

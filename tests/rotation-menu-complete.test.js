@@ -46,7 +46,7 @@ describe('the editor', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('rotates the selection down and asks for a custom angle from the Format menu', async () => {
-    const doc = new Doc({ name: 'Rot', path: 'Spreadsheets/Rot.xlsx' });
+    const doc = new Doc({ name: 'Rot', path: 'Sheets/Rot.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'tilt');

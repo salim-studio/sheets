@@ -1,20 +1,20 @@
 /**
- * IMPORTRANGE(file, range): values from another spreadsheet on the Puter
+ * IMPORTRANGE(file, range): values from another sheets on the Puter
  * drive. The pure parts live here (which file, which cells, reading them out
  * of a loaded Workbook); the editor supplies the file reading.
  */
 
 import { parseRefText } from './refs.js';
 import { htmlTableRows } from './html-table.js';
-import { isSpreadsheetFile } from './filetypes.js';
+import { isSheetsFile } from './filetypes.js';
 import { getLocale } from './format.js';
 
-/** "Budget" → "Spreadsheets/Budget.xlsx"; a path with a slash is used as given (an extension is added when missing). */
+/** "Budget" → "Sheets/Budget.xlsx"; a path with a slash is used as given (an extension is added when missing). */
 export function resolveImportPath(name, folder, ensureXlsx) {
   const text = String(name ?? '').trim();
   if (!text) return null;
   // Explicit supported filenames must resolve to the file the user named.
-  if (isSpreadsheetFile(text) && !/\.xlsx$/i.test(text)) return text.includes('/') ? text : `${folder}/${text}`;
+  if (isSheetsFile(text) && !/\.xlsx$/i.test(text)) return text.includes('/') ? text : `${folder}/${text}`;
   if (text.includes('/')) {
     // A path keeps its extension; a suffix of digits alone (Reports/Q1.2024) is part of the name.
     const ext = /\.([a-z0-9]{2,5})$/i.exec(text)?.[1];
@@ -160,7 +160,7 @@ export function rowsFromHtml(html, kind, index, parseInput) {
       // Use the browser's bounded span, not the untrusted attribute as an allocation size.
       const span = td.colSpan;
       width = Math.max(width, c + span);
-      // Empty rows occupy spreadsheet addresses too. Bound the complete
+      // Empty rows occupy sheets addresses too. Bound the complete
       // rectangle before expanding cells or padding those rows.
       if (tableRows.length * width > 200000) return { error: '#NUM!' };
       const groupEnd = groupEnds.get(tr.parentElement);
@@ -212,13 +212,13 @@ export function rowsFromXml(text, xpath, parseInput) {
 /**
  * A file name for something fetched from a URL, so the importer knows the
  * format: the address's last path segment, or "Imported.xlsx" / "Imported.csv"
- * by sniffing the bytes (a zip signature means a spreadsheet file).
+ * by sniffing the bytes (a zip signature means a sheets file).
  */
 export function importNameFor(url, bytes = null) {
   let name = '';
   try { name = decodeURIComponent(new URL(url).pathname.split('/').filter(Boolean).pop() || ''); } catch { name = ''; }
   name = name.replace(/[\\/:*?"<>|]/g, '').trim();
-  if (isSpreadsheetFile(name)) return name;
+  if (isSheetsFile(name)) return name;
   const zip = bytes && bytes.length > 3 && bytes[0] === 0x50 && bytes[1] === 0x4b;
   const base = name.replace(/\.[^.]*$/, '') || 'Imported';
   return `${base}.${zip ? 'xlsx' : 'csv'}`;

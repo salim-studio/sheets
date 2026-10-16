@@ -9,7 +9,7 @@ let mock;
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); });
 afterEach(() => { delete globalThis.puter; });
 
-const path = 'Spreadsheets/Budget.xlsx';
+const path = 'Sheets/Budget.xlsx';
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0'].v;
 
 /** The file, last written at `modified` (seconds) by a server whose clock need not agree with this one. */

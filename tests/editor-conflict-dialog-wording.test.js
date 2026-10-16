@@ -31,7 +31,7 @@ afterEach(() => {
 // The dialog claimed another copy had been saved, though the file may only have been moved or
 // renamed elsewhere (for a file too large to read back and compare, that is all the time can tell).
 it('says the file was saved, moved or renamed since it was opened, rather than that another copy was saved', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   doc.dispatchEvent(new CustomEvent('conflict', { detail: { kind: 'changed', remoteModified: Date.now() } }));

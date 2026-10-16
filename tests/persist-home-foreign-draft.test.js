@@ -26,11 +26,11 @@ const names = (view) => [...view.el.querySelectorAll('.home-drafts .recent-name'
 
 // The draft of a file deleted elsewhere was listed as that file's lost edits, opening through the old
 // address, though another file had been saved there since: selecting it opened that other file.
-it('lists a deleted file\'s draft as an unsaved spreadsheet of its own once another file has its address, recovering it as such', async () => {
-  draft('Spreadsheets/Budget.xlsx', 'Budget', 'uid-old-budget'); // a new Budget.xlsx is in the folder now
+it('lists a deleted file\'s draft as an unsaved sheet of its own once another file has its address, recovering it as such', async () => {
+  draft('Sheets/Budget.xlsx', 'Budget', 'uid-old-budget'); // a new Budget.xlsx is in the folder now
   draft('/nj/Desktop/Report.xlsx', 'Report', 'uid-old-report'); // deleted outside the folder, and another file saved at its address
-  draft('Spreadsheets/Gone.xlsx', 'Gone', 'uid-gone'); // deleted, its address free: still the lost file's edits
-  vi.spyOn(P, 'listFiles').mockResolvedValue([file('Spreadsheets/Budget.xlsx', 'uid-new-budget')]);
+  draft('Sheets/Gone.xlsx', 'Gone', 'uid-gone'); // deleted, its address free: still the lost file's edits
+  vi.spyOn(P, 'listFiles').mockResolvedValue([file('Sheets/Budget.xlsx', 'uid-new-budget')]);
   vi.spyOn(P, 'statByUid').mockResolvedValue(null);
   vi.spyOn(P, 'statFile').mockImplementation(async (path) => (path === '/nj/Desktop/Report.xlsx' ? file(path, 'uid-new-report') : null));
   const openPath = vi.fn();
@@ -39,8 +39,8 @@ it('lists a deleted file\'s draft as an unsaved spreadsheet of its own once anot
   document.body.append(view.el);
   await vi.advanceTimersByTimeAsync(10);
   expect(names(view)).toEqual(['Budget', 'Gone', 'Report']);
-  expect(listDrafts().map((d) => [d.name, d.path]).sort()).toEqual([['Budget', null], ['Gone', 'Spreadsheets/Gone.xlsx'], ['Report', null]]);
-  expect(loadDraft(draftKey('Spreadsheets/Budget.xlsx'))).toBeNull();
+  expect(listDrafts().map((d) => [d.name, d.path]).sort()).toEqual([['Budget', null], ['Gone', 'Sheets/Gone.xlsx'], ['Report', null]]);
+  expect(loadDraft(draftKey('Sheets/Budget.xlsx'))).toBeNull();
   const chips = [...view.el.querySelectorAll('.home-drafts .recent-open')];
   chips.find((b) => b.textContent.includes('Budget')).click();
   expect(openPath).not.toHaveBeenCalled();
@@ -48,6 +48,6 @@ it('lists a deleted file\'s draft as an unsaved spreadsheet of its own once anot
   expect(isUnsavedDraftKey(recoverDraft.mock.calls[0][0])).toBe(true);
   expect(chips.find((b) => b.textContent.includes('Budget')).title).toBeFalsy();
   chips.find((b) => b.textContent.includes('Gone')).click();
-  expect(openPath).toHaveBeenCalledWith('Spreadsheets/Gone.xlsx');
+  expect(openPath).toHaveBeenCalledWith('Sheets/Gone.xlsx');
   view.destroy();
 });

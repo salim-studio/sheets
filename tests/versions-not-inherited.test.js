@@ -13,7 +13,7 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const BUDGET = 'Spreadsheets/Budget.xlsx';
+const BUDGET = 'Sheets/Budget.xlsx';
 const cellA1 = (wb) => wb.getValue(wb.activeSheetId, 0, 0);
 async function bytesOf(value) {
   const wb = new Workbook();
@@ -52,7 +52,7 @@ it('sets a deleted file\'s history aside when another file is renamed onto its n
     expect(await plan.rename('Budget')).toBeNull();
     expect(plan.path).toBe(BUDGET);
     expect(await labels(plan.file)).toEqual(['', 'Plan milestone']);
-    expect(await labels('Spreadsheets/Plan.xlsx')).toEqual([]);
+    expect(await labels('Sheets/Plan.xlsx')).toEqual([]);
     for (const v of await listVersions(plan.file)) expect(await snapshotText(v)).toBe('plan');
     // The dead file's snapshots are still on the drive, under a name no file's history is read from.
     const aside = await orphaned();
@@ -62,7 +62,7 @@ it('sets a deleted file\'s history aside when another file is renamed onto its n
   } finally { plan.destroy(); }
 });
 
-it('starts a new spreadsheet saved under a deleted file\'s name with a history of its own, and takes its first snapshot', async () => {
+it('starts a new sheet saved under a deleted file\'s name with a history of its own, and takes its first snapshot', async () => {
   await deletedBudgetWithHistory();
   const fresh = new Doc({ wb: new Workbook() });
   fresh.wb.setInput(fresh.wb.activeSheetId, 0, 0, 'new budget');
@@ -93,15 +93,15 @@ it('does the same for a copy saved under a deleted file\'s name', async () => {
 });
 
 it('puts an occupied destination aside when snapshots move, rather than refusing, and leaves a free one be', async () => {
-  await saveVersion('Spreadsheets/A.xlsx', await bytesOf('a'), 'a');
-  await saveVersion('Spreadsheets/B.xlsx', await bytesOf('b'), 'b');
-  expect(await moveVersions('Spreadsheets/A.xlsx', 'Spreadsheets/B.xlsx')).toBe(true);
-  expect(await labels('Spreadsheets/B.xlsx')).toEqual(['a']);
-  expect(await labels('Spreadsheets/A.xlsx')).toEqual([]);
+  await saveVersion('Sheets/A.xlsx', await bytesOf('a'), 'a');
+  await saveVersion('Sheets/B.xlsx', await bytesOf('b'), 'b');
+  expect(await moveVersions('Sheets/A.xlsx', 'Sheets/B.xlsx')).toBe(true);
+  expect(await labels('Sheets/B.xlsx')).toEqual(['a']);
+  expect(await labels('Sheets/A.xlsx')).toEqual([]);
   expect(await orphaned()).toEqual([expect.stringMatching(/^B \(orphaned /)]);
-  expect(await P.fileExists(versionsFolder('Spreadsheets/A.xlsx'))).toBe(false);
+  expect(await P.fileExists(versionsFolder('Sheets/A.xlsx'))).toBe(false);
   // Nothing to put aside: a plain move, and a source without a history moves nothing.
-  expect(await moveVersions('Spreadsheets/B.xlsx', 'Spreadsheets/C.xlsx')).toBe(true);
-  expect(await moveVersions('Spreadsheets/B.xlsx', 'Spreadsheets/D.xlsx')).toBe(false);
+  expect(await moveVersions('Sheets/B.xlsx', 'Sheets/C.xlsx')).toBe(true);
+  expect(await moveVersions('Sheets/B.xlsx', 'Sheets/D.xlsx')).toBe(false);
   expect(await orphaned()).toHaveLength(1);
 });

@@ -32,7 +32,7 @@ it('rejects implicit row overflow while retaining valid implicit row indexes',()
 });
 
 it('reads column declarations only from cols, never DrawingML anchors or extension elements', async () => {
-  const anchor = '<extLst><ext uri="example"><xdr:from xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"><xdr:col>0</xdr:col><xdr:row>0</xdr:row></xdr:from></ext></extLst>';
+  const anchor = '<extLst><ext uri="example"><xdr:from xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing"><xdr:col>0</xdr:col><xdr:row>0</xdr:row></xdr:from></ext></extLst>';
   const bytes = otherProgramsXlsx({ sheetXml: { Data: {
     head: '<sheetViews><sheetView showGridLines="0" workbookViewId="0"/></sheetViews><cols><col min="2" max="3" width="18"/></cols>' + anchor,
     rows: '<row r="3"><c r="B3"><v>12</v></c></row>', tail: anchor,

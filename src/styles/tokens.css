@@ -28,12 +28,12 @@
   --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6964' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   --filter-glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6964' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/></svg>");
 
-  /* Forest green sampled from icon.png. Accent fill needs 4.5:1 with its label. */
-  --accent: #356d49;
-  --accent-strong: #28593a;
+  /* Emerald sampled from the Sheets icon. Accent fill needs 4.5:1 with its label. */
+  --accent: #0E7A4D;
+  --accent-strong: #0A5C3B;
   --accent-ink: #ffffff;
-  --accent-wash: rgba(53, 109, 73, 0.12);
-  --selection: rgba(53, 109, 73, 0.3); /* text selection, strong enough to see */
+  --accent-wash: rgba(14, 122, 77, 0.12);
+  --selection: rgba(14, 122, 77, 0.3); /* text selection, strong enough to see */
 
   --pos: #006300;
   --critical: #c22a2a;
@@ -89,11 +89,11 @@
     --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23918f88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     --filter-glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23918f88' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/></svg>");
 
-    --accent: #83be94;
-    --accent-strong: #a1d2af;
+    --accent: #4CC38A;
+    --accent-strong: #7FE3B0;
     --accent-ink: #0d0d0d;
-    --accent-wash: rgba(131, 190, 148, 0.18);
-    --selection: rgba(131, 190, 148, 0.42);
+    --accent-wash: rgba(76, 195, 138, 0.18);
+    --selection: rgba(76, 195, 138, 0.42);
 
     --pos: #3fb950;
     --critical: #ef6f6f;
@@ -127,11 +127,11 @@
   --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23918f88' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   --filter-glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23918f88' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/></svg>");
 
-  --accent: #83be94;
-  --accent-strong: #a1d2af;
+  --accent: #4CC38A;
+  --accent-strong: #7FE3B0;
   --accent-ink: #0d0d0d;
-  --accent-wash: rgba(131, 190, 148, 0.18);
-  --selection: rgba(131, 190, 148, 0.42);
+  --accent-wash: rgba(76, 195, 138, 0.18);
+  --selection: rgba(76, 195, 138, 0.42);
 
   --pos: #3fb950;
   --critical: #ef6f6f;
@@ -165,11 +165,11 @@
     --scrim: rgba(11, 11, 11, 0.44);
     --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6964' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     --filter-glyph: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6964' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/></svg>");
-    --accent: #356d49;
-    --accent-strong: #28593a;
+    --accent: #0E7A4D;
+    --accent-strong: #0A5C3B;
     --accent-ink: #ffffff;
-    --accent-wash: rgba(53, 109, 73, 0.12);
-    --selection: rgba(53, 109, 73, 0.3); /* text selection, strong enough to see */
+    --accent-wash: rgba(14, 122, 77, 0.12);
+    --selection: rgba(14, 122, 77, 0.3); /* text selection, strong enough to see */
     --pos: #006300;
     --critical: #c22a2a;
     --critical-wash: rgba(194, 42, 42, 0.1);

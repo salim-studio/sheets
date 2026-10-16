@@ -14,7 +14,7 @@ afterEach(() => { view?.destroy?.(); view = null; vi.clearAllTimers(); vi.useRea
 // A long file name is cut short with an ellipsis on the row, and the row had no tooltip to show the rest.
 it('shows the whole file name on hover over a row', async () => {
   const name = 'Quarterly forecast with a very long descriptive name that does not fit the row.xlsx';
-  vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: `Spreadsheets/${name}`, name, modified: 1, size: 10 }]);
+  vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: `Sheets/${name}`, name, modified: 1, size: 10 }]);
   view = homeView({});
   document.body.append(view.el);
   await vi.advanceTimersByTimeAsync(0);

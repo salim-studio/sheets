@@ -32,7 +32,7 @@ describe('telling this tab\'s copy from a matching clipboard', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount(prep) {
-    const doc = new Doc({ name: 'Match', path: 'Spreadsheets/Match.xlsx' });
+    const doc = new Doc({ name: 'Match', path: 'Sheets/Match.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     prep(wb, id);
@@ -120,7 +120,7 @@ describe('telling this tab\'s copy from a matching clipboard', () => {
     const { wb, id, copy, paste } = await mount((wb, id) =>
       wb.setCells(id, Array.from({ length: 5001 }, (_, r) => ({ r, c: 0, cell: { f: '5*2' } }))));
     const own = copy('A1:A5001');
-    expect(own['text/html']).not.toContain('data-spreadsheet-cells=');
+    expect(own['text/html']).not.toContain('data-sheets-cells=');
     paste('B1', { 'text/plain': own['text/plain'], 'text/html': `<pre>${own['text/plain']}</pre>` });
     for (const r of [0, 5000]) expect(wb.getCell(id, r, 1)).toMatchObject({ v: 10, f: null });
     paste('C1', own);

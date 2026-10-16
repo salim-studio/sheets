@@ -70,7 +70,7 @@ function extendedScope(previous, next) {
 
 /**
  * Ctrl+Arrow: jump to the edge of the current block of data, like every
- * spreadsheet does. From a filled cell, run to the last filled cell before
+ * sheets does. From a filled cell, run to the last filled cell before
  * a gap; from an empty one, to the next filled cell (or the sheet edge).
  */
 export function jump(sel, dr, dc, bounds, hasValue, isVisible = () => true, nextFilled = null) {

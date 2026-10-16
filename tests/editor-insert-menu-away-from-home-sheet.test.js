@@ -35,7 +35,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function setup(cell) {
-  const doc = new Doc({ name: 'Sheets', path: 'Spreadsheets/Sheets.xlsx' });
+  const doc = new Doc({ name: 'Sheets', path: 'Sheets/Sheets.xlsx' });
   const wb = doc.wb;
   const home = wb.activeSheetId;
   const other = wb.addSheet('Sheet2').id;
@@ -86,7 +86,7 @@ it('greys the sheet, note and link items out while the formula shows another she
   expect(item('Row above')).toBeUndefined(); // inside its submenu, as ever
   item('Sheet').click();
   await vi.advanceTimersByTimeAsync(1);
-  for (const label of ['Duplicate sheet', 'Copy sheet to another spreadsheet…', 'Rename sheet…', 'Sheet color…', 'Move sheet left', 'Protect sheet', 'Hide sheet']) {
+  for (const label of ['Duplicate sheet', 'Copy sheet to another sheets…', 'Rename sheet…', 'Sheet color…', 'Move sheet left', 'Protect sheet', 'Hide sheet']) {
     expect(item(label)?.disabled, label).toBe(true);
   }
   const deleteSheet = [...document.querySelectorAll('.menu-item')].find((n) => /^Delete sheet/.test(n.querySelector('.menu-label')?.textContent || ''));

@@ -8,8 +8,8 @@ function file(rows) {
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
  xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
- office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:body><office:spreadsheet><table:table table:name="Data">${rows}</table:table></office:spreadsheet></office:body>
+ office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
+ <office:body><office:sheets><table:table table:name="Data">${rows}</table:table></office:sheets></office:body>
 </office:document>`;
 }
 const read = (rows) => workbookFromFile(new TextEncoder().encode(file(rows)), 'repeats.fods');

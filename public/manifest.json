@@ -1,13 +1,13 @@
 {
-  "name": "Spreadsheet",
-  "short_name": "Spreadsheet",
-  "description": "A fast, private spreadsheet. Formulas, formatting, and real .xlsx files saved to your own Puter cloud.",
-  "id": "puter-spreadsheet",
+  "name": "Sheets",
+  "short_name": "Sheets",
+  "description": "Sheets — a fast, private, AI-powered sheets app. 500+ formulas, charts, and real .xlsx files in your own cloud.",
+  "id": "sheets-app",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f9f9f7",
-  "theme_color": "#356d49",
+  "background_color": "#f7f8f7",
+  "theme_color": "#0E7A4D",
   "categories": [
     "productivity",
     "business"

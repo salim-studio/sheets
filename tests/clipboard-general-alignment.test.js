@@ -54,7 +54,7 @@ it('retains text values through edits, undo, outgoing HTML and native XLSX witho
   wb.setCells(id, cells.map((cell, c) => ({ r: 0, c, cell })));
   wb.setInput(id, 0, 0, '22'); wb.undo();
   expect(wb.getValue(id, 0, 0)).toBe('0091');
-  const html = cellsToHtml([cells.map(c => c.v)], [cells], null, [cells.map(c => c.v)]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([cells.map(c => c.v)], [cells], null, [cells.map(c => c.v)]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x => x.cell.v)).toEqual(['0091', '=1+2', 'FALSE']);
   const blob = await workbookToXlsx(wb);
   const data = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(reader.error); reader.readAsArrayBuffer(blob); });

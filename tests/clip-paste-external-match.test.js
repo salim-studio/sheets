@@ -30,7 +30,7 @@ describe('foreign text that matches the last copy', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount() {
-    const doc = new Doc({ name: 'Match', path: 'Spreadsheets/Match.xlsx' });
+    const doc = new Doc({ name: 'Match', path: 'Sheets/Match.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 1, '5');

@@ -32,7 +32,7 @@ afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealT
 const B = 1;
 /** B1 holds `above`; B2 has a Yes/No list rule (strict unless said otherwise); the editor sits on B2. */
 async function setup({ above = 'hello', strict = true } = {}) {
-  const doc = new Doc({ name: 'Rules', path: 'Spreadsheets/Rules.xlsx' });
+  const doc = new Doc({ name: 'Rules', path: 'Sheets/Rules.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, B, above);

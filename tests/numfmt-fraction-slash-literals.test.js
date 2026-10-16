@@ -62,7 +62,7 @@ it('rejects missing, repeated and mixed denominator syntax consistently', () => 
 it('reads spaced fractions from native display-only HTML and uses the selected format section', () => {
   for (const [code, text] of native.slice(0, 5)) {
     const html = cellsToHtml([[text]], [[{ v: 2.75, f: null, s: { fmt: 'custom', code } }]], null, [[2.75]])
-      .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '').replace(/ x:num="[^"]*"/g, '');
+      .replace(/ data-sheets-[\w-]+="[^"]*"/g, '').replace(/ x:num="[^"]*"/g, '');
     const cell = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(cell.v).toBe(2.75); expect(cell.s.code).toBe(code);
   }
@@ -88,7 +88,7 @@ it('keeps raw values, format codes and TEXT results through edits, clipboard and
     const cell = { v: 2.75, f: null, s: { fmt: 'custom', code } };
     const html = cellsToHtml([[text]], [[cell]], null, [[2.75]]);
     expect(parseHtmlClipboard(html).cells).toEqual([[cell]]);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(2.75); expect(pasted.s.code).toBe(code);
   });

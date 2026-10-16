@@ -12,8 +12,8 @@ afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks();
 
 const open = (nav = {}) => {
   vi.spyOn(P, 'listFiles').mockResolvedValue([
-    { path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 2048, modified: Date.now() },
-    { path: 'Spreadsheets/Plan.xlsx', name: 'Plan.xlsx', size: 10, modified: Date.now() - 1000 },
+    { path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 2048, modified: Date.now() },
+    { path: 'Sheets/Plan.xlsx', name: 'Plan.xlsx', size: 10, modified: Date.now() - 1000 },
   ]);
   const view = homeView({ openPath() {}, newDoc() {}, sampleDoc() {}, templateDoc() {}, importFile() {}, ...nav });
   document.body.append(view.el);
@@ -21,20 +21,20 @@ const open = (nav = {}) => {
 };
 
 describe('the ways to start', () => {
-  it('starts a blank spreadsheet or a featured template from its tile, each named by its label', async () => {
+  it('starts a blank sheets or a featured template from its tile, each named by its label', async () => {
     const newDoc = vi.fn();
     const templateDoc = vi.fn();
     const view = open({ newDoc, templateDoc });
     await vi.advanceTimersByTimeAsync(0);
     const tiles = [...view.el.querySelectorAll('.start-tile')];
-    expect(tiles.map((t) => t.textContent)).toEqual(['Blank spreadsheet', 'Monthly budget', 'Expense tracker', 'Invoice', 'To-do list', expect.stringMatching(/^All templates\d+ more$/)]);
+    expect(tiles.map((t) => t.textContent)).toEqual(['Blank sheets', 'Monthly budget', 'Expense tracker', 'Invoice', 'To-do list', expect.stringMatching(/^All templates\d+ more$/)]);
     tiles[0].click();
     expect(newDoc).toHaveBeenCalledOnce();
     tiles[2].click();
     expect(templateDoc).toHaveBeenCalledWith('expenses');
     // The group is named by the section's heading, and that heading's id is this screen's own.
     const group = view.el.querySelector('.start-grid');
-    expect(document.getElementById(group.getAttribute('aria-labelledby')).textContent).toBe('Start a new spreadsheet');
+    expect(document.getElementById(group.getAttribute('aria-labelledby')).textContent).toBe('Start a new sheet');
     view.destroy();
   });
 });
@@ -76,10 +76,10 @@ describe('a long list in order of change', () => {
     // The drive counts seconds.
     const ago = (ms) => Math.floor((Date.now() - ms) / 1000);
     vi.spyOn(P, 'listFiles').mockResolvedValue([
-      { path: 'Spreadsheets/A.xlsx', name: 'A.xlsx', size: 1, modified: ago(3600000) },
-      { path: 'Spreadsheets/B.xlsx', name: 'B.xlsx', size: 3, modified: ago(day) },
-      { path: 'Spreadsheets/C.xlsx', name: 'C.xlsx', size: 2, modified: ago(4 * day) },
-      { path: 'Spreadsheets/D.xlsx', name: 'D.xlsx', size: 4, modified: ago(90 * day) },
+      { path: 'Sheets/A.xlsx', name: 'A.xlsx', size: 1, modified: ago(3600000) },
+      { path: 'Sheets/B.xlsx', name: 'B.xlsx', size: 3, modified: ago(day) },
+      { path: 'Sheets/C.xlsx', name: 'C.xlsx', size: 2, modified: ago(4 * day) },
+      { path: 'Sheets/D.xlsx', name: 'D.xlsx', size: 4, modified: ago(90 * day) },
     ]);
     const view = homeView({ openPath() {}, newDoc() {}, sampleDoc() {}, templateDoc() {}, importFile() {} });
     document.body.append(view.el);

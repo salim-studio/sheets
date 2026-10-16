@@ -162,7 +162,7 @@ export function createPageLayout({ wb, commit, redraw = () => {}, fileName = () 
   const pageNodes = new Map(); // page key → node, with its signature in dataset.sig
 
   function info(sheet, page) {
-    return { file: fileName() || 'Spreadsheet', tab: sheet.name, palette: wb.colorPalette, normalFont: wb.normalFont, page: page.number, pages: page.pages };
+    return { file: fileName() || 'Sheets', tab: sheet.name, palette: wb.colorPalette, normalFont: wb.normalFont, page: page.number, pages: page.pages };
   }
 
   /** A section's drawn text, as print draws it, put back in the flow of its own box. */

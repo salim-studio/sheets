@@ -18,7 +18,7 @@ it('preserves the requested font through external HTML in both directions', () =
   const imported = cellsFromHtmlRows(parseHtmlClipboard('<table><tr><td style="font-family:Book Antiqua;font-weight:bold;font-size:24px">Heading</td></tr></table>').rows)[0].cell;
   expect(imported.s.font).toBe('font:Book Antiqua');
   const html = cellsToHtml([['Heading']], [[imported]], [[imported.s]])
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const td = document.createElement('div');
   td.innerHTML = html;
   expect(td.querySelector('td').style.fontFamily).toBe('\"Book Antiqua\"');
@@ -38,7 +38,7 @@ it('keeps Sylfaen serif fallbacks out of native font identity and external clipb
   const text = 'Latin Ελληνικά Հայերեն ქართული';
   const cell = cellsFromHtmlRows(parseHtmlClipboard(`<table><tr><td style="font-family:Sylfaen;font-weight:bold">${text}</td></tr></table>`).rows)[0].cell;
   const html = cellsToHtml([[text]], [[cell]], [[cell.s]])
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(new DOMParser().parseFromString(html, 'text/html').querySelector('td').style.fontFamily).toBe('"Sylfaen"');
   const back = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
   expect(back.v).toBe(text);
@@ -53,7 +53,7 @@ it('uses the bundled Cambria fallback without substituting its native or clipboa
   }
   const imported = cellsFromHtmlRows(parseHtmlClipboard('<table><tr><td style="font-family:Cambria;font-weight:bold;font-style:italic">Mixed typography</td></tr></table>').rows)[0].cell;
   const html = cellsToHtml([['Mixed typography']], [[imported]], [[imported.s]])
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(new DOMParser().parseFromString(html, 'text/html').querySelector('td').style.fontFamily).toBe('\"Cambria\"');
   expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell.s).toMatchObject({ font: 'cambria', bold: true, italic: true });
 });

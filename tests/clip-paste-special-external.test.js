@@ -31,7 +31,7 @@ describe('paste special from another app', () => {
 
   async function mount(clipboard, prep) {
     vi.stubGlobal('navigator', { onLine: true, clipboard });
-    const doc = new Doc({ name: 'Special', path: 'Spreadsheets/Special.xlsx' });
+    const doc = new Doc({ name: 'Special', path: 'Sheets/Special.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     prep(wb, id);

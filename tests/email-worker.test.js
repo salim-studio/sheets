@@ -3,7 +3,7 @@ import { loadEmailWorker } from './helpers/email-worker-harness.js';
 
 const XLSX_B64 = btoa('PK\x03\x04 a zip of a workbook');
 const PDF_B64 = btoa('%PDF-1.4\n%%EOF');
-const LINK = 'https://spreadsheet.puter.com/#/file/uid-123?range=Sheet1!B4';
+const LINK = 'https://sheets.puter.com/#/file/uid-123?range=Sheet1!B4';
 
 const copy = (over = {}) => ({
   workbook: { name: 'Budget' },
@@ -142,14 +142,14 @@ describe('email worker: /links', () => {
 
   it('refuses links that are not the app’s own', async () => {
     const w = loadEmailWorker();
-    for (const link of ['http://spreadsheet.puter.com/#/file/x', 'https://evil.example/#/file/x', 'https://puter.com.evil.example/', 'javascript:alert(1)',
-      'https://spreadsheet.puter.com/#/settings', 'https://user:pw@spreadsheet.puter.com/']) {
+    for (const link of ['http://sheets.puter.com/#/file/x', 'https://evil.example/#/file/x', 'https://puter.com.evil.example/', 'javascript:alert(1)',
+      'https://sheets.puter.com/#/settings', 'https://user:pw@sheets.puter.com/']) {
       expect((await w.call('POST', '/links', { json: body({ link }) })).data.error).toBe('invalid_link');
     }
-    expect((await w.call('POST', '/links', { json: body({ link: 'https://puter.com/app/spreadsheet?file=abc' }) })).data.sent).toBe(1);
-    expect((await w.call('POST', '/links', { json: body({ link: "https://spreadsheet.puter.com/#/file/u1?range='Q3%20plan'!B4" }) })).data.sent).toBe(1);
+    expect((await w.call('POST', '/links', { json: body({ link: 'https://puter.com/app/sheets?file=abc' }) })).data.sent).toBe(1);
+    expect((await w.call('POST', '/links', { json: body({ link: "https://sheets.puter.com/#/file/u1?range='Q3%20plan'!B4" }) })).data.sent).toBe(1);
     // Markup in a link arrives percent-encoded, never as markup.
-    await w.call('POST', '/links', { json: body({ link: 'https://spreadsheet.puter.com/#/file/x"><script>' }) });
+    await w.call('POST', '/links', { json: body({ link: 'https://sheets.puter.com/#/file/x"><script>' }) });
     expect(w.sent.at(-1).html).not.toContain('<script>');
   });
 });

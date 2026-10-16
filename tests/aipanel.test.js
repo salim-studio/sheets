@@ -508,7 +508,7 @@ describe('assistant panel', () => {
   });
 
   it('keeps working on its own sheet when the user looks at another meanwhile', async () => {
-    localStorage.setItem('spreadsheet:ai', JSON.stringify({ approval: 'always' }));
+    localStorage.setItem('sheets:ai', JSON.stringify({ approval: 'always' }));
     panel.destroy();
     panel = createAiPanel(panel.ctx, env);
     document.body.append(panel.el);
@@ -874,12 +874,12 @@ describe('assistant panel settings', () => {
     localStorage.clear();
     vi.stubGlobal('matchMedia', () => ({ matches: false }));
     expect(loadAiSettings().open).toBe(true);
-    localStorage.setItem('spreadsheet:ai', JSON.stringify({ open: false }));
+    localStorage.setItem('sheets:ai', JSON.stringify({ open: false }));
     expect(loadAiSettings().open).toBe(false);
     localStorage.clear();
     vi.stubGlobal('matchMedia', () => ({ matches: true }));
     expect(loadAiSettings().open).toBe(false);
-    localStorage.setItem('spreadsheet:ai', JSON.stringify({ open: true }));
+    localStorage.setItem('sheets:ai', JSON.stringify({ open: true }));
     expect(loadAiSettings().open).toBe(true);
   });
 });

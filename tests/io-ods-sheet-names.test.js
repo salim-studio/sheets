@@ -31,10 +31,10 @@ it.each([
   const content = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
     <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
       xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
-      office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-      <office:body><office:spreadsheet><table:table table:name="${encoded}"><table:table-row>
+      office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+      <office:body><office:sheets><table:table table:name="${encoded}"><table:table-row>
         <table:table-cell office:value-type="float" office:value="42"/>
-      </table:table-row></table:table></office:spreadsheet></office:body>
+      </table:table-row></table:table></office:sheets></office:body>
     </office:document>`);
   const wb = await workbookFromFile(content, 'names.fods');
   expect(wb.sheets[0].name).toBe(name);

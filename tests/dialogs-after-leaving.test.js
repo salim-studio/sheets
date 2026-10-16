@@ -43,7 +43,7 @@ const leave = () => { view.destroy(); view = null; };
 const appInert = () => document.getElementById('app').hasAttribute('inert');
 
 it('does not open Document details over the next screen', async () => {
-  mount('Spreadsheets/Budget.xlsx');
+  mount('Sheets/Budget.xlsx');
   let release;
   vi.spyOn(P, 'statFile').mockImplementation(() => new Promise((resolve) => { release = resolve; }));
   fileMenu('Document details…');
@@ -59,7 +59,7 @@ it('does not open a file picked after the editor was left', async () => {
   vi.spyOn(P, 'canPickFiles').mockReturnValue(true);
   let release;
   vi.spyOn(P, 'pickFile').mockImplementation(() => new Promise((resolve) => { release = resolve; }));
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   const openPath = vi.fn();
   view = editorView({ doc, goHome: vi.fn(), openPath, newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
@@ -67,18 +67,18 @@ it('does not open a file picked after the editor was left', async () => {
   await vi.advanceTimersByTimeAsync(1);
   expect(P.pickFile).toHaveBeenCalledOnce();
   leave();
-  release({ path: 'Spreadsheets/Other.xlsx' });
+  release({ path: 'Sheets/Other.xlsx' });
   await vi.advanceTimersByTimeAsync(5);
   expect(openPath).not.toHaveBeenCalled();
 });
 
 it('does not retitle the page after a rename that finishes once the editor was left', async () => {
-  const doc = mount('Spreadsheets/Budget.xlsx');
+  const doc = mount('Sheets/Budget.xlsx');
   let release;
   vi.spyOn(doc, 'rename').mockImplementation(() => new Promise((resolve) => { release = resolve; }));
   fileMenu('Rename…');
   await vi.advanceTimersByTimeAsync(1);
-  const input = document.querySelector('.modal-panel[aria-label="Rename spreadsheet"] input');
+  const input = document.querySelector('.modal-panel[aria-label="Rename sheets"] input');
   input.value = 'Renamed';
   input.form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
   await vi.advanceTimersByTimeAsync(1);
@@ -86,11 +86,11 @@ it('does not retitle the page after a rename that finishes once the editor was l
   doc.name = 'Renamed';
   release(null);
   await vi.advanceTimersByTimeAsync(5);
-  expect(document.title).toBe('Spreadsheet');
+  expect(document.title).toBe('Sheets');
 });
 
 it('does not retitle the page or report the copy after a save-copy that finishes once the editor was left', async () => {
-  const doc = mount('Spreadsheets/Budget.xlsx');
+  const doc = mount('Sheets/Budget.xlsx');
   const toast = vi.spyOn(notifications, 'toast');
   let release;
   vi.spyOn(doc, 'saveAs').mockImplementation(() => new Promise((resolve) => { release = resolve; }));
@@ -103,7 +103,7 @@ it('does not retitle the page or report the copy after a save-copy that finishes
   doc.name = 'Budget copy';
   release(null);
   await vi.advanceTimersByTimeAsync(5);
-  expect(document.title).toBe('Spreadsheet');
+  expect(document.title).toBe('Sheets');
   expect(toast).not.toHaveBeenCalledWith('Copy saved', expect.anything());
 });
 
@@ -115,7 +115,7 @@ it('does not open Version history after the first save finishes', async () => {
   fileMenu('Version history…');
   await vi.advanceTimersByTimeAsync(1);
   leave();
-  doc.path = 'Spreadsheets/Budget.xlsx';
+  doc.path = 'Sheets/Budget.xlsx';
   release();
   await vi.advanceTimersByTimeAsync(5);
   expect(document.querySelector('.modal-panel[aria-label="Version history"]')).toBeNull();
@@ -133,7 +133,7 @@ it('does not copy or show a link after the first save finishes', async () => {
   menuItem('Copy link to this cell or range').click();
   await vi.advanceTimersByTimeAsync(1);
   leave();
-  doc.path = 'Spreadsheets/Budget.xlsx';
+  doc.path = 'Sheets/Budget.xlsx';
   release(true);
   await vi.advanceTimersByTimeAsync(5);
   expect(writeText).not.toHaveBeenCalled();

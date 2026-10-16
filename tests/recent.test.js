@@ -13,8 +13,8 @@ describe('recent files', () => {
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new Error('Storage access denied'); } });
     try {
       expect(recentFiles()).toEqual([]);
-      expect(() => rememberRecent('Spreadsheets/Plan.xlsx', 'Plan')).not.toThrow();
-      expect(() => forgetRecent('Spreadsheets/Plan.xlsx')).not.toThrow();
+      expect(() => rememberRecent('Sheets/Plan.xlsx', 'Plan')).not.toThrow();
+      expect(() => forgetRecent('Sheets/Plan.xlsx')).not.toThrow();
     } finally {
       if (original) Object.defineProperty(globalThis, 'localStorage', original);
       else delete globalThis.localStorage;
@@ -32,7 +32,7 @@ describe('recent files', () => {
     expect(recentFiles(st)).toHaveLength(8);
     forgetRecent('/b/11.xlsx', st);
     expect(recentFiles(st).some((r) => r.path === '/b/11.xlsx')).toBe(false);
-    st.setItem(accountStorageKey('spreadsheet:recent'), 'not json');
+    st.setItem(accountStorageKey('sheets:recent'), 'not json');
     expect(recentFiles(st)).toEqual([]);
   });
 });

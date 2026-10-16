@@ -4,8 +4,8 @@ import { workbookFromFile, workbookToOds } from '../src/core/io.js';
 
 function fods(cells) {
   return new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
-<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
-<office:body><office:spreadsheet><table:table table:name="Data"><table:table-row>${cells}</table:table-row></table:table></office:spreadsheet></office:body></office:document>`);
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
+<office:body><office:sheets><table:table table:name="Data"><table:table-row>${cells}</table:table-row></table:table></office:sheets></office:body></office:document>`);
 }
 const cell = (body) => `<table:table-cell office:value-type="string">${body}</table:table-cell>`;
 

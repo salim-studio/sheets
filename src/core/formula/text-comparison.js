@@ -41,7 +41,7 @@ export function compareFoldedText(x, y) {
  * differs from its prefix, although internal ignorable text can compare
  * equal. This is a pairwise comparison, not a transitive identity key.
  */
-export function compareSpreadsheetText(a, b) {
+export function compareSheetsText(a, b) {
   const x = foldPrefixText(a), y = foldPrefixText(b);
   if (x === y) return 0;
   if (x.startsWith(y)) return 1;

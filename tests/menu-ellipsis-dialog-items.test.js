@@ -12,7 +12,7 @@ vi.mock('../src/lib/recent.js', () => ({ refreshRecent: async () => [], recentFi
 vi.mock('../src/ui/toast.js', () => ({ toast: vi.fn() }));
 
 // An item that opens a dialog before acting ends in an ellipsis, as "Color…" and "Copy to another
-// spreadsheet…" do; the sheet tab's Rename and Delete and the home screen's Rename and Delete, which
+// sheets…" do; the sheet tab's Rename and Delete and the home screen's Rename and Delete, which
 // open a prompt or ask to be sure, had none.
 globalThis.matchMedia ??= () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 beforeEach(() => { vi.useFakeTimers(); Element.prototype.scrollIntoView = vi.fn(); document.body.replaceChildren(); });
@@ -45,7 +45,7 @@ describe('the sheet tab menu', () => {
 
 describe('the home file menu', () => {
   it('marks Rename and Delete, which open a prompt and a confirmation', async () => {
-    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 10, modified: 1 }]);
+    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 10, modified: 1 }]);
     const view = homeView({ openPath() {}, newDoc() {}, sampleDoc() {}, templateDoc() {}, importFile() {} });
     document.body.append(view.el);
     await vi.advanceTimersByTimeAsync(0);

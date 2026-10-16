@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function open() {
-  const doc = new Doc({ name: 'Trace', path: 'Spreadsheets/Trace.xlsx' });
+  const doc = new Doc({ name: 'Trace', path: 'Sheets/Trace.xlsx' });
   const { wb } = doc;
   const first = wb.activeSheetId;
   const second = wb.addSheet('Sheet2').id;

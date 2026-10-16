@@ -23,7 +23,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 function setup() {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (const [r, a, b] of [[0, 'Name', 'Qty'], [1, 'b', '2'], [2, 'a', '1'], [3, 'c', '3']]) { wb.setInput(id, r, 0, a); wb.setInput(id, r, 1, b); }

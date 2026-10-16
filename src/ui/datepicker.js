@@ -47,7 +47,7 @@ export function openDatePicker(ctx, r, c) {
     return null;
   }
   const value = wb.getValue(sheetId, r, c);
-  // Finite spreadsheet numbers can still lie outside JavaScript's calendar.
+  // Finite sheets numbers can still lie outside JavaScript's calendar.
   // Start at today in that case, and leave the original value until a pick.
   const current = typeof value === 'number' && Number.isFinite(value)
     && Number.isFinite(serialToParts(Math.floor(value)).y) ? Math.floor(value) : null;

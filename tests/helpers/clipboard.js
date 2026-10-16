@@ -5,7 +5,7 @@ import { clipboardMarkupStamp } from '../../src/core/clipboard-integrity.js';
 export function stampClipboardHtml(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   for (const table of doc.querySelectorAll('table')) {
-    table.setAttribute('data-spreadsheet-markup', clipboardMarkupStamp(table.innerHTML, true));
+    table.setAttribute('data-sheets-markup', clipboardMarkupStamp(table.innerHTML, true));
   }
   return doc.body.innerHTML;
 }

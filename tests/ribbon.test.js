@@ -102,7 +102,7 @@ it('collapses without losing control focus, persists the setting and expands whe
   setup(); const first = enabled()[0]; first.focus(); button('Collapse ribbon').click();
   expect(ribbon.el.querySelector('.ribbon-panels').hidden).toBe(true);
   expect(document.activeElement).toBe(tab('Home'));
-  expect(localStorage.getItem('spreadsheet:ribbon')).toBe('collapsed');
+  expect(localStorage.getItem('sheets:ribbon')).toBe('collapsed');
   tab('Data').click(); expect(ribbon.el.querySelector('.ribbon-panels').hidden).toBe(false);
 });
 
@@ -112,7 +112,7 @@ it('moves along the tabs of a collapsed ribbon without expanding it or changing 
   expect(document.activeElement).toBe(tab('Insert'));
   expect(tab('Insert').getAttribute('aria-selected')).toBe('true');
   expect(ribbon.el.classList.contains('ribbon-collapsed')).toBe(true);
-  expect(localStorage.getItem('spreadsheet:ribbon')).toBe('collapsed');
+  expect(localStorage.getItem('sheets:ribbon')).toBe('collapsed');
   key(tab('Insert'), 'End'); expect(document.activeElement).toBe(tab('Automate'));
   expect(ribbon.el.classList.contains('ribbon-collapsed')).toBe(true);
   // ArrowDown, as a click, opens the chosen tab's commands.
@@ -133,7 +133,7 @@ it('collapses and expands on a double-click of a tab, as the collapse button say
   doubleClick(tab('Home')); expect(collapsed()).toBe(true);
   doubleClick(tab('Data')); expect(collapsed()).toBe(false);
   expect(tab('Data').getAttribute('aria-selected')).toBe('true');
-  expect(localStorage.getItem('spreadsheet:ribbon')).toBe('expanded');
+  expect(localStorage.getItem('sheets:ribbon')).toBe('expanded');
   doubleClick(tab('Data')); expect(collapsed()).toBe(true);
   tab('Home').dispatchEvent(new MouseEvent('click', { bubbles: true, detail: 1 })); expect(collapsed()).toBe(false);
 });

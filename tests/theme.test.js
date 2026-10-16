@@ -30,16 +30,16 @@ describe('theme', () => {
   it('stamps explicit modes and remembers them for the pre-paint script', () => {
     applyTheme('dark');
     expect(document.documentElement.dataset.theme).toBe('dark');
-    expect(localStorage.getItem('spreadsheet:theme')).toBe('dark');
+    expect(localStorage.getItem('sheets:theme')).toBe('dark');
     expect(currentTheme()).toBe('dark');
-    expect(document.querySelector('meta[name="theme-color"]').getAttribute('content')).toBe('#28593a');
+    expect(document.querySelector('meta[name="theme-color"]').getAttribute('content')).toBe('#0B3B2A');
 
     applyTheme('light');
     expect(currentTheme()).toBe('light');
-    expect(document.querySelector('meta[name="theme-color"]').getAttribute('content')).toBe('#356d49');
+    expect(document.querySelector('meta[name="theme-color"]').getAttribute('content')).toBe('#0E7A4D');
 
     applyTheme('system');
     expect(document.documentElement.dataset.theme).toBeUndefined();
-    expect(localStorage.getItem('spreadsheet:theme')).toBeNull();
+    expect(localStorage.getItem('sheets:theme')).toBeNull();
   });
 });

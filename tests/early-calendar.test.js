@@ -90,7 +90,7 @@ it('retains serial dates through native XLSX and clipboard, edits and undo', asy
     wb.setInput(id,r,1,`=DAY(A${r+1})`);
     const display=wb.getDisplay(id,r,0), cell=wb.getCell(id,r,0);
     expect(parseInput(editText(cell)).v).toBe(n);
-    const html=cellsToHtml([[display]],[[cell]],null,[[n]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html=cellsToHtml([[display]],[[cell]],null,[[n]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const pasted=cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(pasted.v).toBe(n); expect(styleToNumFmt(pasted.s)).toBe('yyyy-mm-dd');
   }

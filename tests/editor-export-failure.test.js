@@ -40,7 +40,7 @@ const menuItem = (test) => [...document.querySelectorAll('.menu-item')].find((n)
 
 it('says why an export could not be saved in the Puter app', async () => {
   P.saveFileAs.mockRejectedValue(new Error('disk full'));
-  const doc = new Doc({ name: 'Report', path: 'Spreadsheets/Report.xlsx' });
+  const doc = new Doc({ name: 'Report', path: 'Sheets/Report.xlsx' });
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'hello');
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);

@@ -1,7 +1,7 @@
 /**
  * Recursive-descent parser: tokens → AST.
  *
- * Precedence, lowest to highest (matching spreadsheet conventions):
+ * Precedence, lowest to highest (matching sheets conventions):
  *   comparison  = <> < > <= >=
  *   concat      &
  *   additive    + -

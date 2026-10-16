@@ -18,7 +18,7 @@ it('leaves nothing of a name with nothing visible in it, so it falls back to Unt
   expect(sanitizeName('  ​ ')).toBe('');
   expect(sanitizeName('‮')).toBe('');
   expect(sanitizeName('...​')).toBe('');
-  expect(ensureXlsx(sanitizeName('​') || UNTITLED)).toBe('Untitled spreadsheet.xlsx');
+  expect(ensureXlsx(sanitizeName('​') || UNTITLED)).toBe('Untitled sheets.xlsx');
 });
 
 it('strips bidi controls, zero-width spaces and C1 controls from a name, and joiners only at its ends', () => {
@@ -40,15 +40,15 @@ it('keeps the joiners that shape words and emoji sequences', () => {
   expect(sanitizeName('Übersicht 合計')).toBe('Übersicht 合計');
 });
 
-it('saves a spreadsheet named with nothing visible as Untitled, and refuses such a rename', async () => {
+it('saves a sheets named with nothing visible as Untitled, and refuses such a rename', async () => {
   const doc = new Doc({ name: '​' });
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'x');
   try {
     expect(await doc.save()).toBe(true);
-    expect(doc.path).toBe('Spreadsheets/Untitled spreadsheet.xlsx');
+    expect(doc.path).toBe('Sheets/Untitled sheets.xlsx');
     expect(doc.name).toBe(UNTITLED);
     expect(await doc.rename('‮')).toBe('Enter a name');
     expect(await doc.rename('budget‮')).toBeNull();
-    expect(doc.path).toBe('Spreadsheets/budget.xlsx');
+    expect(doc.path).toBe('Sheets/budget.xlsx');
   } finally { doc.destroy(); }
 });

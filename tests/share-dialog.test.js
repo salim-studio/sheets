@@ -37,7 +37,7 @@ it('lists who has access, and adds a person at the level chosen', async () => {
     return { ...rows.at(-1), isNew: true };
   });
   const onChange = vi.fn();
-  const { panel } = openShareDialog({ path: 'Spreadsheets/Plan.xlsx', name: 'Plan', onChange });
+  const { panel } = openShareDialog({ path: 'Sheets/Plan.xlsx', name: 'Plan', onChange });
   await tick();
   expect(panel.classList.contains('share-panel')).toBe(true); // sized for an address beside the level and the button
   expect(labels(panel)).toEqual(['bo']);
@@ -45,7 +45,7 @@ it('lists who has access, and adds a person at the level chosen', async () => {
   panel.querySelector('select.share-mode').value = 'write';
   submit(panel);
   await tick();
-  expect(P.shareFile).toHaveBeenCalledWith('Spreadsheets/Plan.xlsx', 'ana', 'write');
+  expect(P.shareFile).toHaveBeenCalledWith('Sheets/Plan.xlsx', 'ana', 'write');
   expect(onChange).toHaveBeenCalledOnce();
   expect(labels(panel)).toEqual(['bo', 'ana']);
   expect(field(panel).value).toBe('');

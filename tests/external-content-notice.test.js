@@ -54,7 +54,7 @@ describe('editor notice', () => {
   it('keeps the notice hidden for a trusted document', async () => {
     const wb = new Workbook();
     wb.setInput(wb.activeSheetId, 0, 0, '=IMPORTDATA("https://example.com/a.csv")');
-    const doc = new Doc({ wb, name: 'Mine', path: 'Spreadsheets/Mine.xlsx' });
+    const doc = new Doc({ wb, name: 'Mine', path: 'Sheets/Mine.xlsx' });
     view = editorView({ doc, goHome() {}, openPath() {}, newDoc() {}, importFile() {} });
     document.querySelector('#app').append(view.el);
     await vi.advanceTimersByTimeAsync(5);

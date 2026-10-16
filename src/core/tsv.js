@@ -1,6 +1,6 @@
 /**
  * Tab-separated text for the clipboard, and CSV parsing for pasted text.
- * Quoting follows the spreadsheet convention: a field containing the
+ * Quoting follows the sheets convention: a field containing the
  * delimiter, a quote, or a newline is wrapped in double quotes, with inner
  * quotes doubled.
  */

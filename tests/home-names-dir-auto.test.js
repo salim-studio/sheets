@@ -13,7 +13,7 @@ afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks();
 // A file named in Hebrew or Arabic was laid out left to right in the home list and the recents strip,
 // its number at the wrong end; the names follow their own direction now, as the cells do.
 it('lays the file names and the recent names out in their own direction', async () => {
-  vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Spreadsheets/תקציב 2026.xlsx', name: 'תקציב 2026.xlsx', size: 10, modified: 1 }]);
+  vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Sheets/תקציב 2026.xlsx', name: 'תקציב 2026.xlsx', size: 10, modified: 1 }]);
   const view = homeView({ openPath() {}, newDoc() {}, sampleDoc() {}, templateDoc() {}, importFile() {} });
   document.body.append(view.el);
   await vi.advanceTimersByTimeAsync(0);

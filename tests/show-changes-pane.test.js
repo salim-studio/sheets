@@ -33,7 +33,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; session.user = savedUser; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Changes', path: 'Spreadsheets/Changes.xlsx' });
+  const doc = new Doc({ name: 'Changes', path: 'Sheets/Changes.xlsx' });
   const wb = doc.wb;
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);

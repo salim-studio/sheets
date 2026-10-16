@@ -20,7 +20,7 @@ describe('cell style keys that every object inherits', () => {
 describe('embedded cells pasted from another tab', () => {
   it('refuse style keys named like inherited object members', () => {
     if (typeof DOMParser === 'undefined') return;
-    const html = (style) => stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify([[{ v: 'x', s: style }]])}'><tr><td>x</td></tr></table>`);
+    const html = (style) => stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify([[{ v: 'x', s: style }]])}'><tr><td>x</td></tr></table>`);
     expect(parseHtmlClipboard(html({ bold: true, color: '#ff0000', bc: '#112233', bs: 'dashed' }))?.cells?.[0]?.[0]?.s).toEqual({ bold: true, color: '#ff0000', bc: '#112233', bs: 'dashed' });
     expect(parseHtmlClipboard(html({ toString: true }))?.cells).toBeUndefined();
     expect(parseHtmlClipboard(html({ __proto__: { bold: true }, constructor: 'x' }))?.cells).toBeUndefined();

@@ -37,7 +37,7 @@ export function projectTrackerXlsx({ controlProps = '', caption = '', occupied =
       tail: '<conditionalFormatting sqref="O5:O10 C5:C29">' + statuses.map((v, i) => textRule(v, i, 'C')).join('') + '</conditionalFormatting>'
         + '<conditionalFormatting sqref="Q5:Q8 D5:D29">' + priorities.map((v, i) => textRule(v, i + 5, 'D')).join('') + '</conditionalFormatting>'
         + '<dataValidations count="2"><dataValidation type="list" sqref="C5:C29"><formula1>$O$5:$O$10</formula1></dataValidation><dataValidation type="list" sqref="D5:D29"><formula1>$Q$5:$Q$8</formula1></dataValidation></dataValidations>'
-        + '<legacyDrawing r:id="legacy"/><mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><mc:Choice Requires="x14"><controls>' + controlXml + '</controls></mc:Choice></mc:AlternateContent>',
+        + '<legacyDrawing r:id="legacy"/><mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main"><mc:Choice Requires="x14"><controls>' + controlXml + '</controls></mc:Choice></mc:AlternateContent>',
     }];
   }));
   const bytes = otherProgramsXlsx({ sheetNames: names, sheetXml, styles: {

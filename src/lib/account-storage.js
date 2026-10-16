@@ -25,11 +25,11 @@ export function isAccountScope(s) { return /^(uuid|username):./.test(s); }
 /** The guest scope, or the throwaway one used while a signed-in account's identity is unknown: records kept under it follow the account once it is known. */
 export function isProvisionalScope(s) { return s === 'guest' || /^session:/.test(s); }
 
-/** Records are spreadsheet:<kind>:account:<owner>:<path>; legacy records have no owner field. */
+/** Records are sheets:<kind>:account:<owner>:<path>; legacy records have no owner field. */
 function belongsToScope(key, prefix) {
-  if (!key?.startsWith('spreadsheet:')) return false;
+  if (!key?.startsWith('sheets:')) return false;
   // Look immediately after the record kind, never farther into a document's title or path.
-  const at = key.indexOf(':', 'spreadsheet:'.length);
+  const at = key.indexOf(':', 'sheets:'.length);
   return at >= 0 && key.startsWith(prefix, at);
 }
 
@@ -64,7 +64,7 @@ export function adoptStorageFrom(fromScope, storage = null) {
 
 /**
  * An account is being left (a sign-out): every record this browser kept for it goes, the mirror
- * image of adoptStorageFrom. Drafts hold whole spreadsheets, and the recent list holds names and
+ * image of adoptStorageFrom. Drafts hold whole sheets, and the recent list holds names and
  * addresses from the drive, so on a shared computer signing out must leave none of it behind.
  * Only the named scope's records are swept: the guest's and any other account's stay, and so do
  * the records kept for this browser rather than for an account (the theme). Call it while that

@@ -7,7 +7,7 @@ import { parseHtmlClipboard } from '../src/core/clipboard.js';
 // anything can put such an attribute on the clipboard. Colours are written
 // into element styles by the toolbar and grid, so only hex colours may pass.
 describe('colours in embedded pasted cells', () => {
-  const embed = (cell) => parseHtmlClipboard(stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify([[cell]])}'><tr><td>Shown</td></tr></table>`));
+  const embed = (cell) => parseHtmlClipboard(stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify([[cell]])}'><tr><td>Shown</td></tr></table>`));
 
   it('drops colour values that are not hex colours and keeps the rest of the style', () => {
     const parsed = embed({ v: 1, s: { color: 'url(https://evil.example/px?c)', bg: 'red; background-image: url(https://evil.example/b)', bc: 'javascript:alert(1)', bold: true, align: 'right' } });

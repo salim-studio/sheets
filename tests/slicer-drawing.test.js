@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 import { parseModelXml } from '../src/core/data-model-metadata.js';
 import { readSlicerDrawing, slicerDrawingBounds } from '../src/core/slicer-drawing.js';
-const D = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing';
+const D = 'http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing';
 const A = 'http://schemas.openxmlformats.org/drawingml/2006/main';
 const S = 'http://schemas.microsoft.com/office/drawing/2010/slicer';
 const M = 'http://schemas.openxmlformats.org/markup-compatibility/2006';

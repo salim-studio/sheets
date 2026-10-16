@@ -2,7 +2,7 @@
  * Values on screen. A cell stores a raw value (number, string, boolean or
  * null) plus an optional style; this module turns typed text into values
  * and values into display strings, and converts between our number-format
- * names and the codes spreadsheet files use.
+ * names and the codes sheets files use.
  *
  * Dates use the 1900 serial calendar of workbook files, including its fictitious February 29.
  * Gregorian dates from March 1900 onward have the 1899-12-30 epoch. All date
@@ -51,7 +51,7 @@ export const ERROR_HELP = {
   '#CALC!': 'The calculation produced something a cell cannot show, such as an uncalled LAMBDA or an empty array.',
   '#ERROR!': 'The formula could not be parsed. Check parentheses, commas, and quotes.',
   '#BUSY!': 'Waiting for an answer (AI or another slow source); the cell fills in when it arrives.',
-  '#BLOCKED!': 'Content from other files or the web is not loaded in this spreadsheet until you allow it in the notice above the sheet.',
+  '#BLOCKED!': 'Content from other files or the web is not loaded in this sheet until you allow it in the notice above the sheet.',
 };
 
 export function errorHelp(code) {
@@ -292,7 +292,7 @@ export function dateToSerial(date) {
 }
 
 /** Gregorian bridge only: serial 60 maps to February 28, and 0 to December 31.
- * Use serialToYMD for spreadsheet calendar fields, which preserve both special days. */
+ * Use serialToYMD for sheets calendar fields, which preserve both special days. */
 export function serialToDate(serial) {
   return new Date(EPOCH_MS + Math.round((serial < 60 ? serial + 1 : serial) * DAY_MS));
 }
@@ -578,7 +578,7 @@ function monthNumber(word, loc = locale) {
 
 /**
  * A typed calendar date as { serial, style }, or null when it is not a valid
- * spreadsheet date or falls before January 1900: such input stays
+ * sheets date or falls before January 1900: such input stays
  * text rather than a serial no date format can show.
  */
 function typedDate(y, m, d, style = null) {

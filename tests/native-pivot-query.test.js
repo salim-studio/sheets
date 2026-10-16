@@ -82,7 +82,7 @@ it('computes cross-filter availability in one selected-record pass and retains z
   expect(query.memberCounts(2, [{ field: 0, items: [1] }])).toEqual([1, 1]);
   expect(query.memberCounts(0, [{ field: 2, items: [] }])).toEqual([0, 0, 0]);
 });
-it('reports aggregate overflow as a spreadsheet error', () => {
+it('reports aggregate overflow as a sheets error', () => {
   const cache = fixture(); cache.records[0][2].value = 1e308; cache.records[1][2].value = 1e308;
   expect(new NativePivotQuery(cache).aggregate(3).value).toEqual({ error: '#NUM!' });
 });

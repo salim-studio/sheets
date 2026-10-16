@@ -22,25 +22,25 @@ afterEach(() => {
 
 it('keeps app actions working when analytics is blocked, missing or throws', () => {
   vi.stubGlobal('plausible', undefined);
-  expect(() => trackEvent('Spreadsheet Edited')).not.toThrow();
+  expect(() => trackEvent('Sheets Edited')).not.toThrow();
   vi.stubGlobal('plausible', () => { throw new Error('blocked'); });
-  expect(() => trackEvent('Spreadsheet Saved', { method: 'manual' })).not.toThrow();
+  expect(() => trackEvent('Sheets Saved', { method: 'manual' })).not.toThrow();
 });
 
 it('queues custom events before the async script loads', () => {
   const queue = [];
   vi.stubGlobal('plausible', (...args) => queue.push(args));
-  trackEvent('Spreadsheet Edited');
-  trackEvent('Spreadsheet Saved', { method: 'auto' });
-  expect(queue).toEqual([['Spreadsheet Edited'], ['Spreadsheet Saved', { props: { method: 'auto' } }]]);
+  trackEvent('Sheets Edited');
+  trackEvent('Sheets Saved', { method: 'auto' });
+  expect(queue).toEqual([['Sheets Edited'], ['Sheets Saved', { props: { method: 'auto' } }]]);
 });
 
 it('sends only a known format and export method, never a filename or arbitrary extension', () => {
   trackExport('Private payroll for jane@example.com.XLSX', 'browser');
   trackExport('Payroll.private-financial-information', 'puter');
   expect(plausible.mock.calls).toEqual([
-    ['Spreadsheet Exported', { props: { format: 'xlsx', method: 'browser' } }],
-    ['Spreadsheet Exported', { props: { format: 'other', method: 'puter' } }],
+    ['Sheets Exported', { props: { format: 'xlsx', method: 'browser' } }],
+    ['Sheets Exported', { props: { format: 'other', method: 'puter' } }],
   ]);
 });
 
@@ -59,9 +59,9 @@ it('tracks actual cloud saves and copies, skipping failed and unchanged saves', 
   expect(await doc.saveAs('Private copy')).toBeNull();
   expect(await doc.saveAs('Private copy')).toBe('A file with that name already exists');
   expect(plausible.mock.calls).toEqual([
-    ['Spreadsheet Saved', { props: { method: 'manual' } }],
-    ['Spreadsheet Saved', { props: { method: 'auto' } }],
-    ['Spreadsheet Saved', { props: { method: 'copy' } }],
+    ['Sheets Saved', { props: { method: 'manual' } }],
+    ['Sheets Saved', { props: { method: 'auto' } }],
+    ['Sheets Saved', { props: { method: 'copy' } }],
   ]);
 });
 
@@ -73,7 +73,7 @@ it('tracks an export only after the Puter picker writes a file', async () => {
   expect(await P.saveFileAs(blob, 'Private.csv')).toBeNull();
   expect(plausible).not.toHaveBeenCalled();
   await P.saveFileAs(blob, 'Private.csv');
-  expect(plausible.mock.calls).toEqual([['Spreadsheet Exported', { props: { format: 'csv', method: 'puter' } }]]);
+  expect(plausible.mock.calls).toEqual([['Sheets Exported', { props: { format: 'csv', method: 'puter' } }]]);
 });
 
 it('tracks a browser export after starting the download', () => {
@@ -82,7 +82,7 @@ it('tracks a browser export after starting the download', () => {
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
   try {
     P.downloadBlob(new Blob(['secret']), 'Private.csv');
-    expect(plausible.mock.calls).toEqual([['Spreadsheet Exported', { props: { format: 'csv', method: 'browser' } }]]);
+    expect(plausible.mock.calls).toEqual([['Sheets Exported', { props: { format: 'csv', method: 'browser' } }]]);
     vi.runAllTimers();
   } finally { vi.useRealTimers(); }
 });

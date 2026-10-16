@@ -16,12 +16,12 @@ function file({ mode, styleName = 'ce1', formatName = 'N1', defineStyle = true, 
   const inlineStyle = mode === 'ods-common' ? '' : style;
   const root = mode === 'fods' ? 'document' : 'document-content';
   const content = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
-  <office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+  <office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
     <office:automatic-styles>${styleFirst ? inlineStyle : ''}${externalFormat ? '' : format}${styleFirst ? '' : inlineStyle}</office:automatic-styles>
-    <office:body><office:spreadsheet><table:table table:name="Data"><table:table-row>
+    <office:body><office:sheets><table:table table:name="Data"><table:table-row>
       <table:table-cell office:value-type="float" office:value="7.5" table:style-name="${styleName}"/>
       <table:table-cell office:value-type="float" office:value="12"/>
-    </table:table-row></table:table></office:spreadsheet></office:body>
+    </table:table-row></table:table></office:sheets></office:body>
   </office:${root}>`);
   if (mode === 'fods') return content;
   const book = XLSX.utils.book_new();

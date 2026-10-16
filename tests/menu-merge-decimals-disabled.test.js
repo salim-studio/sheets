@@ -56,7 +56,7 @@ describe('the editor', () => {
   afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('follows the selection and the active cell format', async () => {
-    const doc = new Doc({ name: 'Menus', path: 'Spreadsheets/Menus.xlsx' });
+    const doc = new Doc({ name: 'Menus', path: 'Sheets/Menus.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '2024-05-01');

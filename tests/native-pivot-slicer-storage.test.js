@@ -637,7 +637,7 @@ it('keeps a copied pivot source local when its table is on the copied sheet', as
 });
 it('requires actual source provenance before extracting an off-sheet pivot source', async () => {
   const source = await imported(), before = source.toJSON();
-  expect(() => source.sheetToWorkbook(source.sheets[1].id)).toThrow(/Save the source spreadsheet/);
+  expect(() => source.sheetToWorkbook(source.sheets[1].id)).toThrow(/Save the source sheets/);
   expect(source.toJSON()).toEqual(before);
   expect(source.sheetToWorkbook(source.sheets[0].id).nativePivots).toBeNull();
 });
@@ -657,7 +657,7 @@ it('rebases existing external pivot sources when extracting a sheet into a diffe
   const cache = source.nativePivots.caches[0];
   cache.sourceSheetId = null; cache.sourceWorkbook = '../Data/Values.xlsx';
   const before = source.toJSON();
-  expect(() => source.sheetToWorkbook(sheet.id)).toThrow(/Save the source spreadsheet/);
+  expect(() => source.sheetToWorkbook(sheet.id)).toThrow(/Save the source sheets/);
   const copy = source.sheetToWorkbook(sheet.id, { sourceWorkbook: '../Reports/Source.xlsx' });
   expect(copy.nativePivots.caches[0].sourceWorkbook).toBe('../Data/Values.xlsx');
   const reopened = await workbookFromFile(nativeBytes(await archive(copy)));

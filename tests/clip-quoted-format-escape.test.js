@@ -8,7 +8,7 @@ import * as X from '../src/vendor/xlsx.mjs';
 
 // Office number-format escapes use four hex digits; adjacent digits, letters
 // and whitespace are literal code characters, unlike standard CSS escapes.
-const strip = (html) => html.replace(/ data-spreadsheet-(cells|values|origin)="[^"]*"/g, '');
+const strip = (html) => html.replace(/ data-sheets-(cells|values|origin)="[^"]*"/g, '');
 const back = (html) => {
   const parsed = parseHtmlClipboard(strip(html));
   expect(parsed.cells).toBeUndefined();
@@ -112,7 +112,7 @@ describe('quoted labels in copied number formats', () => {
     wb.setInput(id, 0, 1, '7');
     wb.applyStyle(id, { r1: 0, c1: 1, r2: 0, c2: 1 }, { fmt: 'custom', code: '"Q"0' });
     const page = sheetToHtml(wb, id);
-    expect(page).not.toContain('data-spreadsheet-cells');
+    expect(page).not.toContain('data-sheets-cells');
     const { rows } = parseHtmlClipboard(page);
     const layout = { color: '#1a1a1a', wrap: true, valign: 'middle' };
     for (const side of ['bt', 'br', 'bb', 'bl']) { layout[side] = true; layout[`${side}Border`] = { bs: 'thin', bc: '#dddddd' }; }

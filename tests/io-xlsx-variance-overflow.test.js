@@ -43,7 +43,7 @@ it('preserves raw-moment errors, database criteria, edits and shifted formulas t
 it('counts externally pasted booleans for A-functions, including the population overflow check', () => {
   const values = [[0, 8e153, false]];
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

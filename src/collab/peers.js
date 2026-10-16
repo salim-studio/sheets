@@ -111,7 +111,7 @@ export class PeerNetwork {
     const challenge = crypto.randomUUID();
     try {
       // Presence travels on an unordered channel without retransmits.
-      const soft = conn.peerconnection?.createDataChannel?.('spreadsheet-presence', { negotiated: true, id: 5, ordered: false, maxRetransmits: 0 });
+      const soft = conn.peerconnection?.createDataChannel?.('sheets-presence', { negotiated: true, id: 5, ordered: false, maxRetransmits: 0 });
       if (soft) { conn.ssSoft = soft; soft.onmessage = (e) => message(e); }
     } catch { /* Notices still travel on the reliable channel. */ }
     const timeout = setTimeout(() => { if (!authorized) conn.close(); }, 12000);

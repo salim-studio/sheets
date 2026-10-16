@@ -35,7 +35,7 @@ afterEach(() => {
 });
 
 function setup({ recoverable = null } = {}) {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   doc.recoverable = recoverable;
   const goHome = vi.fn();
   const openPath = vi.fn();
@@ -269,7 +269,7 @@ describe('leaving the editor', () => {
       wb.markClean();
       return true;
     });
-    view.el.querySelector('[aria-label="Back to all spreadsheets"]').click();
+    view.el.querySelector('[aria-label="Back to all sheets"]').click();
     expect(save).toHaveBeenCalledOnce();
     view.el.querySelector('[role="grid"]').dispatchEvent(new KeyboardEvent('keydown', { key: 'x', bubbles: true, cancelable: true }));
     const input = view.el.querySelector('.grid-editor');
@@ -335,7 +335,7 @@ describe('leaving the editor', () => {
     const { doc, goHome } = setup();
     doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'Unsaved work');
     vi.spyOn(doc, 'save').mockRejectedValue(new Error('Offline'));
-    view.el.querySelector('[aria-label="Back to all spreadsheets"]').click();
+    view.el.querySelector('[aria-label="Back to all sheets"]').click();
     await vi.advanceTimersByTimeAsync(1);
     expect(goHome).not.toHaveBeenCalled();
     expect(doc.wb.dirty).toBe(true);
@@ -356,7 +356,7 @@ describe('leaving the editor', () => {
     doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'Latest edit');
     const save = vi.spyOn(doc, 'save').mockResolvedValueOnce(true)
       .mockImplementationOnce(async () => { doc.wb.markClean(); return true; });
-    view.el.querySelector('[aria-label="Back to all spreadsheets"]').click();
+    view.el.querySelector('[aria-label="Back to all sheets"]').click();
     await vi.advanceTimersByTimeAsync(1);
     expect(save).toHaveBeenCalledTimes(2);
     expect(goHome).toHaveBeenCalledOnce();
@@ -1139,7 +1139,7 @@ describe('pasting external HTML', () => {
   it.each(['HTML', 'cells'].flatMap((format) => [false, true].map((tiled) => ({ format, tiled }))))(
     'pastes $format formatting with tiling $tiled without adding data to a table', async ({ format, tiled }) => {
       const html = format === 'HTML' ? '<table><tr><td style="font-weight:bold">5</td></tr><tr><td style="font-style:italic">7</td></tr></table>'
-        : stampClipboardHtml('<table data-spreadsheet-cells=\'[[{"v":5,"s":{"bold":true}}],[{"v":7,"s":{"italic":true}}]]\'></table>');
+        : stampClipboardHtml('<table data-sheets-cells=\'[[{"v":5,"s":{"bold":true}}],[{"v":7,"s":{"italic":true}}]]\'></table>');
       vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: ['text/html'], getType: async () => ({ text: async () => html }) }] } });
       const { doc } = setup();
       const wb = doc.wb, id = wb.activeSheetId;
@@ -1225,7 +1225,7 @@ describe('pasting external HTML', () => {
 
   it.each(['text', 'cells'])('allows %s skip-blanks paste across an untouched protected cell', async (format) => {
     const type = format === 'text' ? 'text/plain' : 'text/html';
-    const contents = format === 'text' ? '5\n\n7' : stampClipboardHtml('<table data-spreadsheet-cells=\'[[{"v":5}],[null],[{"v":7}]]\'></table>');
+    const contents = format === 'text' ? '5\n\n7' : stampClipboardHtml('<table data-sheets-cells=\'[[{"v":5}],[null],[{"v":7}]]\'></table>');
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: [type], getType: async () => ({ text: async () => contents }) }] } });
     const { doc } = setup();
     const wb = doc.wb, id = wb.activeSheetId;
@@ -1257,7 +1257,7 @@ describe('pasting external HTML', () => {
   });
 
   it('refuses a protected tile outside the first copied block and permits a later retry', async () => {
-    const html = stampClipboardHtml('<table data-spreadsheet-cells=\'[[{"v":5}],[{"v":7}]]\'></table>');
+    const html = stampClipboardHtml('<table data-sheets-cells=\'[[{"v":5}],[{"v":7}]]\'></table>');
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: ['text/html'], getType: async () => ({ text: async () => html }) }] } });
     const { doc } = setup();
     const wb = doc.wb, id = wb.activeSheetId;
@@ -1297,7 +1297,7 @@ describe('pasting external HTML', () => {
       const type = format === 'text' ? 'text/plain' : 'text/html';
       const cells = transpose ? [[{ v: 5, s: { bold: true } }, { v: 7 }]] : [[{ v: 5, s: { bold: true } }], [{ v: 7 }]];
       const contents = format === 'text' ? (transpose ? '5\t7' : '5\n7') : format === 'cells'
-        ? stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'></table>`)
+        ? stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'></table>`)
         : transpose ? '<table><tr><td>5</td><td>7</td></tr></table>' : '<table><tr><td style="font-weight:bold">5</td></tr><tr><td>7</td></tr></table>';
       vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: [type], getType: async () => ({ text: async () => contents }) }] } });
       const { doc } = setup();
@@ -1330,7 +1330,7 @@ describe('pasting external HTML', () => {
     const type = format === 'text' ? 'text/plain' : 'text/html';
     const contents = format === 'text' ? (label === 'Transposed' ? '5\t7' : '5\n7')
       : format === 'HTML' ? '<table><tr><td>5</td></tr><tr><td>7</td></tr></table>'
-        : stampClipboardHtml('<table data-spreadsheet-cells=\'[[{"v":5}],[{"v":7}]]\' data-spreadsheet-values=\'[[5],[7]]\'></table>');
+        : stampClipboardHtml('<table data-sheets-cells=\'[[{"v":5}],[{"v":7}]]\' data-sheets-values=\'[[5],[7]]\'></table>');
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: [type], getType: async () => ({ text: async () => contents }) }] } });
     const { doc } = setup();
     const wb = doc.wb, id = wb.activeSheetId;
@@ -1542,7 +1542,7 @@ describe('pasting external HTML', () => {
   });
 
   it.each([false, true])('handles an unchanged value snapshot paste with protection: %s', async (protectedRange) => {
-    const html = stampClipboardHtml('<table data-spreadsheet-cells=\'[[{"v":1}],[{"v":2}]]\' data-spreadsheet-values=\'[[1],[2]]\'></table>');
+    const html = stampClipboardHtml('<table data-sheets-cells=\'[[{"v":1}],[{"v":2}]]\' data-sheets-values=\'[[1],[2]]\'></table>');
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: ['text/html'], getType: async () => ({ text: async () => html }) }] } });
     const { doc } = setup();
     const wb = doc.wb, id = wb.activeSheetId;
@@ -1697,7 +1697,7 @@ describe('pasting external HTML', () => {
     'handles $format inserted paste protection that $kind when shifting $direction', async ({ format, direction, kind }) => {
       const cells = direction === 'down' ? [[{ v: 'First' }], [{ v: 'Last' }]] : [[{ v: 'First' }, { v: 'Last' }]];
       const text = cells.map((row) => row.map((cell) => cell.v).join('\t')).join('\n');
-      const html = format === 'embedded' ? stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'></table>`)
+      const html = format === 'embedded' ? stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'></table>`)
         : `<table>${cells.map((row) => `<tr>${row.map((cell) => `<td>${cell.v}</td>`).join('')}</tr>`).join('')}</table>`;
       vi.stubGlobal('navigator', { onLine: true, clipboard: format === 'text' ? { readText: async () => text }
         : { read: async () => [{ types: ['text/html', 'text/plain'], getType: async (type) => ({ text: async () => type === 'text/html' ? html : text }) }] } });
@@ -1738,7 +1738,7 @@ describe('pasting external HTML', () => {
 
   it.each(['down', 'right'])('refuses an inserted paste beyond the %s paste limit before shifting cells', async (direction) => {
     const cells = direction === 'down' ? [[{ v: 'First' }], [{ v: 'Last' }]] : [[{ v: 'First' }, { v: 'Last' }]];
-    const html = stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'></table>`);
+    const html = stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'></table>`);
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: ['text/html', 'text/plain'], getType: async (type) => ({ text: async () => type === 'text/html' ? html : 'First\nLast' }) }] } });
     const { doc } = setup();
     const wb = doc.wb, id = wb.activeSheetId;
@@ -1765,7 +1765,7 @@ describe('pasting external HTML', () => {
     const size = direction === 'down' ? 1000 : 100;
     const values = Array.from({ length: size }, (_, i) => ({ v: i === 0 ? 'First' : i === size - 1 ? 'Last' : 'Middle' }));
     const cells = direction === 'down' ? values.map((cell) => [cell]) : [values];
-    const html = stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'></table>`);
+    const html = stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'></table>`);
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: ['text/html', 'text/plain'], getType: async (type) => ({ text: async () => type === 'text/html' ? html : 'First\nSecond' }) }] } });
     const { doc } = setup();
     const wb = doc.wb, id = wb.activeSheetId;
@@ -1871,12 +1871,12 @@ describe('pasting external HTML', () => {
     if (change === 'same target') { wb.undo(); expect(wb.getValue(originalSheet, 0, 0)).toBeNull(); }
   });
 
-  it('pastes visible text when embedded spreadsheet metadata has an invalid row', () => {
+  it('pastes visible text when embedded sheets metadata has an invalid row', () => {
     const { doc } = setup();
     const viewport = view.el.querySelector('[role="grid"]');
     viewport.focus();
     const event = new Event('paste', { bubbles: true, cancelable: true });
-    const html = stampClipboardHtml(`<table data-spreadsheet-cells='[[{"v":"Wrong value"}],null]'><tr><td>Visible value</td></tr></table>`);
+    const html = stampClipboardHtml(`<table data-sheets-cells='[[{"v":"Wrong value"}],null]'><tr><td>Visible value</td></tr></table>`);
     Object.defineProperty(event, 'clipboardData', { value: { getData: (type) => type === 'text/html' ? html : 'Visible value' } });
     viewport.dispatchEvent(event);
     expect(doc.wb.getValue(doc.wb.activeSheetId, 0, 0)).toBe('Visible value');
@@ -1904,7 +1904,7 @@ it.each(['spans', 'embedded cells'])('refuses oversized HTML %s without edits an
   };
   const html = source === 'spans'
     ? `<table><tr><td colspan="1000" rowspan="0">Value</td></tr>${'<tr></tr>'.repeat(200)}</table>`
-    : stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(Array.from({ length: 201 }, () => Array(1000).fill(null)))}'><tr><td>Fallback text</td></tr></table>`);
+    : stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(Array.from({ length: 201 }, () => Array(1000).fill(null)))}'><tr><td>Fallback text</td></tr></table>`);
   paste(html);
   expect(contentSnapshot(wb)).toEqual(before);
   expect(wb.canUndo()).toBe(false);

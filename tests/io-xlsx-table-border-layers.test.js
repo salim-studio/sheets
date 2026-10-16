@@ -72,7 +72,7 @@ it('copies the displayed table borders to external HTML and reads them back', ()
   const html = cellsToHtml([['12']], [[cell]], [[look(wb, 3, 1)]]);
   expect(html).toContain('border-bottom:1pt solid #39c199');
   expect(html).toContain('border-top:0.5pt solid #d4d4d4');
-  const rows = parseHtmlClipboard(html.replace(/ data-spreadsheet-\w+="[^"]*"/g, '')).rows;
+  const rows = parseHtmlClipboard(html.replace(/ data-sheets-\w+="[^"]*"/g, '')).rows;
   expect(rows[0][0].style).toMatchObject({ btBorder: gray, blBorder: gray, brBorder: gray, bbBorder: green });
 });
 

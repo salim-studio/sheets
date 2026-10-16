@@ -77,7 +77,7 @@ export class RoomService {
     this.accountOwner ??= this.puter.auth.getUser();
     return this.accountOwner;
   }
-  path(room, name) { return `spreadsheet/shared/${room}/${name}`; }
+  path(room, name) { return `sheets/shared/${room}/${name}`; }
   async readText(path) { return (await this.fs.read(path)).text(); }
   async writeText(path, text) { await this.fs.write(path, text, { overwrite: true, dedupeName: false, createMissingParents: true }); }
 
@@ -327,7 +327,7 @@ export class RoomService {
       ? { path: input.file.path, uid: typeof input.file.uid === 'string' ? input.file.uid.slice(0, 200) : null } : null;
     const meta = {
       owner: user.uuid,
-      name: typeof input.name === 'string' && input.name.trim() ? input.name.trim().slice(0, 200) : 'Untitled spreadsheet',
+      name: typeof input.name === 'string' && input.name.trim() ? input.name.trim().slice(0, 200) : 'Untitled sheets',
       created: this.now(), keys: await keyPair(), initial, file,
     };
     await this.kv.set(prefix + 'meta', meta);
@@ -381,7 +381,7 @@ export class RoomService {
 
   /**
    * A checkpoint: the whole workbook at a revision, written by an editor's browser (it holds the state the log
-   * leads to; the worker does not run the spreadsheet). Joining starts from the latest checkpoint. With it may
+   * leads to; the worker does not run the sheets). Joining starts from the latest checkpoint. With it may
    * come the workbook as an .xlsx file, written over the owner's file so it opens anywhere.
    */
   async checkpoint(room, meta, member, input) {

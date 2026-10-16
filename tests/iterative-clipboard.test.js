@@ -19,7 +19,7 @@ it('copies circular formulas internally and exchanges their calculated values th
   expect(wb.getValue(id, 3, 2)).toBeCloseTo(18, 8);
   // Foreign programs consume standard HTML typed values. Workbook iteration
   // settings do not travel on the clipboard or silently enable in a destination.
-  const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows);
   expect(pasted[0].cell.f).toBeNull();
   expect(pasted[0].cell.v).toBeCloseTo(18, 8);

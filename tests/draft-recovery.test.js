@@ -31,7 +31,7 @@ function unsavedDraft() {
   return key;
 }
 
-it('offers unsaved spreadsheets on the home screen even while the cloud file list is unavailable', () => {
+it('offers unsaved sheets on the home screen even while the cloud file list is unavailable', () => {
   const key = unsavedDraft();
   vi.spyOn(P, 'listFiles').mockImplementation(() => new Promise(() => {}));
   const recoverDraft = vi.fn();

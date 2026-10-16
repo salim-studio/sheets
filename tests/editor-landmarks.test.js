@@ -28,7 +28,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('has one main landmark holding the grid, which is the tab panel the sheet tabs control', async () => {
-  const doc = new Doc({ name: 'Landmarks', path: 'Spreadsheets/Landmarks.xlsx' });
+  const doc = new Doc({ name: 'Landmarks', path: 'Sheets/Landmarks.xlsx' });
   const wb = doc.wb;
   const first = wb.activeSheetId;
   const second = wb.addSheet('Two').id;

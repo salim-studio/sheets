@@ -76,19 +76,19 @@ describe('Doc', () => {
     doc.wb.setInput(doc.wb.sheets[0].id, 0, 0, '42');
     expect(doc.status).toBe('unsaved');
     await vi.advanceTimersByTimeAsync(2000);
-    expect(doc.path).toBe(`Spreadsheets/${UNTITLED}.xlsx`);
+    expect(doc.path).toBe(`Sheets/${UNTITLED}.xlsx`);
     expect(doc.status).toBe('saved');
     expect(statuses).toEqual(['unsaved', 'saving', 'saved']);
-    expect(mock.fs.has(`Spreadsheets/${UNTITLED}.xlsx`)).toBe(true);
+    expect(mock.fs.has(`Sheets/${UNTITLED}.xlsx`)).toBe(true);
     doc.destroy();
   });
 
   it('picks a unique name when the default is taken', async () => {
-    mock.fs.set(`Spreadsheets/${UNTITLED}.xlsx`, { blob: new Blob(['x']), size: 1 });
+    mock.fs.set(`Sheets/${UNTITLED}.xlsx`, { blob: new Blob(['x']), size: 1 });
     const doc = Doc.blank();
     doc.wb.setInput(doc.wb.sheets[0].id, 0, 0, '1');
     await doc.save();
-    expect(doc.path).toBe(`Spreadsheets/${UNTITLED} 2.xlsx`);
+    expect(doc.path).toBe(`Sheets/${UNTITLED} 2.xlsx`);
     expect(doc.name).toBe(`${UNTITLED} 2`);
     doc.destroy();
   });
@@ -128,7 +128,7 @@ describe('Doc', () => {
       expect(await doc.save({ auto: true })).toBe(false);
       expect(doc.path).toBeNull();
       expect(doc.wb.dirty).toBe(true);
-      const target = `Spreadsheets/${UNTITLED}.xlsx`;
+      const target = `Sheets/${UNTITLED}.xlsx`;
       const external = new Blob(['another workbook']);
       mock.fs.set(target, { blob: external, size: external.size });
       globalThis.puter.fs.write = write;
@@ -173,13 +173,13 @@ describe('Doc', () => {
     await original.saveAs('Notes');
     original.destroy();
 
-    const doc = await Doc.fromPath('Spreadsheets/Notes.xlsx');
+    const doc = await Doc.fromPath('Sheets/Notes.xlsx');
     expect(doc.name).toBe('Notes');
     expect(doc.wb.getValue(doc.wb.sheets[0].id, 0, 0)).toBe('hello');
     expect(doc.status).toBe('saved');
     doc.wb.setInput(doc.wb.sheets[0].id, 0, 1, 'world');
     await doc.save();
-    expect(doc.path).toBe('Spreadsheets/Notes.xlsx');
+    expect(doc.path).toBe('Sheets/Notes.xlsx');
     expect([...mock.fs.keys()].filter((k) => !k.includes('/.versions/')).length).toBe(1); // the save itself (a version snapshot may sit beside it)
     doc.destroy();
   });
@@ -191,7 +191,7 @@ describe('Doc', () => {
     expect(doc.wb.getValue(doc.wb.sheets[0].id, 1, 1)).toBe(2);
     doc.wb.setInput(doc.wb.sheets[0].id, 2, 0, '3');
     await doc.save();
-    expect(doc.path).toBe('Spreadsheets/data.xlsx');
+    expect(doc.path).toBe('Sheets/data.xlsx');
     expect(mock.fs.has('Desktop/data.csv')).toBe(true);
     doc.destroy();
   });
@@ -200,13 +200,13 @@ describe('Doc', () => {
     const doc = Doc.blank();
     doc.wb.setInput(doc.wb.sheets[0].id, 0, 0, '1');
     await doc.save();
-    mock.fs.set('Spreadsheets/Taken.xlsx', { blob: new Blob(['x']), size: 1 });
+    mock.fs.set('Sheets/Taken.xlsx', { blob: new Blob(['x']), size: 1 });
     expect(await doc.rename('Taken')).toMatch(/already exists/);
     expect(await doc.rename('')).toMatch(/Enter a name/);
     expect(await doc.rename('Budget 2026')).toBeNull();
-    expect(doc.path).toBe('Spreadsheets/Budget 2026.xlsx');
-    expect(mock.fs.has('Spreadsheets/Budget 2026.xlsx')).toBe(true);
-    expect(mock.fs.has(`Spreadsheets/${UNTITLED}.xlsx`)).toBe(false);
+    expect(doc.path).toBe('Sheets/Budget 2026.xlsx');
+    expect(mock.fs.has('Sheets/Budget 2026.xlsx')).toBe(true);
+    expect(mock.fs.has(`Sheets/${UNTITLED}.xlsx`)).toBe(false);
     doc.destroy();
   });
 
@@ -217,7 +217,7 @@ describe('Doc', () => {
     expect(doc.path).toBeNull();
     doc.wb.setInput(doc.wb.sheets[0].id, 0, 0, '1');
     await doc.save();
-    expect(doc.path).toBe('Spreadsheets/Plans.xlsx');
+    expect(doc.path).toBe('Sheets/Plans.xlsx');
     doc.destroy();
   });
 
@@ -227,7 +227,7 @@ describe('Doc', () => {
     await doc.save();
     const first = doc.path;
     expect(await doc.saveAs('Copy')).toBeNull();
-    expect(doc.path).toBe('Spreadsheets/Copy.xlsx');
+    expect(doc.path).toBe('Sheets/Copy.xlsx');
     expect(doc.status).toBe('saved');
     expect(mock.fs.has(first)).toBe(true);
     expect(await doc.saveAs('Copy')).toMatch(/already exists/);
@@ -240,7 +240,7 @@ describe('Doc', () => {
     const entered = deferred();
     const release = deferred();
     const readdir = globalThis.puter.fs.readdir;
-    const originalFolder = versionsFolder(`Spreadsheets/${UNTITLED}.xlsx`);
+    const originalFolder = versionsFolder(`Sheets/${UNTITLED}.xlsx`);
     globalThis.puter.fs.readdir = async (path) => {
       if (path === originalFolder) { entered.resolve(); await release.promise; }
       return readdir(path);
@@ -355,7 +355,7 @@ describe('Doc', () => {
       release.resolve();
       expect(await restoring).toBe(true);
       expect(await copying).toBeNull();
-      expect(doc.path).toBe('Spreadsheets/Restored copy.xlsx');
+      expect(doc.path).toBe('Sheets/Restored copy.xlsx');
       const saved = await workbookFromFile(mock.fs.get(doc.path).blob, 'copy.xlsx');
       expect(saved.getValue(saved.activeSheetId, 0, 0)).toBe('old version');
     } finally { release.resolve(); doc.destroy(); }
@@ -383,7 +383,7 @@ describe('Doc', () => {
     const originalPath = doc.path;
     const originalModified = doc.remoteModified;
     doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'unsaved edit');
-    const target = 'Spreadsheets/Copy.xlsx';
+    const target = 'Sheets/Copy.xlsx';
     const external = new Blob(['another workbook']);
     const write = globalThis.puter.fs.write;
     globalThis.puter.fs.write = async (path, blob, options) => {
@@ -431,7 +431,7 @@ describe('Doc', () => {
     const release = deferred();
     const write = globalThis.puter.fs.write;
     globalThis.puter.fs.write = async (path, blob) => {
-      if (path === 'Spreadsheets/Copy.xlsx') { entered.resolve(); await release.promise; }
+      if (path === 'Sheets/Copy.xlsx') { entered.resolve(); await release.promise; }
       return write(path, blob);
     };
     try {
@@ -529,7 +529,7 @@ describe('Doc', () => {
     expect(doc.name).toBe('points');
     expect(doc.status).toBe('unsaved');
     await vi.advanceTimersByTimeAsync(2000);
-    expect(doc.path).toBe('Spreadsheets/points.xlsx');
+    expect(doc.path).toBe('Sheets/points.xlsx');
     doc.destroy();
   });
 
@@ -547,7 +547,7 @@ describe('save conflicts', () => {
   it('requires a conflict decision when the opening timestamp could not be read', async () => {
     const wb = new Workbook();
     const original = await workbookToXlsx(wb);
-    const path = 'Spreadsheets/Unknown.xlsx';
+    const path = 'Sheets/Unknown.xlsx';
     mock.fs.set(path, { blob: original, size: original.size, modified: Date.now() / 1000 - 60 });
     const stat = globalThis.puter.fs.stat;
     globalThis.puter.fs.stat = async () => { throw new Error('Temporary metadata failure'); };
@@ -572,7 +572,7 @@ describe('save conflicts', () => {
     const original = await workbookToXlsx(wb);
     wb.setInput(wb.activeSheetId, 0, 0, 'Remote edit');
     const theirs = await workbookToXlsx(wb);
-    const path = 'Spreadsheets/Opening.xlsx';
+    const path = 'Sheets/Opening.xlsx';
     const modified = Date.now() / 1000 - 60;
     mock.fs.set(path, { blob: original, size: original.size, modified });
     const read = globalThis.puter.fs.read;

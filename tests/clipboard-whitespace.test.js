@@ -80,7 +80,7 @@ it('preserves collapsed and preformatted values through paste, external HTML and
   wb.pasteCells(id, [cells], 0, 0);
   const values = [['wrapped source', '  pre\ttext\nnext  ']];
   expect(wb.rangeValues(id, { r1: 0, c1: 0, r2: 0, c2: 1 })).toEqual(values);
-  const copied = cellsToHtml(values, wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 1 })).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const copied = cellsToHtml(values, wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 1 })).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(copied).rows).map(x => x.cell.v)).toEqual(values[0]);
   const blob = await workbookToXlsx(wb);
   const data = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(blob); });

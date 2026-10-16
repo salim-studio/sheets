@@ -1,5 +1,5 @@
 /** Functions inserted lately, newest first, for the Formulas ribbon's Recently Used list. */
-const KEY = 'spreadsheet:recent-functions';
+const KEY = 'sheets:recent-functions';
 const LIMIT = 10;
 // Before anything has been inserted, the list offers the everyday functions.
 const DEFAULTS = ['SUM', 'AVERAGE', 'IF', 'HYPERLINK', 'COUNT', 'MAX', 'SIN', 'SUMIF', 'PMT', 'STDEV'];

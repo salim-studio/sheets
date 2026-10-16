@@ -31,7 +31,7 @@ it('opens a file with a long request formula blocked until the user allows it', 
   source.setInput(source.activeSheetId, 0, 0, `=${longFormula}`);
   expect(source.getCell(source.activeSheetId, 0, 0).f).toBe(longFormula);
   const blob = await workbookToXlsx(source);
-  const path = 'Spreadsheets/Long formula.xlsx';
+  const path = 'Sheets/Long formula.xlsx';
   mock.fs.set(path, { blob, size: blob.size, modified: 1 });
   doc = await Doc.fromPath(path);
   const { wb } = doc, id = wb.activeSheetId;

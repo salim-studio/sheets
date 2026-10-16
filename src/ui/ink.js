@@ -13,7 +13,7 @@ import {
   DEFAULT_PENS, MAX_PENS, PEN_WIDTHS, HIGHLIGHTER_WIDTHS, PEN_COLORS, HIGHLIGHTER_COLORS, PEN_KINDS, SHAPE_NAMES, MM_PX,
 } from '../core/ink.js';
 
-const STORE = 'spreadsheet:pens';
+const STORE = 'sheets:pens';
 const SVG = 'http://www.w3.org/2000/svg';
 const KIND_LABELS = { pen: 'Pen', pencil: 'Pencil', highlighter: 'Highlighter' };
 const KIND_GLYPHS = { pen: 'inkPen', pencil: 'inkPencil', highlighter: 'inkHighlighter' };

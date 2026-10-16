@@ -20,7 +20,7 @@ import { numFmtToStyle, styleToNumFmt } from '../core/format.js';
 import { DRAFT_ENCODING, packDraftWorkbook, unpackDraftWorkbook } from './draft-codec.js';
 import { serializeChangeHistory } from '../core/change-history.js';
 
-const PREFIX = 'spreadsheet:draft';
+const PREFIX = 'sheets:draft';
 // localStorage gives an origin about 5 MB, counted in UTF-16 units, so one item can hold some
 // 2.5 million characters at most; a little under that leaves room for the key and the account's
 // other records. Very large books are not drafted.
@@ -37,7 +37,7 @@ function store() {
   try { return globalThis.localStorage || null; } catch { return null; }
 }
 
-/** An id for a draft's revision, or for a new spreadsheet's key: two documents with the same title need independent recovery copies. */
+/** An id for a draft's revision, or for a new sheet's key: two documents with the same title need independent recovery copies. */
 export const uniqueId = () => Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(16).padStart(8, '0')).join('');
 
 /** A plain object, as JSON gives one: not null, not a list. */
@@ -125,7 +125,7 @@ function sampleChars(wb, cells) {
   return (compact(JSON.stringify(sample)).length - 2 * sample.length) / sample.length * cells;
 }
 
-/** Is `key` where the current account keeps a draft of a spreadsheet that has no file yet? */
+/** Is `key` where the current account keeps a draft of a sheets that has no file yet? */
 export function isUnsavedDraftKey(key) {
   const prefix = accountStorageKey(PREFIX);
   return typeof key === 'string' && key.startsWith(prefix) && key.slice(prefix.length).startsWith('new:');
@@ -292,7 +292,7 @@ export function clearDraft(key, revision = undefined) {
 }
 
 /**
- * Keep the draft under `key` as an unsaved spreadsheet of its own, under a new: key of the same account,
+ * Keep the draft under `key` as an unsaved sheet of its own, under a new: key of the same account,
  * where the home screen lists it: for a draft that can no longer be offered where it is (its file gone and
  * another at its address, say, or newer edits taking its place), rather than dropping it or writing over
  * it. The new key, or null when there is no readable draft to keep (or, given a revision, not that one).
@@ -322,7 +322,7 @@ function park(s, key, raw, draft) {
 
 /**
  * A document got a (new) path: its draft follows. Another document's draft already at the destination
- * (of a file deleted elsewhere whose name a new spreadsheet took, say) is kept as an unsaved spreadsheet
+ * (of a file deleted elsewhere whose name a new sheet took, say) is kept as an unsaved sheet
  * of its own rather than written over; the same snapshot, moved there by another tab first, and a record
  * that is not a readable draft give way. When the occupant cannot be kept, the move is left undone.
  * True when the draft is under `to` now.

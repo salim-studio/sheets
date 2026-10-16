@@ -11,8 +11,8 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
-const MOVED = 'Spreadsheets/Plan.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
+const MOVED = 'Sheets/Plan.xlsx';
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 
 /** Storage refuses the record under `refused` (full, say), and takes everything else. */

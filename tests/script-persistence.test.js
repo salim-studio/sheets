@@ -67,7 +67,7 @@ describe('workbook scripts', () => {
     expect(Object.keys(zip)).toContain(SCRIPTS_PART.slice(1));
     expect(strFromU8(zip['_rels/.rels'])).toContain(SCRIPTS_RELATIONSHIP);
     expect(strFromU8(zip['[Content_Types].xml'])).toContain(`PartName="${SCRIPTS_PART}"`);
-    // Nothing of the scripts is in the parts every spreadsheet program reads.
+    // Nothing of the scripts is in the parts every sheets program reads.
     expect(strFromU8(zip['xl/workbook.xml'])).not.toContain('main(workbook)');
     const reopened = await workbookFromFile(file, 'book.xlsx');
     expect(reopened.scripts.map((s) => [s.name, s.code])).toEqual([['One', CODE], ['Two', '// two']]);

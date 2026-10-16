@@ -4,7 +4,7 @@ import { workbookFromFile } from '../src/core/io.js';
 
 const errors = [[0x00, '#NULL!'], [0x07, '#DIV/0!'], [0x0f, '#VALUE!'], [0x17, '#REF!'], [0x1d, '#NAME?'], [0x24, '#NUM!'], [0x2a, '#N/A']];
 
-describe('spreadsheet error values', () => {
+describe('sheets error values', () => {
   it('imports error constants as errors and propagates them to dependent formulas', async () => {
     const book = XLSX.utils.book_new();
     const sheet = { '!ref': 'A1:B7', B1: { t: 'n', f: 'IFERROR(A1,42)', v: 42 } };

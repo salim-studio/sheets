@@ -69,13 +69,13 @@ export function menubarMenus(f = {}) {
   const home = (item) => (f.away && item.cmd ? { ...item, disabled: true } : item);
 
   const file = [
-    i('New spreadsheet', 'filePlus', 'new'),
+    i('New sheets', 'filePlus', 'new'),
     f.templates && i('New from template…', 'sparkle', 'newFromTemplate'),
     f.pick && i('Open from Puter…', 'folderOpen', 'open', null, { shortcut: `${M}+O` }),
     sub('Import', 'upload', [
       i('From this device…', 'upload', 'import'),
       i('From a URL…', 'external', 'importUrl'),
-      i('Into this spreadsheet…', 'sheet', 'importSheets'),
+      i('Into this sheet…', 'sheet', 'importSheets'),
     ]),
     sep,
     i('Save', 'save', 'save', null, { shortcut: `${M}+S` }),
@@ -118,7 +118,7 @@ export function menubarMenus(f = {}) {
     sep,
     i('Options…', 'options', 'options', null, { shortcut: `${M}+,` }),
     sep,
-    i('Back to all spreadsheets', 'back', 'home'),
+    i('Back to all sheets', 'back', 'home'),
   ];
 
   const edit = [
@@ -305,7 +305,7 @@ export function menubarMenus(f = {}) {
       ...[
         i('Duplicate sheet', 'duplicate', 'duplicateSheet'),
         i('Move or Copy sheet…', 'layers', 'moveOrCopySheet'),
-        i('Copy sheet to another spreadsheet…', 'copy', 'copySheetTo'),
+        i('Copy sheet to another sheets…', 'copy', 'copySheetTo'),
         i('Rename sheet…', 'pencil', 'renameSheet'),
         i('Sheet color…', 'fill', 'sheetColor'),
         sep,
@@ -554,7 +554,7 @@ export function menubarMenus(f = {}) {
     i('Search the menus…', 'search', 'palette', null, { shortcut: `${M}+Shift+P` }),
     fn('Keyboard shortcuts…', 'keyboard', f.fns?.shortcuts),
     f.fns?.about && sep,
-    fn('About Spreadsheet…', 'info', f.fns?.about),
+    fn('About Sheets…', 'info', f.fns?.about),
   ];
 
   const lists = { file, edit, view, insert, format, data, tools, help };

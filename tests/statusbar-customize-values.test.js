@@ -60,5 +60,5 @@ it('shows every statistic\'s value in the menu and keeps the menu open while swi
   item('Minimum').click(); await flush();
   expect(item('Minimum').getAttribute('aria-checked')).toBe('false');
   expect(bar.textContent).not.toContain('Minimum');
-  expect(JSON.parse(localStorage.getItem('spreadsheet:status-bar'))).toMatchObject({ min: false, max: true });
+  expect(JSON.parse(localStorage.getItem('sheets:status-bar'))).toMatchObject({ min: false, max: true });
 });

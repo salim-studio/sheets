@@ -22,13 +22,13 @@ function draftOf(name, path = null, text = 'x') {
 // again before parsing it a second time: with a few large drafts the home screen paid for it on every render.
 it('lists drafts by reading their heads, without parsing a single book', () => {
   const plan = draftOf('Unfinished "plan" \\ with éscapes');
-  const budget = draftOf('Budget', 'Spreadsheets/Budget.xlsx');
+  const budget = draftOf('Budget', 'Sheets/Budget.xlsx');
   const parse = vi.spyOn(JSON, 'parse');
   const listed = listDrafts();
   expect(bookParses(parse)).toBe(0);
   expect(listed.map((d) => [d.key, d.path, d.name])).toEqual(expect.arrayContaining([
     [plan, null, 'Unfinished "plan" \\ with éscapes'],
-    [budget, 'Spreadsheets/Budget.xlsx', 'Budget'],
+    [budget, 'Sheets/Budget.xlsx', 'Budget'],
   ]));
   expect(listed.every((d) => Number.isFinite(d.savedAt))).toBe(true);
 });
@@ -51,8 +51,8 @@ it('recovers a draft by its key alone, parsing it once', () => {
   } finally { doc.destroy(); }
 });
 
-it('refuses keys that are not this account\'s unsaved spreadsheets', () => {
-  const file = draftOf('Budget', 'Spreadsheets/Budget.xlsx');
+it('refuses keys that are not this account\'s unsaved sheets', () => {
+  const file = draftOf('Budget', 'Sheets/Budget.xlsx');
   expect(isUnsavedDraftKey(file)).toBe(false);
   expect(() => Doc.fromDraft(file)).toThrow('no longer available');
   const mine = draftOf('Mine');

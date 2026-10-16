@@ -21,7 +21,7 @@ it('retains elapsed boundaries through recalculation, clipboard and external XLS
     expect(wb.getValue(id, r, 1)).toBe(display);
     const html = cellsToHtml([[display]], [[wb.getCell(id, r, 0)]], null, [[value]]);
     expect(parseHtmlClipboard(html).cells[0][0].v).toBe(value);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(value); expect(pasted.s.code).toBe(code);
   }

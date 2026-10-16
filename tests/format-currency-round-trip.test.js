@@ -179,7 +179,7 @@ describe('the Currency format applied from the toolbar, the Format menu and the 
 
   async function mount(loc, style = null) {
     setLocale(loc);
-    const doc = new Doc({ name: 'Money', path: 'Spreadsheets/Money.xlsx' });
+    const doc = new Doc({ name: 'Money', path: 'Sheets/Money.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '5');

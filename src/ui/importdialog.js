@@ -19,7 +19,7 @@ import { formulaReachesOut } from '../core/reaches-out.js';
 import { isRangeSource } from '../core/validation.js';
 
 /**
- * Does what is about to be placed reach outside the spreadsheet: a formula of the placed sheet
+ * Does what is about to be placed reach outside the sheets: a formula of the placed sheet
  * (of every sheet, when the file's sheets are added), of a table's calculated column, a rule, a
  * validation or a filter condition on it, or one of the file's names? Only such content costs
  * the document its consent to outside content; a plain CSV leaves it as it was.

@@ -35,7 +35,7 @@ beforeEach(() => {
 });
 afterEach(() => { toast.mockClear(); closeMenu(); closeAllModals(); view?.destroy(); view = null; resetAppOptions(); vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
-async function mount(doc = new Doc({ name: 'Book', path: 'Spreadsheets/Book.xlsx' })) {
+async function mount(doc = new Doc({ name: 'Book', path: 'Sheets/Book.xlsx' })) {
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await vi.advanceTimersByTimeAsync(1);

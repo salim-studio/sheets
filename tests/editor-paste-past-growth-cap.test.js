@@ -39,7 +39,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 const said = (toast, pattern) => toast.mock.calls.some(([msg]) => pattern.test(msg));
 
 async function mount() {
-  const doc = new Doc({ name: 'Imported', path: 'Spreadsheets/Imported.xlsx' });
+  const doc = new Doc({ name: 'Imported', path: 'Sheets/Imported.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   wb.sheet(id).rows = BIG;

@@ -191,7 +191,7 @@ it.each([false, true])('preserves both stored sides and conditional precedence t
 it.each([false, true])('preserves the editable losing border through HTML paste (foreign=%s)', async foreign => {
   const wb = competingWorkbook(), cells = wb.copyRange(wb.activeSheetId, { r1: 0, r2: 0, c1: 0, c2: 1 });
   let html = cellsToHtml([['Left', 'Right']], cells);
-  if (foreign) html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (foreign) html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html), back = new Workbook();
   if (foreign) back.setCells(back.activeSheetId, cellsFromHtmlRows(parsed.rows).map(({ i, j, cell }) => ({ r: i, c: j, cell })));
   else back.pasteCells(back.activeSheetId, parsed.cells, 0, 0);

@@ -36,7 +36,7 @@ afterEach(() => {
 
 /** A filtered list: column A keeps only "a" rows, hiding rows 3 and 5 (1-based). */
 async function open() {
-  const doc = new Doc({ name: 'Filtered', path: 'Spreadsheets/Filtered.xlsx' });
+  const doc = new Doc({ name: 'Filtered', path: 'Sheets/Filtered.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   [['Key', 'Value'], ['a', '1'], ['b', '2'], ['a', '3'], ['b', '4'], ['a', '5']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

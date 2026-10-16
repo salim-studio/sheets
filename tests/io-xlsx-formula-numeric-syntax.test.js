@@ -60,7 +60,7 @@ it('keeps numeric text and live coercion through native XLSX, edits, Undo and in
 
 it('preserves currency strings through external HTML before formula conversion', () => {
   const cells = values.map(v => [{ v }]);
-  const html = cellsToHtml(values.map(v => [v]), cells, null, values.map(v => [v])).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml(values.map(v => [v]), cells, null, values.map(v => [v])).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows);

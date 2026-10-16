@@ -66,13 +66,13 @@ describe('leaving and reaching out while signed out', () => {
     expect(grid.contains(document.activeElement) || document.activeElement === grid).toBe(true);
   });
 
-  it('asks for the sign-in, not whether to leave, before copying a sheet to another spreadsheet', async () => {
+  it('asks for the sign-in, not whether to leave, before copying a sheet to another sheets', async () => {
     const leaveDialog = vi.fn().mockResolvedValue('stay');
     const { doc } = setup(leaveDialog);
     doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'unsaved');
     openMenubar('Insert');
     menuItem('Sheet').click();
-    const item = menuItem('Copy sheet to another spreadsheet');
+    const item = menuItem('Copy sheet to another sheets');
     expect(item).toBeTruthy();
     item.click();
     await vi.waitFor(() => expect(document.querySelector('.modal-panel[aria-label^="Copy"]')).not.toBeNull());

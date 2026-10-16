@@ -32,7 +32,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function mount(prepare) {
-  const doc = new Doc({ name: 'Rows', path: 'Spreadsheets/Rows.xlsx' });
+  const doc = new Doc({ name: 'Rows', path: 'Sheets/Rows.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   prepare(wb, id);

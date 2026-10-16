@@ -108,7 +108,7 @@ export function openVersionHistory(doc, { onRestored } = {}) {
     try {
       const ok = await confirmDialog({
         title: 'Restore this version?',
-        message: `The spreadsheet goes back to how it was ${when(v.at)}${v.label ? ` (${v.label})` : ''}. The current state is kept as a version first, so nothing is lost.`,
+        message: `The sheets goes back to how it was ${when(v.at)}${v.label ? ` (${v.label})` : ''}. The current state is kept as a version first, so nothing is lost.`,
         confirmLabel: 'Restore', danger: false,
       });
       if (!ok || closed) return;

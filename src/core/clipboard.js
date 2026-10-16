@@ -18,7 +18,7 @@ import { numberFormatParts } from './format-layout.js';
 /**
  * Rich clipboard: an HTML table for other apps (and for this app in another
  * tab), read back into cells. The table carries a JSON copy of the cells in
- * a data attribute so a paste between two spreadsheet tabs keeps formulas
+ * a data attribute so a paste between two sheets tabs keeps formulas
  * and styles; tables from Excel, Sheets, or a web page are read from their
  * markup with the basic styling they carry.
  */
@@ -61,7 +61,7 @@ const MAX_EMBED_CELLS = 5000;
 const MAX_CLIPBOARD_CELLS = 200000; // matches the editor's copy limit
 const TOO_LARGE = 'This table is too large to paste. Copy at most 200,000 cells.';
 // Modern Excel errors are values in Office HTML, but remain ordinary text when
-// typed into a cell or pasted without a spreadsheet type hint.
+// typed into a cell or pasted without a sheets type hint.
 const OFFICE_ERRORS = new Set([...TYPED_ERRORS, '#SPILL!', '#CALC!', '#CONNECT!', '#BLOCKED!', '#UNKNOWN!', '#FIELD!', '#BUSY!', '#GETTING_DATA']);
 
 function escapeHtml(s) {
@@ -109,7 +109,7 @@ function fontCss(s, clipboard) {
 
 /** Inline CSS for a cell's style. Values come from files and pasted data, so only well-formed ones are written. */
 function cellCss(s, value, noWrap, clipboard, indentUnit) {
-  // The spreadsheet's default is middle; Excel's is bottom. Carry even the
+  // The sheets's default is middle; Excel's is bottom. Carry even the
   // implicit default when copying, so a foreign destination cannot replace it.
   const vertical = VERTICAL_ALIGNS.has(s?.valign) ? s.valign : clipboard ? 'middle' : null;
   const out = vertical ? [`vertical-align:${vertical}`] : [];
@@ -130,7 +130,7 @@ function cellCss(s, value, noWrap, clipboard, indentUnit) {
   if (align) out.push(`text-align:${align}`);
   if (indent && align !== 'center') out.push(`padding-${align === 'right' ? 'right' : 'left'}:${indent * indentUnit + CELL_TEXT_INSET}px`, `mso-char-indent-count:${indent}`);
   if (s.wrap) out.push('white-space:pre-wrap');
-  // Spreadsheet cells do not wrap by default; HTML cells do. Explicitly
+  // Sheets cells do not wrap by default; HTML cells do. Explicitly
   // carry that default into Excel's fragment-aware table import as well.
   else if (noWrap || s.wrap === false) out.push('white-space:nowrap');
   for (const [key, side] of [['bt', 'top'], ['br', 'right'], ['bb', 'bottom'], ['bl', 'left']]) {
@@ -375,7 +375,7 @@ export function cellsToHtml(texts, cells, looks = null, values = null, origin = 
     const formatColor = !look?.color && style?.fmt === 'custom'
       ? codeColor(values?.[i]?.[j] ?? cells?.[i]?.[j]?.v ?? text, style.code, colorPalette) : null;
     if (formatColor) body = `<font color="${formatColor}" style="mso-ignore:color">${body}</font>`;
-    // A linked cell travels as a link, as spreadsheet clipboards write one, so it arrives live in Word,
+    // A linked cell travels as a link, as sheets clipboards write one, so it arrives live in Word,
     // Gmail or Excel; the embedded cells still carry the formula, so a paste back here is unchanged.
     const link = body ? cellLink(cells?.[i]?.[j]) : null;
     const across = span ? `${span.rowSpan > 1 ? ` rowspan="${span.rowSpan}"` : ''}${span.colSpan > 1 ? ` colspan="${span.colSpan}"` : ''}` : '';
@@ -409,17 +409,17 @@ export function cellsToHtml(texts, cells, looks = null, values = null, origin = 
   const fills = nativeFillEncoder();
   const snapshotCells = cells && total <= MAX_EMBED_CELLS ? cells.map(row => row.map(cell => cell?.s?.nativeFill
     ? { ...cell, s: fills.style(cell.s) } : cell)) : null;
-  const embed = snapshotCells ? ` data-spreadsheet-cells="${escapeHtml(JSON.stringify(snapshotCells))}"` : '';
-  const fillMeta = Object.keys(fills.records).length ? ` data-spreadsheet-fills="${escapeHtml(JSON.stringify(fills.records))}"` : '';
-  const rules = embed && Array.isArray(conditionalFormats) ? ` data-spreadsheet-rules="${escapeHtml(JSON.stringify(conditionalFormats))}"` : '';
-  const sparkMeta = total <= MAX_CLIPBOARD_CELLS && nativeSparklines ? ` data-spreadsheet-sparklines="${escapeHtml(JSON.stringify(nativeSparklines))}"` : '';
-  const validationMeta = embed && Array.isArray(validations) ? ` data-spreadsheet-validations="${escapeHtml(JSON.stringify(validations))}"` : '';
-  const externalMeta = (embed || sparkMeta) && externalWorkbooks ? ` data-spreadsheet-external-workbooks="${escapeHtml(JSON.stringify(rebaseExternalWorkbooks(normalizeExternalWorkbooks(externalWorkbooks), sourceWorkbook)))}"` : '';
-  const results = values && total <= MAX_CLIPBOARD_CELLS ? ` data-spreadsheet-values="${escapeHtml(JSON.stringify(values))}"` : '';
+  const embed = snapshotCells ? ` data-sheets-cells="${escapeHtml(JSON.stringify(snapshotCells))}"` : '';
+  const fillMeta = Object.keys(fills.records).length ? ` data-sheets-fills="${escapeHtml(JSON.stringify(fills.records))}"` : '';
+  const rules = embed && Array.isArray(conditionalFormats) ? ` data-sheets-rules="${escapeHtml(JSON.stringify(conditionalFormats))}"` : '';
+  const sparkMeta = total <= MAX_CLIPBOARD_CELLS && nativeSparklines ? ` data-sheets-sparklines="${escapeHtml(JSON.stringify(nativeSparklines))}"` : '';
+  const validationMeta = embed && Array.isArray(validations) ? ` data-sheets-validations="${escapeHtml(JSON.stringify(validations))}"` : '';
+  const externalMeta = (embed || sparkMeta) && externalWorkbooks ? ` data-sheets-external-workbooks="${escapeHtml(JSON.stringify(rebaseExternalWorkbooks(normalizeExternalWorkbooks(externalWorkbooks), sourceWorkbook)))}"` : '';
+  const results = values && total <= MAX_CLIPBOARD_CELLS ? ` data-sheets-values="${escapeHtml(JSON.stringify(values))}"` : '';
   // Where the block was copied from, so a paste into another tab shifts relative references as an in-app paste does.
-  const from = embed && origin && Number.isInteger(origin.r) && Number.isInteger(origin.c) ? ` data-spreadsheet-origin="${origin.r},${origin.c}"` : '';
+  const from = embed && origin && Number.isInteger(origin.r) && Number.isInteger(origin.c) ? ` data-sheets-origin="${origin.r},${origin.c}"` : '';
   const body = `<tbody>${trs}</tbody>`;
-  const stamp = embed || results || sparkMeta ? ` data-spreadsheet-markup="${clipboardMarkupStamp(body)}"` : '';
+  const stamp = embed || results || sparkMeta ? ` data-sheets-markup="${clipboardMarkupStamp(body)}"` : '';
   const table = `<table${embed}${fillMeta}${rules}${validationMeta}${sparkMeta}${externalMeta}${results}${from}${stamp}>${body}</table>`;
   // Excel for Mac drops fills without standard HTML clipboard boundaries.
   // Include the complete table so spans and private data describe the same
@@ -558,10 +558,10 @@ function msoNumberFormat(value) {
   return code || null;
 }
 
-function styleFromElement(td, styles, spreadsheet = false) {
+function styleFromElement(td, styles, sheets = false) {
   const s = {};
   const decls = styles(td);
-  readBorders(td, decls, s, spreadsheet);
+  readBorders(td, decls, s, sheets);
   const prop = (name) => decls.get(name) ?? null;
   const weight = prop('font-weight');
   if ((weight && (weight === 'bold' || Number(weight) >= 600)) || (!weight && td.tagName === 'TH')) s.bold = true;
@@ -570,8 +570,8 @@ function styleFromElement(td, styles, spreadsheet = false) {
   else if (prop('font-style') === 'normal') s.italic = false;
   let deco = '';
   for (const [name, value] of decls) if (name === 'text-decoration' || name === 'text-decoration-line') deco = value;
-  deco = prop('-spreadsheet-text-decoration') || deco;
-  if (/underline/.test(deco)) s.underline = prop('-spreadsheet-underline-style') === 'double' ? 'double' : true;
+  deco = prop('-sheets-text-decoration') || deco;
+  if (/underline/.test(deco)) s.underline = prop('-sheets-underline-style') === 'double' ? 'double' : true;
   if (/line-through/.test(deco)) s.strike = true;
   if (/\b(?:none|underline|line-through)\b/.test(deco)) { s.underline ??= false; s.strike ??= false; }
   const color = /^(?:windowtext|canvastext)$/i.test(prop('color') || '') ? 'windowtext' : readColor(prop('color'));
@@ -583,7 +583,7 @@ function styleFromElement(td, styles, spreadsheet = false) {
   const noFill = prop('mso-background-source')?.trim().toLowerCase() === 'auto'
     && prop('mso-pattern')?.trim().toLowerCase() === 'auto';
   if (noFill) s.bg = null;
-  else if (bg && (bg !== '#ffffff' || spreadsheet && prop('mso-pattern'))) s.bg = bg;
+  else if (bg && (bg !== '#ffffff' || sheets && prop('mso-pattern'))) s.bg = bg;
   const font = fontKeyFor(prop('font-family'));
   if (font) s.font = font;
   const size = fontPixels(prop('font-size'));
@@ -595,7 +595,7 @@ function styleFromElement(td, styles, spreadsheet = false) {
   if (ALIGNS.has(align)) s.align = align;
   const vertical = prop('vertical-align')?.trim().toLowerCase();
   if (VERTICAL_ALIGNS.has(vertical)) s.valign = vertical;
-  const script = prop('-spreadsheet-run-vertical-align');
+  const script = prop('-sheets-run-vertical-align');
   if (script === 'super' || script === 'sub') s.vertAlign = script === 'super' ? 'superscript' : 'subscript';
   if (align !== 'center') {
     // Excel supplies the logical indent as well as CSS padding. The logical
@@ -624,7 +624,7 @@ function styleFromElement(td, styles, spreadsheet = false) {
 }
 
 /** Let CSS expand border shorthands and settle per-side overrides in declaration order. */
-function readBorders(td, declarations, out, spreadsheet) {
+function readBorders(td, declarations, out, sheets) {
   let css;
   for (const [name, value] of declarations) {
     if (!/^border(?:-(?:top|right|bottom|left))?(?:-(?:width|style|color))?$/.test(name)) continue;
@@ -649,7 +649,7 @@ function readBorders(td, declarations, out, spreadsheet) {
     // Native Excel HTML serializes thin/medium/thick as .5/1/1.5pt.
     // Its point-weight thresholds differ from ordinary CSS pixel weights;
     // keep web tables and other units on the existing CSS interpretation.
-    const weight = spreadsheet && unit?.[2] === 'pt'
+    const weight = sheets && unit?.[2] === 'pt'
       ? Number(unit[1]) < 1 ? 'thin' : Number(unit[1]) < 1.5 ? 'medium' : 'thick'
       : px <= 1.34 ? 'thin' : px < 3 ? 'medium' : 'thick';
     out[key] = visible;
@@ -685,8 +685,8 @@ function sheetsNumberFormat(td) {
  * a number, {"1":2,"2":"t"} for text, {"1":4,"4":b} for a boolean).
  * Undefined when the text must speak for itself.
  */
-function typedValue(td, styles, spreadsheet = false, text = '', emptyStrings) {
-  if (!td.hasAttributes() && !spreadsheet) return undefined;
+function typedValue(td, styles, isSheets = false, text = '', emptyStrings) {
+  if (!td.hasAttributes() && !isSheets) return undefined;
   const num = td.getAttribute('x:num');
   if (num != null && num.trim() !== '') { const n = Number(num); return Number.isFinite(n) ? n : undefined; }
   const str = td.getAttribute('x:str');
@@ -724,7 +724,7 @@ function typedValue(td, styles, spreadsheet = false, text = '', emptyStrings) {
   // Native Office documents can omit the default left hint on text cells.
   // Outside that dialect, missing HTML alignment says nothing about type.
   if (num == null && (alignment === 'general' || alignment === 'auto')
-    && (hint === 'left' || spreadsheet && hint == null)
+    && (hint === 'left' || isSheets && hint == null)
     && decls.get('direction')?.toLowerCase() !== 'rtl'
     && !td.closest('[dir="rtl" i]')) return null;
   return undefined;
@@ -944,7 +944,7 @@ function validEmbeddedCell(cell) {
 
 /** Optional rule snapshots use the same trust boundary and style checks as cells. */
 function copiedConditionalFormats(table, height, width) {
-  const raw = table.getAttribute('data-spreadsheet-rules');
+  const raw = table.getAttribute('data-sheets-rules');
   if (raw == null) return null;
   const point = (n, max) => Number.isInteger(n) && n >= 0 && n < max;
   const range = (g, h, w) => g && point(g.r1, h) && point(g.r2, h) && g.r1 <= g.r2
@@ -968,7 +968,7 @@ function copiedConditionalFormats(table, height, width) {
 }
 
 function copiedValidations(table, height, width) {
-  const raw = table.getAttribute('data-spreadsheet-validations');
+  const raw = table.getAttribute('data-sheets-validations');
   if (raw == null) return null;
   const point = (n, max) => Number.isInteger(n) && n >= 0 && n < max;
   const range = (g, h, w) => g && point(g.r1, h) && point(g.r2, h) && g.r1 <= g.r2
@@ -996,7 +996,7 @@ export function isOwnHtmlClipboard(html, copyId) {
     let table = doc.querySelector('table');
     if (!table) return false;
     for (let inner = wrappedTable(table); inner; inner = wrappedTable(inner)) table = inner;
-    return table.getAttribute('data-spreadsheet-copy') === copyId && hasClipboardSnapshot(table);
+    return table.getAttribute('data-sheets-copy') === copyId && hasClipboardSnapshot(table);
   } catch { return false; }
 }
 
@@ -1039,10 +1039,10 @@ export function parseHtmlClipboard(html, plainText) {
   // Unsigned older copies and metadata left behind by another application
   // still have usable HTML, but cannot safely restore formulas or old values.
   const snapshot = hasClipboardSnapshot(table);
-  // Office spreadsheet HTML is a rendered table, whereas its accompanying
+  // Office sheets HTML is a rendered table, whereas its accompanying
   // TSV is independent of column width. In particular, HTML can contain
   // overflow hashes or expanded fill in place of the copied cell's text.
-  const spreadsheet = doc.documentElement.getAttribute('xmlns:x') === 'urn:schemas-microsoft-com:office:excel'
+  const sheets = doc.documentElement.getAttribute('xmlns:x') === 'urn:schemas-microsoft-com:office:excel'
     || [...doc.querySelectorAll('meta[name]')].some(meta => meta.getAttribute('name').toLowerCase() === 'progid'
       && meta.getAttribute('content')?.toLowerCase() === 'excel.sheet');
   // Include decimal/hex C1 prefixes as well as NUL and zero-padded references.
@@ -1056,7 +1056,7 @@ export function parseHtmlClipboard(html, plainText) {
   const readValues = (height, width) => {
     if (!snapshot || height * width > MAX_CLIPBOARD_CELLS) return null;
     try {
-      const values = JSON.parse(table.getAttribute('data-spreadsheet-values') || 'null');
+      const values = JSON.parse(table.getAttribute('data-sheets-values') || 'null');
       if (Array.isArray(values) && values.length === height && values.every((row) =>
         Array.isArray(row) && row.length === width && row.every(validEmbeddedValue))) return values;
     } catch { /* Older or malformed snapshots still have usable cells or text. */ }
@@ -1064,25 +1064,25 @@ export function parseHtmlClipboard(html, plainText) {
   };
   const readSparklines = (height, width) => {
     if (!snapshot || height * width > MAX_CLIPBOARD_CELLS) return null;
-    try { return readCopiedNativeSparklines(JSON.parse(table.getAttribute('data-spreadsheet-sparklines') || 'null'), height, width); }
+    try { return readCopiedNativeSparklines(JSON.parse(table.getAttribute('data-sheets-sparklines') || 'null'), height, width); }
     catch { return null; } // Malformed optional metadata leaves visible HTML intact.
   };
   // Link IDs are workbook-relative. Invalid supporting data must never leave
   // a private formula accidentally bound to the destination's same-numbered link.
   let externalWorkbooks = null;
-  if (snapshot && table.hasAttribute('data-spreadsheet-external-workbooks')) {
+  if (snapshot && table.hasAttribute('data-sheets-external-workbooks')) {
     try {
-      externalWorkbooks = normalizeExternalWorkbooks(JSON.parse(table.getAttribute('data-spreadsheet-external-workbooks')));
+      externalWorkbooks = normalizeExternalWorkbooks(JSON.parse(table.getAttribute('data-sheets-external-workbooks')));
       if (!externalWorkbooks || !copiedExternalLinksValid(externalWorkbooks.books.flatMap(book => book.names.map(name => name.ref)), externalWorkbooks)) throw new Error('Missing supporting data');
     } catch { return { error: 'The copied external workbook links are invalid. Copy the cells again.' }; }
   }
-  const embedded = snapshot && table.getAttribute('data-spreadsheet-cells');
+  const embedded = snapshot && table.getAttribute('data-sheets-cells');
   let embeddedResult;
   if (embedded) {
     try {
       let cells = JSON.parse(embedded);
-      if (table.hasAttribute('data-spreadsheet-fills')) {
-        const fills = nativeFillDecoder(JSON.parse(table.getAttribute('data-spreadsheet-fills')));
+      if (table.hasAttribute('data-sheets-fills')) {
+        const fills = nativeFillDecoder(JSON.parse(table.getAttribute('data-sheets-fills')));
         if (!Array.isArray(cells) || cells.some(row => !Array.isArray(row))) throw new Error('Invalid copied cells');
         cells = cells.map(row => row.map(cell => cell?.s?.nativeFill ? { ...cell, s: fills.style(cell.s) } : cell));
       }
@@ -1095,7 +1095,7 @@ export function parseHtmlClipboard(html, plainText) {
           || r + cell.array.rows <= cells.length && c + cell.array.cols <= width))) {
         if (cells.length * width > MAX_CLIPBOARD_CELLS) return { error: TOO_LARGE };
         const values = readValues(cells.length, width);
-        const at = /^(\d{1,7}),(\d{1,5})$/.exec(table.getAttribute('data-spreadsheet-origin') || '');
+        const at = /^(\d{1,7}),(\d{1,5})$/.exec(table.getAttribute('data-sheets-origin') || '');
         const origin = at ? { r: Number(at[1]), c: Number(at[2]) } : null;
         const conditionalFormats = copiedConditionalFormats(table, cells.length, width);
         const validations = copiedValidations(table, cells.length, width);
@@ -1164,8 +1164,8 @@ export function parseHtmlClipboard(html, plainText) {
       // Verified value-only snapshots may have crossed a DOM serialization,
       // which writes their originally bare markers as x:str="". Their captured
       // values still take precedence, as they did before syntax preservation.
-      const typed = embeddedResult || blank ? undefined : typedValue(td, styles, spreadsheet, text, snapshot ? undefined : emptyStrings);
-      row[c] = { text, style: embeddedResult ? undefined : styleFromElement(td, styles, spreadsheet) };
+      const typed = embeddedResult || blank ? undefined : typedValue(td, styles, sheets, text, snapshot ? undefined : emptyStrings);
+      row[c] = { text, style: embeddedResult ? undefined : styleFromElement(td, styles, sheets) };
       // Uniform inline formatting is a cell format. Only differences need a
       // character-run list, preserving the existing plain-cell representation.
       if (content.runs.length) {
@@ -1213,7 +1213,7 @@ export function parseHtmlClipboard(html, plainText) {
   // Every row spans the table's width, short rows and empty <tr> elements
   // alike, so a paste clears those cells rather than retaining old destination data.
   for (const row of rows) while (row.length < width) row.push({ text: '', style: undefined });
-  // HTML borders belong to the complete spanning TD. Spreadsheet borders
+  // HTML borders belong to the complete spanning TD. Sheets borders
   // belong to the individual perimeter cells, including covered positions.
   // Private snapshots already carry that geometry and returned above.
   for (const m of displaySpans) {
@@ -1243,7 +1243,7 @@ export function parseHtmlClipboard(html, plainText) {
     if (m.r2 > m.r1 && Object.hasOwn(source,'bb')) { anchor.style.bb = false; anchor.style.bbBorder = null; }
     if (m.c2 > m.c1 && Object.hasOwn(source,'br')) { anchor.style.br = false; anchor.style.brBorder = null; }
   }
-  if (spreadsheet && !snapshot && typeof plainText === 'string' && plainText !== '') {
+  if (sheets && !snapshot && typeof plainText === 'string' && plainText !== '') {
     const plain = parseDelimited(plainText, '\t', { maxRows: rows.length, maxColumns: width, strict: true });
     if (plain?.length === rows.length && plain.every(row => row.length === width)) {
       // A merged range has one value. Nonempty covered positions indicate
@@ -1274,7 +1274,7 @@ export function parseHtmlClipboard(html, plainText) {
   }));
   for (const [r, c] of anchors) {
     const cell = rows[r][c];
-    if (spreadsheet && !snapshot && (cell.value === undefined || bare.has(cell)) && cell.style?.fmt === 'custom') {
+    if (sheets && !snapshot && (cell.value === undefined || bare.has(cell)) && cell.style?.fmt === 'custom') {
       // An untyped number such as 1212 must not become text "12" merely
       // because the code also has an @@ text section. Only invert text.
       const text = bare.has(cell) || cell.text.startsWith('=') || typeof cellFromInput(cell.text, cell.style)?.v === 'string';
@@ -1285,7 +1285,7 @@ export function parseHtmlClipboard(html, plainText) {
     }
     // Text format identifies a literal string. Excel copies formula results,
     // so an untyped Office display beginning with '=' is also text, not code.
-    if (cell.value === undefined && cell.text !== '' && (cell.style?.fmt === 'text' || spreadsheet && cell.text.startsWith('='))) cell.value = cell.text;
+    if (cell.value === undefined && cell.text !== '' && (cell.style?.fmt === 'text' || sheets && cell.text.startsWith('='))) cell.value = cell.text;
   }
   const nativeSparklines = readSparklines(rows.length, width);
   if (nativeSparklines) {

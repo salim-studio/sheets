@@ -1,6 +1,6 @@
 /**
- * Version history: snapshots of a spreadsheet kept as .xlsx files under
- * Spreadsheets/.versions/<name> ~<id>/. One is written automatically when a save
+ * Version history: snapshots of a sheets kept as .xlsx files under
+ * Sheets/.versions/<name> ~<id>/. One is written automatically when a save
  * lands and the newest snapshot is older than AUTO_VERSION_MS; any number can
  * be saved by hand with a label. Unlabeled snapshots beyond MAX_VERSIONS are
  * pruned, oldest first; labeled ones are kept.

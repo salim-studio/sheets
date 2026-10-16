@@ -19,7 +19,7 @@ beforeEach(() => {
 afterEach(() => { closeAllModals(); vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 // Two refusals asked for something the control could not give: a fill colour from a select that was
-// empty and disabled because the column has none, and a spreadsheet from a select disabled because
+// empty and disabled because the column has none, and a sheets from a select disabled because
 // there is none to copy into — where refuse()'s focus, and most screen readers, never arrive.
 const panel = () => document.querySelector('.modal-panel');
 const field = (label) => panel().querySelector(`[aria-label="${label}"]`);
@@ -68,12 +68,12 @@ describe('Copy sheet', () => {
   const existing = () => panel().querySelector('input[type="radio"][value="existing"]');
   const reason = () => panel().querySelector(`#${existing().getAttribute('aria-describedby')}`);
 
-  it('turns "Existing spreadsheet" off, with the reason beside it, when there is nothing to copy into', async () => {
+  it('turns "Existing sheets" off, with the reason beside it, when there is nothing to copy into', async () => {
     open();
     await vi.advanceTimersByTimeAsync(1);
     expect(existing().disabled).toBe(true);
     expect(reason().hidden).toBe(false);
-    expect(reason().textContent).toBe('There is no other spreadsheet in your Spreadsheets folder to copy into.');
+    expect(reason().textContent).toBe('There is no other sheets in your Sheets folder to copy into.');
     expect(existing().closest('label').classList.contains('is-disabled')).toBe(true);
     // Nothing is marked invalid: there is no refusal to make, and no disabled control to blame.
     expect(panel().querySelectorAll('[aria-invalid="true"]')).toHaveLength(0);
@@ -84,11 +84,11 @@ describe('Copy sheet', () => {
     open();
     await vi.advanceTimersByTimeAsync(1);
     expect(existing().disabled).toBe(true);
-    expect(reason().textContent).toBe('Your spreadsheets could not be listed. Choose Try again to look once more.');
+    expect(reason().textContent).toBe('Your sheets could not be listed. Choose Try again to look once more.');
   });
 
-  it('leaves the choice open, and unexplained, when there is a spreadsheet to copy into', async () => {
-    P.listFiles.mockResolvedValue([{ name: 'Other.xlsx', path: 'Spreadsheets/Other.xlsx' }]);
+  it('leaves the choice open, and unexplained, when there is a sheets to copy into', async () => {
+    P.listFiles.mockResolvedValue([{ name: 'Other.xlsx', path: 'Sheets/Other.xlsx' }]);
     open();
     await vi.advanceTimersByTimeAsync(1);
     expect(existing().disabled).toBe(false);

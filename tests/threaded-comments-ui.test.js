@@ -36,7 +36,7 @@ async function review() {
 const type = (area, text) => { area.value = text; area.dispatchEvent(new Event('input')); };
 
 it('starts, replies to, resolves, walks, lists and deletes threads from the ribbon', async () => {
-  const doc = new Doc({ name: 'Comments', path: 'Spreadsheets/Comments.xlsx' });
+  const doc = new Doc({ name: 'Comments', path: 'Sheets/Comments.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
@@ -100,7 +100,7 @@ it('starts, replies to, resolves, walks, lists and deletes threads from the ribb
 }, 30000);
 
 it('opens a thread from Ctrl+Shift+F2 and from Ctrl+Alt+M', async () => {
-  const doc = new Doc({ name: 'Keys', path: 'Spreadsheets/Keys.xlsx' });
+  const doc = new Doc({ name: 'Keys', path: 'Sheets/Keys.xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await tick();

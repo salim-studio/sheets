@@ -53,7 +53,7 @@ it('retains a large finite quantile in formula HTML and external numeric HTML', 
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     expect(parseHtmlClipboard(html).cells[0][0].f).toBe(cell.f);
-    const foreign = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const foreign = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     expect(cellsFromHtmlRows(parseHtmlClipboard(foreign).rows)[0].cell.v).toBe(value);
   } finally { vi.unstubAllGlobals(); }
 });

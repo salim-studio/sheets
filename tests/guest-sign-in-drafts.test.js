@@ -41,11 +41,11 @@ describe('guest drafts when the visitor signs in', () => {
 
     expect(await session.signIn()).toBe(true);
     expect(guestKeys()).toEqual([]);
-    expect(listDrafts().map((d) => d.name)).toEqual(['Untitled spreadsheet']);
+    expect(listDrafts().map((d) => d.name)).toEqual(['Untitled sheets']);
     expect(doc.draftKey).toContain(encodeURIComponent('uuid:u-1'));
 
     expect(await doc.save()).toBe(true);
-    expect(doc.path).toBe('Spreadsheets/Untitled spreadsheet.xlsx');
+    expect(doc.path).toBe('Sheets/Untitled sheets.xlsx');
     expect(listDrafts()).toEqual([]);
 
     await settle();
@@ -77,10 +77,10 @@ describe('guest drafts when the visitor signs in', () => {
   });
 
   it('keeps an account record that already exists over a guest one with the same key', async () => {
-    localStorage.setItem('spreadsheet:recent:account:guest:', '[{"path":"a"}]');
-    localStorage.setItem(`spreadsheet:recent:account:${encodeURIComponent('uuid:u-1')}:`, '[{"path":"b"}]');
+    localStorage.setItem('sheets:recent:account:guest:', '[{"path":"a"}]');
+    localStorage.setItem(`sheets:recent:account:${encodeURIComponent('uuid:u-1')}:`, '[{"path":"b"}]');
     await session.signIn();
-    expect(localStorage.getItem(`spreadsheet:recent:account:${encodeURIComponent('uuid:u-1')}:`)).toBe('[{"path":"b"}]');
+    expect(localStorage.getItem(`sheets:recent:account:${encodeURIComponent('uuid:u-1')}:`)).toBe('[{"path":"b"}]');
     expect(guestKeys()).toEqual([]);
   });
 });
@@ -103,7 +103,7 @@ describe('a sign-in whose identity lookup fails', () => {
     await session.refresh();
     expect(storageScope()).toBe('uuid:u-1');
     expect(guestKeys()).toEqual([]);
-    expect(listDrafts().map((d) => d.name)).toEqual(['Untitled spreadsheet']);
+    expect(listDrafts().map((d) => d.name)).toEqual(['Untitled sheets']);
     expect(doc.draftKey).toContain(encodeURIComponent('uuid:u-1'));
     doc.destroy();
   });

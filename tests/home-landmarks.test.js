@@ -18,7 +18,7 @@ describe('the home screen', () => {
     const view = homeView({});
     document.body.append(view.el);
     expect(view.el.querySelectorAll('h1')).toHaveLength(1);
-    expect(view.el.querySelector('h1').textContent).toBe('Spreadsheet');
+    expect(view.el.querySelector('h1').textContent).toBe('Sheets');
     const list = view.el.querySelector('.file-list');
     // Loading skeletons are not list items, so the list role waits for real rows.
     expect(list.querySelector('.skeleton-row')).toBeTruthy();
@@ -28,7 +28,7 @@ describe('the home screen', () => {
     expect(list.querySelector('.empty')).toBeTruthy();
     expect(list.getAttribute('role')).toBeNull();
     view.destroy?.();
-    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', modified: Date.now(), size: 1000 }]);
+    vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', modified: Date.now(), size: 1000 }]);
     const filled = homeView({});
     document.body.append(filled.el);
     await vi.advanceTimersByTimeAsync(0);

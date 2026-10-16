@@ -6,12 +6,12 @@ function content(sheet, target) {
   return new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
     <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
       xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
-      office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-      <office:body><office:spreadsheet><table:table table:name="${sheet}"><table:table-row>
+      office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+      <office:body><office:sheets><table:table table:name="${sheet}"><table:table-row>
         <table:table-cell office:value-type="float" office:value="42"/>
       </table:table-row></table:table><table:database-ranges>
         <table:database-range table:name="Filter" table:display-filter-buttons="true" table:target-range-address="${target}.A1:B2"/>
-      </table:database-ranges></office:spreadsheet></office:body>
+      </table:database-ranges></office:sheets></office:body>
     </office:document>`);
 }
 

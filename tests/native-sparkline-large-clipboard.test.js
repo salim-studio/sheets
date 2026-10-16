@@ -12,7 +12,7 @@ const sample = () => {
 };
 it('carries native-only destinations beyond the embedded-cell limit and pastes their data with undo', () => {
   const { wb, html, nativeSparklines } = sample();
-  expect(html).not.toContain('data-spreadsheet-cells=');
+  expect(html).not.toContain('data-sheets-cells=');
   const parsed = parseHtmlClipboard(html);
   expect(parsed.nativeSparklines).toEqual(nativeSparklines);
   const before = wb.toJSON();
@@ -29,7 +29,7 @@ it('does not restore stale native metadata after another application changes the
 });
 it('rejects malformed or mismatched native coordinates without losing visible HTML data', () => {
   const { html } = sample(), doc = new DOMParser().parseFromString(html, 'text/html');
-  doc.querySelector('table').setAttribute('data-spreadsheet-sparklines', JSON.stringify({ groups: [], rows: [0], cols: [0], sheetName: 'Source' }));
+  doc.querySelector('table').setAttribute('data-sheets-sparklines', JSON.stringify({ groups: [], rows: [0], cols: [0], sheetName: 'Source' }));
   const parsed = parseHtmlClipboard(doc.body.innerHTML);
   expect(parsed.nativeSparklines).toBeUndefined(); expect(parsed.rows[1000][0].value).toBe(3);
 });
@@ -42,8 +42,8 @@ it('signs native metadata even when neither full cells nor copied values are pre
 });
 it('an empty native snapshot clears overwritten charts through the normal cell paste path', () => {
   const { wb, html } = sample(), doc = new DOMParser().parseFromString(html, 'text/html'), table = doc.querySelector('table');
-  const snapshot = JSON.parse(table.getAttribute('data-spreadsheet-sparklines')); snapshot.groups = [];
-  table.setAttribute('data-spreadsheet-sparklines', JSON.stringify(snapshot));
+  const snapshot = JSON.parse(table.getAttribute('data-sheets-sparklines')); snapshot.groups = [];
+  table.setAttribute('data-sheets-sparklines', JSON.stringify(snapshot));
   const parsed = parseHtmlClipboard(doc.body.innerHTML);
   wb.pasteCells('s', parsed.cells, 2000, 7, null, null, { nativeSparklines: parsed.nativeSparklines });
   expect(wb.sheet('s').sparklineGroups).toEqual([]);

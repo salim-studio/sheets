@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function setup() {
-  const doc = new Doc({ name: 'Tabs', path: 'Spreadsheets/Tabs.xlsx' });
+  const doc = new Doc({ name: 'Tabs', path: 'Sheets/Tabs.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.addSheet('Two');

@@ -15,14 +15,14 @@ it.each(['fods', 'ods'].flatMap((format) => [
     const content = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
       <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
         xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
-        office:mimetype="application/vnd.oasis.opendocument.spreadsheet" office:version="1.2">
-        <office:body><office:spreadsheet><table:table table:name="${escape(name)}">
+        office:mimetype="application/vnd.oasis.opendocument.sheets" office:version="1.2">
+        <office:body><office:sheets><table:table table:name="${escape(name)}">
           <table:table-row><table:table-cell office:value-type="float" office:value="42"/></table:table-row>
           <table:table-row><table:table-cell office:value-type="float" office:value="8"/></table:table-row>
         </table:table><table:named-expressions>
           <table:named-range table:name="&#65;mount" table:cell-range-address="${escape(`$${quoteSheet(name)}.A1:.A2`)}"
             table:base-cell-address="${escape(`$${quoteSheet(name)}.$A$1`)}"/>
-        </table:named-expressions></office:spreadsheet></office:body>
+        </table:named-expressions></office:sheets></office:body>
       </office:${root}>`);
     let bytes = content;
     if (format === 'ods') {

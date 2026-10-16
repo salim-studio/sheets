@@ -21,7 +21,7 @@ async function cycle(wb, { metadata = false, edit = null } = {}) {
   return { wb: await workbookFromFile(X.CFB.write(zip, { type: 'array', fileType: 'zip' })), xml };
 }
 const chart = wb => wb.activeSheet.charts[0];
-const props = xml => new JSDOM(xml, { contentType: 'application/xml' }).window.document.getElementsByTagNameNS('http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing', 'cNvPr')[0];
+const props = xml => new JSDOM(xml, { contentType: 'application/xml' }).window.document.getElementsByTagNameNS('http://schemas.openxmlformats.org/drawingml/2006/sheetsDrawing', 'cNvPr')[0];
 const svg = wb => new JSDOM(renderChartSvg(chartData(wb, wb.activeSheetId, chart(wb)), chart(wb), 600, 400)).window.document.querySelector('svg');
 
 it.each(['column', 'bar', 'line', 'pie', 'donut', 'scatter', 'bubble', 'radar', 'area', 'combo'])('preserves a %s description separately from the visible title through two native XLSX cycles', async type => {

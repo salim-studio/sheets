@@ -115,7 +115,7 @@ describe('in the editor', () => {
 
   async function mount(loc, style = null) {
     setLocale(loc);
-    const doc = new Doc({ name: 'Ledger', path: 'Spreadsheets/Ledger.xlsx' });
+    const doc = new Doc({ name: 'Ledger', path: 'Sheets/Ledger.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '5');

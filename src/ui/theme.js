@@ -1,6 +1,6 @@
-const LS_KEY = 'spreadsheet:theme';
-const LIGHT_THEME_COLOR = '#356d49';
-const DARK_THEME_COLOR = '#28593a';
+const LS_KEY = 'sheets:theme';
+const LIGHT_THEME_COLOR = '#0E7A4D';
+const DARK_THEME_COLOR = '#0B3B2A';
 
 export function applyTheme(mode) {
   const rootEl = document.documentElement;

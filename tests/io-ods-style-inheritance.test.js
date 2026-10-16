@@ -11,13 +11,13 @@ function file(mode, common, automatic = '', cellStyle = 'child') {
   const formats = `<number:number-style style:name="N1"><number:number number:decimal-places="2" number:min-integer-digits="1"/></number:number-style>
     <number:number-style style:name="N2"><number:number number:decimal-places="3" number:min-integer-digits="1"/></number:number-style>`;
   const root = mode === 'fods' ? 'document' : 'document-content';
-  const content = new TextEncoder().encode(`<?xml version="1.0"?><office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+  const content = new TextEncoder().encode(`<?xml version="1.0"?><office:${root} ${ns} office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
     ${mode === 'fods' ? `<office:styles>${formats}${common}</office:styles>` : ''}
     <office:automatic-styles>${automatic}</office:automatic-styles>
-    <office:body><office:spreadsheet><table:table table:name="Data"><table:table-row>
+    <office:body><office:sheets><table:table table:name="Data"><table:table-row>
       <table:table-cell table:style-name="${cellStyle}" office:value-type="float" office:value="7.5" table:number-columns-repeated="2"/>
       <table:table-cell office:value-type="float" office:value="12"/>
-    </table:table-row></table:table></office:spreadsheet></office:body></office:${root}>`);
+    </table:table-row></table:table></office:sheets></office:body></office:${root}>`);
   if (mode === 'fods') return content;
   const book = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(book, XLSX.utils.aoa_to_sheet([[0]]), 'Data');

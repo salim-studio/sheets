@@ -224,7 +224,7 @@ export function openSendLinkDialog({ doc, mailer, user = null, onClose = null, l
       }
       if (closed) return;
       const link = await linkFor(mode.value);
-      if (!link) throw new Error('Could not make a link to this spreadsheet');
+      if (!link) throw new Error('Could not make a link to this sheet');
       const out = await mailer.sendLink({ workbookName: doc.name, recipients: parsed.people, link, access: mode.value === 'write' ? 'edit' : 'view', message: message.value });
       if (closed) return;
       const said = describeResult(out, { noun: 'link' });

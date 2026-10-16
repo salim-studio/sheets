@@ -5,7 +5,7 @@ import { workbookFromFile, workbookToXlsx } from '../src/core/io.js';
 import { normalizeExternalWorkbooks } from '../src/core/external-workbooks.js';
 import { normalizeExternalVisibility } from '../src/core/external-visibility.js';
 import * as X from '../src/vendor/xlsx.mjs';
-const NS = 'urn:puter:spreadsheet:external-visibility:1';
+const NS = 'urn:puter:sheets:external-visibility:1';
 function fixture(kind = 'row', includeHidden = false) {
   const wb = new Workbook({ sheets: [{ name: 'Report', cells: {
     '10,0': { f: 'SUBTOTAL(9,Data!B2:B4)' }, '11,0': { f: 'SUBTOTAL(109,Data!B2:B4)' },

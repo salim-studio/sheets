@@ -298,19 +298,19 @@ describe('Text box', () => {
 });
 
 describe('Copy sheet', () => {
-  it('blames the name of a new spreadsheet, or the choice of an existing one', async () => {
+  it('blames the name of a new sheet, or the choice of an existing one', async () => {
     const { wb, id } = workbook();
-    P.listFiles.mockResolvedValue([{ name: 'Other.xlsx', path: 'Spreadsheets/Other.xlsx' }]); // so the choice is open at all
+    P.listFiles.mockResolvedValue([{ name: 'Other.xlsx', path: 'Sheets/Other.xlsx' }]); // so the choice is open at all
     openCopySheetDialog({ wb, sheetId: () => id, grid: grid(), run: vi.fn() }, id);
     await vi.advanceTimersByTimeAsync(1);
-    field('Name of the new spreadsheet').value = '';
+    field('Name of the new sheets').value = '';
     submit();
     await vi.advanceTimersByTimeAsync(1);
-    expectRefusal('Name of the new spreadsheet', /enter a name/i);
+    expectRefusal('Name of the new sheets', /enter a name/i);
     panel().querySelector('input[type="radio"][value="existing"]').click();
-    field('Spreadsheet to copy into').value = ''; // nothing chosen
+    field('Sheets to copy into').value = ''; // nothing chosen
     submit();
     await vi.advanceTimersByTimeAsync(1);
-    expectRefusal('Spreadsheet to copy into', /choose a spreadsheet/i);
+    expectRefusal('Sheets to copy into', /choose a sheets/i);
   });
 });

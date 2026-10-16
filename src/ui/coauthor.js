@@ -116,7 +116,7 @@ export function coauthorSection({ doc, onStarted }) {
       },
     }, el('span', { html: icon('people', 16) }), el('span', {}, 'Start editing together'));
     box.append(heading,
-      el('p.collab-share-text', {}, 'Work on this spreadsheet at the same time as others: everyone sees each other\'s changes and selections as they happen. The file stays yours and is kept up to date.'),
+      el('p.collab-share-text', {}, 'Work on this sheet at the same time as others: everyone sees each other\'s changes and selections as they happen. The file stays yours and is kept up to date.'),
       el('div.row', {}, start), progress);
     return box;
   }
@@ -184,8 +184,8 @@ export function coauthorSection({ doc, onStarted }) {
   }, 'Stop editing together');
   box.append(heading,
     el('p.collab-share-text', {}, owner
-      ? 'This spreadsheet is live: everyone in it sees changes as they happen. Send an invitation link, or invite people by their Puter username.'
-      : 'This spreadsheet is live: everyone in it sees changes as they happen. Its owner decides who has access.'),
+      ? 'This sheet is live: everyone in it sees changes as they happen. Send an invitation link, or invite people by their Puter username.'
+      : 'This sheet is live: everyone in it sees changes as they happen. Its owner decides who has access.'),
     owner ? el('div.row.collab-link-row', {}, roleSel, el('button.btn.btn-outline', { type: 'button', html: icon('link', 16), onclick: () => copy(roleSel.value) }, el('span', {}, 'Copy invitation link'))) : el('div.row.collab-link-row', {}, el('button.btn.btn-outline', { type: 'button', html: icon('link', 16), onclick: () => copy(null) }, el('span', {}, 'Copy link'))),
     owner && inviteForm,
     el('h3.share-h3', {}, 'In this workbook'),

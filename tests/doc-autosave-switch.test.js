@@ -24,7 +24,7 @@ it('leaves edits unsaved while AutoSave is off, and saves them when it is turned
   expect(documentWrites()).toEqual([]);
   doc.setAutoSave(true);
   for (let i = 0; i < 50 && doc.status !== 'saved'; i++) await new Promise((r) => setTimeout(r, 100));
-  expect(documentWrites().map(([, p]) => p)).toEqual(['Spreadsheets/Untitled spreadsheet.xlsx']);
+  expect(documentWrites().map(([, p]) => p)).toEqual(['Sheets/Untitled sheets.xlsx']);
   expect(doc.status).toBe('saved');
 });
 
@@ -33,7 +33,7 @@ it('still saves on an explicit Save while AutoSave is off', async () => {
   const doc = Doc.blank({ excel: true });
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'Synthetic');
   expect(await doc.save()).toBe(true);
-  expect(documentWrites().map(([, p]) => p)).toEqual(['Spreadsheets/Untitled spreadsheet.xlsx']);
+  expect(documentWrites().map(([, p]) => p)).toEqual(['Sheets/Untitled sheets.xlsx']);
 });
 
 it('drops the AutoSave already waiting on an edit when AutoSave is turned off', async () => {

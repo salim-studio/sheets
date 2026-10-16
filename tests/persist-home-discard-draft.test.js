@@ -29,9 +29,9 @@ function unsavedDraft(name) {
   return key;
 }
 
-// The "Unsaved spreadsheets" chips could only be recovered; a draft nobody wanted stayed
+// The "Unsaved sheets" chips could only be recovered; a draft nobody wanted stayed
 // on the home screen (and in local storage) for good.
-it('discards an unsaved spreadsheet from the home screen after asking', async () => {
+it('discards an unsaved sheet from the home screen after asking', async () => {
   const keep = unsavedDraft('Keep me');
   const drop = unsavedDraft('Drop me');
   view = homeView({ recoverDraft: vi.fn() });
@@ -51,7 +51,7 @@ it('discards an unsaved spreadsheet from the home screen after asking', async ()
 // Edits made to a file while an earlier draft of it awaited a decision are kept beside that draft, under a
 // key the list never shows; discarding the lost file's draft left them in storage for good.
 it('discards the edits kept beside a lost file\'s draft along with it', async () => {
-  const path = 'Spreadsheets/Gone.xlsx';
+  const path = 'Sheets/Gone.xlsx';
   const wb = new Workbook();
   wb.setInput(wb.activeSheetId, 0, 0, 'edits to Gone');
   expect(saveDraft(draftKey(path), wb, 'Gone', 'rev-1', { fileModified: 1, fileUid: 'uid-gone' })).toBe(true);

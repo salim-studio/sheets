@@ -44,7 +44,7 @@ it.each([false, true])('copies a distant newly painted region through HTML and n
   wb.applyBorders(id, box, 'all', { style: 'dotted', color: '#118855' });
   const area = { r1: 749, c1: 59, r2: 752, c2: 61 }, cells = wb.copyRange(id, area);
   let html = cellsToHtml(cells.map((row, i) => row.map((_, j) => wb.getDisplay(id, i + area.r1, j + area.c1))), cells);
-  if (foreign) html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (foreign) html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html), back = new Workbook(), dest = back.activeSheetId;
   if (foreign) back.setCells(dest, cellsFromHtmlRows(parsed.rows).map(({ i, j, cell }) => ({ r: i, c: j, cell })));
   else back.pasteCells(dest, parsed.cells, 0, 0);

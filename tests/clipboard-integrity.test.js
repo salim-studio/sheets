@@ -6,7 +6,7 @@ import { workbookToXlsx, workbookFromFile } from '../src/core/io.js';
 import * as X from '../src/vendor/xlsx.mjs';
 
 const copied = () => cellsToHtml([['#VALUE!']], [[{ f: 'MINVERSE(A1:B1)', s: { bold: true } }]], null,
-  [[{ error: '#VALUE!' }]], { r: 4, c: 2 }).replace('<table', '<table data-spreadsheet-copy="copy-id"');
+  [[{ error: '#VALUE!' }]], { r: 4, c: 2 }).replace('<table', '<table data-sheets-copy="copy-id"');
 
 it.each(['<td class="foreign">#VALUE!</td>', '<td x:num="42">42</td>', '<td>Current</td><td>cells</td>'])
   ('ignores a stale formula, value snapshot, origin, and copy token after cells change: %s', (cells) => {
@@ -42,7 +42,7 @@ it.each([
 it('falls back to visible cells for unsigned old metadata and unknown or damaged stamps', () => {
   for (const stamp of ['', '2:future', '1:invalid']) {
     const doc = new DOMParser().parseFromString(copied(), 'text/html');
-    doc.querySelector('table').setAttribute('data-spreadsheet-markup', stamp);
+    doc.querySelector('table').setAttribute('data-sheets-markup', stamp);
     expect(parseHtmlClipboard(doc.body.innerHTML).rows[0][0].text).toBe('#VALUE!');
     expect(isOwnHtmlClipboard(doc.body.innerHTML, 'copy-id')).toBe(false);
   }

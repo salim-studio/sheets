@@ -9,7 +9,7 @@ const repeated = () => Object.fromEntries(Array.from({ length: 40 }, (_, r) => [
 
 describe('XLSX private style indexing', () => {
   it('deduplicates exact styles without changing the source or other metadata, and keeps the shared pool read-only', () => {
-    const meta = { v: 1, format: 'puter-spreadsheet', sheets: { Data: { styles: repeated(), nativeStyles: true, charts: [{ text: '😺 _x000A_ <&>' }] } } };
+    const meta = { v: 1, format: 'puter-sheets', sheets: { Data: { styles: repeated(), nativeStyles: true, charts: [{ text: '😺 _x000A_ <&>' }] } } };
     const before = structuredClone(meta), json = stringifyXlsxMetadata(meta);
     expect(json.length).toBeLessThan(JSON.stringify(meta).length / 2);
     expect(JSON.parse(json).sheets.Data.styles.values).toHaveLength(1);

@@ -117,7 +117,7 @@ export function environment() {
   return Object.assign(env, { kv, workerPuter });
 }
 
-export const SERVER = 'https://spreadsheet-test.puter.work';
+export const SERVER = 'https://sheets-test.puter.work';
 export const wait = (ms = 0) => new Promise((r) => setTimeout(r, ms));
 /** Wait until `check` holds (polling), failing after `timeout`. */
 export async function until(check, timeout = 4000, what = 'condition') {

@@ -36,7 +36,7 @@ describe('the Spelling dialog', () => {
   afterEach(() => { view?.destroy(); view = null; vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
   async function mount(cells) {
-    const doc = new Doc({ name: 'Notes', path: 'Spreadsheets/Notes.xlsx' });
+    const doc = new Doc({ name: 'Notes', path: 'Sheets/Notes.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     for (const [ref, text] of Object.entries(cells)) { const c = ref.charCodeAt(0) - 65, r = Number(ref.slice(1)) - 1; wb.setInput(id, r, c, text); }

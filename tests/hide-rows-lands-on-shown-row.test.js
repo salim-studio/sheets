@@ -30,7 +30,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 it('lands on the next row the filter shows, not on one it hides', async () => {
-  const doc = new Doc({ name: 'Filtered', path: 'Spreadsheets/Filtered.xlsx' });
+  const doc = new Doc({ name: 'Filtered', path: 'Sheets/Filtered.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   // Rows 3 and 4 (1-based) are hidden by the filter; row 5 is the first shown row after row 2.

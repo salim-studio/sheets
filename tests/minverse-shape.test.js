@@ -32,7 +32,7 @@ it('recalculates a changing input shape and preserves the error through native X
   expect(wb.getValue(id, 4, 3)).toEqual({ error: '#VALUE!' });
   const range = { r1: 4, c1: 3, r2: 4, c2: 3 };
   const values = wb.rangeValues(id, range);
-  const html = cellsToHtml([['#VALUE!']], wb.copyRange(id, range), null, values).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([['#VALUE!']], wb.copyRange(id, range), null, values).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell.v).toEqual({ error: '#VALUE!' });
   const blob = await workbookToXlsx(wb);
   const data = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(blob); });

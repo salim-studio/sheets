@@ -28,7 +28,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Hide', path: 'Spreadsheets/Hide.xlsx' });
+  const doc = new Doc({ name: 'Hide', path: 'Sheets/Hide.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });

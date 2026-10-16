@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('says the text was cut to the cell limit, once per entry that ran past it', async () => {
-  const doc = new Doc({ name: 'Long', path: 'Spreadsheets/Long.xlsx' });
+  const doc = new Doc({ name: 'Long', path: 'Sheets/Long.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });

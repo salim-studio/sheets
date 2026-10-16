@@ -46,7 +46,7 @@ it('pastes the named percentage format over inherited currency while retaining t
 it.each([false, true])('preserves native percentage precision in copied HTML, foreign=%s', foreign => {
   const wb = paste(native), cells = wb.copyRange(wb.activeSheetId, { r1: 0, c1: 0, r2: 0, c2: 3 });
   let html = cellsToHtml([expected], cells);
-  if (foreign) html = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (foreign) html = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html), back = new Workbook();
   if (parsed.cells) back.pasteCells(back.activeSheetId, parsed.cells, 0, 0);
   else back.setCells(back.activeSheetId, cellsFromHtmlRows(parsed.rows).map(({ i, j, cell }) => ({ r: i, c: j, cell })));

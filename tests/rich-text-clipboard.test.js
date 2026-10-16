@@ -5,7 +5,7 @@ import { Workbook } from '../src/core/workbook.js';
 import boundaries from './fixtures/reference-numeric-text-boundaries.json';
 
 const read = html => { const parsed = parseHtmlClipboard(html); return cellsFromHtmlRows(parsed.rows)[0].cell; };
-const foreign = html => html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+const foreign = html => html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
 
 // Saved desktop Excel controls distinguish bare x:str (typed rich markup)
 // from x:str="" (empty) and x:str="value" (one font for the explicit value).
@@ -87,7 +87,7 @@ it('round-trips mixed runs through standard HTML without the private cell payloa
     { text: 'AA ', s: { bold: true, size: 24 } },
     { text: ' bb\ncc', s: { bold: false, underline: false, size: 12, color: '#123456' } },
   ] };
-  const html = cellsToHtml([[cell.v]], [[cell]], null, [[cell.v]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([[cell.v]], [[cell]], null, [[cell.v]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const back = read(html);
   expect(back.v).toBe(cell.v);
   expect(back.richText.map(run => [run.text, run.s.bold, run.s.size, run.s.underline])).toEqual([
@@ -111,7 +111,7 @@ it('keeps superscript, subscript and double underline as character formatting in
   expect(cell.richText.map(run => [run.text, run.s?.vertAlign, run.s?.underline])).toEqual([
     ['Base', undefined, undefined], ['Up', 'superscript', undefined], ['Down', 'subscript', undefined], ['Double', undefined, 'double'],
   ]);
-  const html = cellsToHtml([[cell.v]], [[cell]], null, [[cell.v]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([[cell.v]], [[cell]], null, [[cell.v]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const doc = new DOMParser().parseFromString(html, 'text/html');
   expect(doc.querySelector('td').style.verticalAlign).toBe('top');
   expect([...doc.querySelectorAll('td > span')].map(span => span.style.verticalAlign)).toEqual(['', 'super', 'sub', '']);
@@ -134,7 +134,7 @@ it('writes semantic character formats inside a neutral cell font for Excel HTML 
     { text: ' plain', s: { bold: false, italic: false } },
     { text: ' italic', s: { bold: false, italic: true } },
   ] };
-  const html = cellsToHtml([[cell.v]], [[cell]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([[cell.v]], [[cell]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const doc = new DOMParser().parseFromString(html, 'text/html');
   expect(doc.querySelector('td').style.fontWeight).toBe('normal');
   expect(doc.querySelector('td').style.fontStyle).toBe('normal');
@@ -148,7 +148,7 @@ it('writes semantic character formats inside a neutral cell font for Excel HTML 
 
 it('carries rich hyperlinks through standard HTML and keeps typed number labels numeric', () => {
   const linked = { v: 'Bold plain', hyperlink: 'https://example.com/details', richText: [{ text: 'Bold', s: { bold: true } }, { text: ' plain', s: { bold: false } }] };
-  const html = cellsToHtml([[linked.v]], [[linked]], null, [[linked.v]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const html = cellsToHtml([[linked.v]], [[linked]], null, [[linked.v]]).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const parsed = parseHtmlClipboard(html), cell = cellsFromHtmlRows(parsed.rows)[0].cell;
   expect(cell).toMatchObject({ v: linked.v, f: null, hyperlink: linked.hyperlink });
   expect(cell.richText.map(run => [run.text, run.s.bold])).toEqual([['Bold', true], [' plain', false]]);

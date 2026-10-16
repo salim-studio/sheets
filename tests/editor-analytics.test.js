@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 async function mount() {
-  doc = new Doc({ name: 'Private report', path: 'Spreadsheets/Private.xlsx' });
+  doc = new Doc({ name: 'Private report', path: 'Sheets/Private.xlsx' });
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'Imported data');
   doc.wb.markClean();
   view = editorView({ doc, goHome() {}, openPath() {}, newDoc() {}, templateDoc() {}, importFile() {} });
@@ -40,7 +40,7 @@ it('counts first data edits once per editor session, excluding opening and layou
   expect(plausible).not.toHaveBeenCalled();
   wb.setInput(id, 0, 0, 'Private edit');
   wb.setInput(id, 1, 0, 'Another private edit');
-  expect(plausible.mock.calls).toEqual([['Spreadsheet Edited']]);
+  expect(plausible.mock.calls).toEqual([['Sheets Edited']]);
 });
 
 it('does not count typing that is cancelled or committing an unchanged value', async () => {
@@ -50,5 +50,5 @@ it('does not count typing that is cancelled or committing an unchanged value', a
   viewport.focus(); key('F2'); key('Enter');
   expect(plausible).not.toHaveBeenCalled();
   viewport.focus(); key('x'); key('Enter');
-  expect(plausible.mock.calls).toEqual([['Spreadsheet Edited']]);
+  expect(plausible.mock.calls).toEqual([['Sheets Edited']]);
 });

@@ -1,6 +1,6 @@
 # Editing together
 
-Several people can work in the same spreadsheet at once. Everyone sees the others' edits within a second or two, sees where each of them is (their selection outlined in their colour, with their name), and keeps their own Undo. The `.xlsx` file stays the durable copy its owner keeps: it is written back as people work, so it still opens anywhere.
+Several people can work in the same sheets at once. Everyone sees the others' edits within a second or two, sees where each of them is (their selection outlined in their colour, with their name), and keeps their own Undo. The `.xlsx` file stays the durable copy its owner keeps: it is written back as people work, so it still opens anywhere.
 
 Choose **Share**, then **Start editing together**. The first time, this deploys the owner's own collaboration server (a Puter Worker) to their account; then the workbook opens as a shared workbook. From the same dialog the owner copies an **invitation link** that lets people edit or only view (valid for seven days), invites people by their Puter username, changes anyone's access, removes them, or **stops editing together**. People open the link, sign in to Puter if they have not, and join. Opening the file again later, its owner joins the shared workbook automatically; members reopen the link (without the invitation part, it opens the workbook for members only).
 
@@ -16,7 +16,7 @@ The design follows the Whiteboard app in this repository (`src/whiteboard/docs/c
 | `src/collab/client.js` | Joining, loading, sending and fetching changes, the outbox, checkpoints, presence, events and peer links |
 | `src/collab/outbox.js` | Unconfirmed changes kept in IndexedDB |
 | `src/collab/protocol.js`, `auth.js`, `api.js`, `peers.js` | Roles, encodings, signatures and links; signed requests; deploying the worker; WebRTC peer links |
-| `src/collab/server/` | The room worker (`service.js`, `auth.js`, entry `index.js`), bundled by `npm run build:worker` into `public/worker/spreadsheet-worker.js` (22 kB) |
+| `src/collab/server/` | The room worker (`service.js`, `auth.js`, entry `index.js`), bundled by `npm run build:worker` into `public/worker/sheets-worker.js` (22 kB) |
 | `src/collab/session.js` | Starting, finding and opening shared workbooks for the app |
 | `src/ui/coauthor.js` | The people bar, the status, the Share dialog's Edit together part |
 
@@ -31,7 +31,7 @@ Adding or duplicating a sheet sends the new sheet whole.
 
 ### Why not a CRDT
 
-We considered the Whiteboard app's approach, a Yjs document of per-cell registers. A spreadsheet's positions are the problem: cells, formulas, merges, conditional formats, validation ranges, tables, charts, names and print areas all refer to rows and columns by number, and inserting a row renumbers all of them. A CRDT needs stable identities for rows and columns, and then every one of those features (and every formula reference) must be stored relative to those identities, which would mean reimplementing most of the workbook's structural code in a second representation. The order-based model instead lets the workbook remain the single implementation of what an edit does: the log decides the order, and the workbook does the rest, deterministically, in every browser. This is the approach spreadsheet services commonly take (an operation log ordered by a server, with operational transformation of positions).
+We considered the Whiteboard app's approach, a Yjs document of per-cell registers. A sheets's positions are the problem: cells, formulas, merges, conditional formats, validation ranges, tables, charts, names and print areas all refer to rows and columns by number, and inserting a row renumbers all of them. A CRDT needs stable identities for rows and columns, and then every one of those features (and every formula reference) must be stored relative to those identities, which would mean reimplementing most of the workbook's structural code in a second representation. The order-based model instead lets the workbook remain the single implementation of what an edit does: the log decides the order, and the workbook does the rest, deterministically, in every browser. This is the approach sheets services commonly take (an operation log ordered by a server, with operational transformation of positions).
 
 ### Capturing a change
 
@@ -58,13 +58,13 @@ The workbook's own Undo would put back whole sheets, including other people's ed
 
 ## Offline and recovery
 
-Every pending change is kept in IndexedDB (`spreadsheet-collab`, one record per room: the revision the changes apply on top of, and the changes). Without a connection the status says **Offline · N changes waiting**; work continues locally. When the connection returns (or the tab becomes visible again) the browser fetches what others did, rebases its changes on it and sends them. After a reload, opening the shared workbook loads the checkpoint at or before the saved revision, applies the log up to it, puts the saved changes back on top, and rebases them through the rest. A change the worker refuses for good (access removed, invalid) is taken back with the later ones, which may build on it, and the person is told.
+Every pending change is kept in IndexedDB (`sheets-collab`, one record per room: the revision the changes apply on top of, and the changes). Without a connection the status says **Offline · N changes waiting**; work continues locally. When the connection returns (or the tab becomes visible again) the browser fetches what others did, rebases its changes on it and sends them. After a reload, opening the shared workbook loads the checkpoint at or before the saved revision, applies the log up to it, puts the saved changes back on top, and rebases them through the rest. A change the worker refuses for good (access removed, invalid) is taken back with the later ones, which may build on it, and the person is told.
 
 One tab per shared workbook keeps the outbox; two tabs of the same shared workbook in one browser each send their own changes while open, but only the latest one's unsent changes survive closing both while offline.
 
 ## The room worker
 
-`npm run build:worker` bundles `src/collab/server` (it does not include the spreadsheet engine: the worker orders, checks and stores, browsers compute). `npm run build` runs it first. Sharing deploys or updates the owner's worker with `puter.workers.create()`; only a worker recorded in the owner's private app KV is ever updated, and invitation links never deploy anything.
+`npm run build:worker` bundles `src/collab/server` (it does not include the sheets engine: the worker orders, checks and stores, browsers compute). `npm run build` runs it first. Sharing deploys or updates the owner's worker with `puter.workers.create()`; only a worker recorded in the owner's private app KV is ever updated, and invitation links never deploy anything.
 
 | Key / file | Contents |
 | --- | --- |
@@ -77,7 +77,7 @@ One tab per shared workbook keeps the outbox; two tabs of the same shared workbo
 | `ss:<room>:cp`, `ss:<room>:cps` | The latest checkpoint and the last 50 |
 | `ss:<room>:presence:<session>` | Peer ticket and where the person is (90 s) |
 | `ss:<room>:ev:signal` | Change notice (carries no data) |
-| `spreadsheet/shared/<room>/…` | Initial state, checkpoints (gzipped JSON), large records |
+| `sheets/shared/<room>/…` | Initial state, checkpoints (gzipped JSON), large records |
 
 Requests (`create`, `join`, `load`, `sync`, `commit`, `checkpoint`, `presence`, `leave`, `members`, `invite`, `invite-user`, `role`, `revoke-invites`, `stop`, `events`) are signed as in the Whiteboard app: the browser never sends its app session to a worker; it mints a restricted Puter token that can only read a small identity file with its public key, and signs the worker's origin, the file path and the body digest. The worker validates the token with Puter (`fs.stat` with strong consistency of an unshared file owned by the caller) and checks the signature.
 
@@ -93,7 +93,7 @@ Accepted commits return a receipt signed with the room key, binding the room, th
 
 ## Checkpoints and the file
 
-The worker does not run the spreadsheet, so checkpoints come from browsers: the editor with the lowest session among those present writes one (the whole workbook at a revision, while it has nothing pending, so its state is the room's) after every 50 revisions or a minute after the last one. Joining loads the latest checkpoint and the log after it. Saving (**Ctrl+S**, leaving, or 15 seconds after the last change in the owner's browser) delivers what is pending and writes a checkpoint with the workbook as `.xlsx`; the worker writes it over the owner's file, and the owner's browser writes the file itself when the worker could not. The file is therefore always a recent state of the shared workbook and opens anywhere; version history keeps working for it.
+The worker does not run the sheets, so checkpoints come from browsers: the editor with the lowest session among those present writes one (the whole workbook at a revision, while it has nothing pending, so its state is the room's) after every 50 revisions or a minute after the last one. Joining loads the latest checkpoint and the log after it. Saving (**Ctrl+S**, leaving, or 15 seconds after the last change in the owner's browser) delivers what is pending and writes a checkpoint with the workbook as `.xlsx`; the worker writes it over the owner's file, and the owner's browser writes the file itself when the worker could not. The file is therefore always a recent state of the shared workbook and opens anywhere; version history keeps working for it.
 
 ## Presence
 

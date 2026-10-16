@@ -76,7 +76,7 @@ it('keeps raw serial precision through editing, portable clipboard and XLSX', as
     const cell = wb.getCell(id,r,0);
     // The formula bar follows the application's 15-significant-digit input policy.
     expect(parseInput(editText(cell)).v.toPrecision(15)).toBe(v.toPrecision(15));
-    const html = cellsToHtml([[wb.getDisplay(id,r,0)]],[[cell]],null,[[v]]).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+    const html = cellsToHtml([[wb.getDisplay(id,r,0)]],[[cell]],null,[[v]]).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(pasted.v).toBe(v);
     expect(styleToNumFmt(pasted.s)).toBe(styleToNumFmt(style));

@@ -101,7 +101,7 @@ describe('single-cell data commands', () => {
   });
 
   async function open(active) {
-    const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+    const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
     const { id } = seed(doc.wb);
     view = editorView({ doc, goHome() {}, openPath() {}, newDoc() {}, importFile() {} });
     document.querySelector('#app').append(view.el);

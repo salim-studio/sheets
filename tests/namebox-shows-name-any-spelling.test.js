@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function setup() {
-  const doc = new Doc({ name: 'Names', path: 'Spreadsheets/Names.xlsx' });
+  const doc = new Doc({ name: 'Names', path: 'Sheets/Names.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   expect(wb.defineName('Total', 'Sheet1!A1:A3')).toBeNull(); // relative spelling

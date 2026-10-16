@@ -23,7 +23,7 @@ it('retains bracket codes and TEXT semantics through editing, clipboard and exte
       wb.applyStyle(id, { r1:r, r2:r, c1:0, c2:0 }, { fmt:'custom', code });
       const html = cellsToHtml([[expected]], [[wb.getCell(id, r, 0)]], null, [[value]]);
       expect(parseHtmlClipboard(html).cells[0][0].v).toBe(value);
-      const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+      const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
       const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
       expect(pasted.v).toBe(value); expect(pasted.s.code).toBe(code);
     }

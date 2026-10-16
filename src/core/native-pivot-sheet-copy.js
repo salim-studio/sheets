@@ -12,7 +12,7 @@ const identity = report => JSON.stringify([report.owner, sheetKey(decodeXlsxStri
 const fail = message => { throw new Error(`Cannot copy pivot sheet: ${message}`); };
 function requireSourceLocation(sourceWorkbook) {
   if (typeof sourceWorkbook === 'string' && sourceWorkbook.trim()) return;
-  const error = new Error('Save the source spreadsheet before copying a pivot that needs its original workbook location.');
+  const error = new Error('Save the source sheets before copying a pivot that needs its original workbook location.');
   error.code = 'PIVOT_SOURCE_LOCATION_REQUIRED'; throw error;
 }
 export { rebaseWorkbookTarget as rebasePivotWorkbookTarget } from './workbook-location.js';

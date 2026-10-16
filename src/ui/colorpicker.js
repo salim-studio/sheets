@@ -10,7 +10,7 @@
 
 import { isComposing, el, fieldId } from './dom.js';
 
-const RECENT_KEY = 'spreadsheet:recentColors';
+const RECENT_KEY = 'sheets:recentColors';
 const MAX_RECENT = 6;
 
 export const isHex = (v) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);

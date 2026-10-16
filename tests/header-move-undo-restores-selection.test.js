@@ -36,7 +36,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const pointer = (target, type, init) => target.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, button: 0, pointerType: 'mouse', ...init }));
 
 async function mount() {
-  const doc = new Doc({ name: 'Move', path: 'Spreadsheets/Move.xlsx' });
+  const doc = new Doc({ name: 'Move', path: 'Sheets/Move.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   for (let c = 0; c < 4; c++) for (let r = 0; r < 3; r++) wb.setInput(id, r, c, `${String.fromCharCode(65 + c)}${r + 1}`);

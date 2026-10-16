@@ -29,7 +29,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function setup(texts, selection) {
-  const doc = new Doc({ name: 'Decimals', path: 'Spreadsheets/Decimals.xlsx' });
+  const doc = new Doc({ name: 'Decimals', path: 'Sheets/Decimals.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   texts.forEach((t, r) => wb.setInput(id, r, 0, t));

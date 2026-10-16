@@ -99,7 +99,7 @@ describe('the name box names menu', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('gives the name box back, with its typed text, after Escape, and the sheet after a choice', async () => {
-    const doc = new Doc({ name: 'Names', path: 'Spreadsheets/Names.xlsx' });
+    const doc = new Doc({ name: 'Names', path: 'Sheets/Names.xlsx' });
     const { wb } = doc;
     wb.defineName('Total', 'Sheet1!A1:A3');
     view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });

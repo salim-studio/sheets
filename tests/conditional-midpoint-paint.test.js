@@ -12,7 +12,7 @@ it('prints and copies every color of an overflowing three-color range',()=>{
   const style=wb.conditionalStyle(id,r,0,value),expectedCell=document.createElement('td');expectedCell.style.backgroundColor=expected[r];
   expect(rows[r].querySelector('td').style.backgroundColor).toBe(expectedCell.style.backgroundColor);
   const html=cellsToHtml([[String(value)]],wb.copyRange(id,{r1:r,c1:0,r2:r,c2:0}),[[style]],[[value]]);
-  const foreign=parseHtmlClipboard(html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,''));
+  const foreign=parseHtmlClipboard(html.replace(/ data-sheets-[\w-]+="[^"]*"/g,''));
   const cell=cellsFromHtmlRows(foreign.rows)[0].cell;
   expect(cell.v).toBe(value);expect(cell.s.bg || '#ffffff').toBe(expected[r]);
  });

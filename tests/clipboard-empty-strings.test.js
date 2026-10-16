@@ -49,7 +49,7 @@ it('preserves empty-string semantics through edit, undo, XLSX and outgoing HTML'
   const cell = wb.getCell(id, 0, 0);
   const html = cellsToHtml([['']], [[cell]], null, [['']]);
   expect(parseHtmlClipboard(html).cells[0][0].v).toBe('');
-  expect(cells(html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, ''))[0].v).toBe('');
+  expect(cells(html.replace(/ data-sheets-[\w-]+="[^"]*"/g, ''))[0].v).toBe('');
 });
 
 it('associates the source attribute with cells after table repair and merge expansion', () => {

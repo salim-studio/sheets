@@ -1,5 +1,5 @@
 /**
- * Pivot tables, the spreadsheet way: a summary table whose cells are live
+ * Pivot tables, the sheets way: a summary table whose cells are live
  * SUMIFS / COUNTIFS / AVERAGEIFS / MAXIFS / MINIFS formulas over the source
  * range, so edits to the data flow through. Row and column labels are the
  * distinct values found when the table is built (rebuild to pick up new

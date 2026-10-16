@@ -19,7 +19,7 @@ beforeEach(() => {
     },
     kv: { get: async () => null, set: async () => true },
     fs: {
-      readdir: vi.fn(async () => [{ path: 'Spreadsheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 1 }]),
+      readdir: vi.fn(async () => [{ path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 1 }]),
       stat: async () => null, mkdir: async () => {},
     },
     ui: {},
@@ -35,7 +35,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('offers the sign-in in place of the list, then lists the spreadsheets once signed in', async () => {
+it('offers the sign-in in place of the list, then lists the sheets once signed in', async () => {
   await session.init();
   const newDoc = vi.fn();
   view = homeView({ openPath: vi.fn(), newDoc, sampleDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
@@ -43,7 +43,7 @@ it('offers the sign-in in place of the list, then lists the spreadsheets once si
   await Promise.resolve();
 
   const list = view.el.querySelector('.file-list');
-  expect(list.textContent).toContain('Sign in to see your spreadsheets');
+  expect(list.textContent).toContain('Sign in to see your sheets');
   expect(sdk.fs.readdir).not.toHaveBeenCalled();
   expect(list.querySelector('.file-row')).toBeNull();
   const account = view.el.querySelector('.user-btn');
@@ -51,13 +51,13 @@ it('offers the sign-in in place of the list, then lists the spreadsheets once si
   expect(account.querySelector('svg')).not.toBeNull();
 
   // Working needs no account at all.
-  [...list.querySelectorAll('button')].find((b) => b.textContent === 'New spreadsheet').click();
+  [...list.querySelectorAll('button')].find((b) => b.textContent === 'New sheets').click();
   expect(newDoc).toHaveBeenCalledTimes(1);
 
   [...list.querySelectorAll('button')].find((b) => b.textContent === 'Sign in to Puter').click();
   await vi.waitFor(() => expect(sdk.auth.signIn).toHaveBeenCalledTimes(1));
   await vi.waitFor(() => expect(list.querySelector('.file-row .file-name')?.textContent).toBe('Budget'));
-  expect(list.textContent).not.toContain('Sign in to see your spreadsheets');
+  expect(list.textContent).not.toContain('Sign in to see your sheets');
   expect(account.title).toBe('nariman');
   expect(account.textContent).toBe('n');
 });

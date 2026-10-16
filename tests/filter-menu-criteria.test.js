@@ -31,7 +31,7 @@ afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealT
 
 /** Column A under a header, filtered over rows 1..n; `prepare` shapes the workbook before the menu opens on A1. */
 async function mount(values, prepare = () => {}) {
-  const doc = new Doc({ name: 'List', path: 'Spreadsheets/List.xlsx' });
+  const doc = new Doc({ name: 'List', path: 'Sheets/List.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Key');

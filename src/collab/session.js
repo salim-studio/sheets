@@ -11,7 +11,7 @@ import { shareLink } from './protocol.js';
 import { Doc } from '../lib/doc.js';
 import { workbookToXlsx } from '../core/io.js';
 
-const fileKey = (file) => `spreadsheet-collab-file-v1:${file.uid || file.path}`;
+const fileKey = (file) => `sheets-collab-file-v1:${file.uid || file.path}`;
 
 /** The room the owner's file is shared through, or null. */
 export async function roomForFile(file) {

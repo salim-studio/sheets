@@ -3,7 +3,7 @@
  * objective) as large or as small as it can be, or equal to a value, while other cells meet constraints.
  *
  * A model is kept per sheet in hidden, sheet-scoped defined names (solver_opt, solver_adj, solver_lhs1 …),
- * the convention spreadsheet files use for it, so a model saved here opens elsewhere and back again. The
+ * the convention sheets files use for it, so a model saved here opens elsewhere and back again. The
  * dialog edits the model as text (references relative to the sheet); prepareSolver() turns that into the
  * numeric problem the engines solve, with an evaluate(x) that writes trial values into the variable cells
  * and reads the objective and constraint cells through the workbook's own recalculation:

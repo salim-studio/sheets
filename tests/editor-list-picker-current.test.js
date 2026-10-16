@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(value, prep = null) {
-  const doc = new Doc({ name: 'Lists', path: 'Spreadsheets/Lists.xlsx' });
+  const doc = new Doc({ name: 'Lists', path: 'Sheets/Lists.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   if (prep) prep(wb, id);

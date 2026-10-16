@@ -29,7 +29,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function open(cells) {
-  const doc = new Doc({ name: 'Spill', path: 'Spreadsheets/Spill.xlsx' });
+  const doc = new Doc({ name: 'Spill', path: 'Sheets/Spill.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   for (const [r, c, text] of cells) wb.setInput(id, r, c, text);

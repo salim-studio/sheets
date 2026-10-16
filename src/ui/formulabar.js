@@ -29,7 +29,7 @@ export function createFormulaBar(ctx, { fixedActions = false } = {}) {
   });
   // The bar can grow to several lines for long formulas and wrapped text; the choice is remembered.
   let expanded = false;
-  try { expanded = localStorage.getItem('spreadsheet:formulabar') === 'tall'; } catch { /* no storage */ }
+  try { expanded = localStorage.getItem('sheets:formulabar') === 'tall'; } catch { /* no storage */ }
   const expandBtn = el('button.fx-expand', { type: 'button', 'aria-expanded': 'false', onclick: () => setExpanded(!expanded) });
   // The named ranges, one click (or Alt+Down in the name box) away.
   const nameMenuBtn = el('button.name-menu-btn', { type: 'button', html: icon('chevD', 14, 2), 'aria-label': 'Named ranges', title: 'Named ranges', 'aria-haspopup': 'menu', onclick: (e) => openNamesMenu(e.currentTarget) });
@@ -75,7 +75,7 @@ export function createFormulaBar(ctx, { fixedActions = false } = {}) {
     expandBtn.setAttribute('aria-label', label);
     expandBtn.title = label;
     expandBtn.innerHTML = icon(expanded ? 'chevU' : 'chevD', 16, 2);
-    try { localStorage.setItem('spreadsheet:formulabar', expanded ? 'tall' : 'short'); } catch { /* no storage */ }
+    try { localStorage.setItem('sheets:formulabar', expanded ? 'tall' : 'short'); } catch { /* no storage */ }
   }
   setExpanded(expanded);
 

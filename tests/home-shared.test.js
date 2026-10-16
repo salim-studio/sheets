@@ -12,7 +12,7 @@ vi.mock('../src/ui/toast.js', () => ({ toast: vi.fn() }));
 beforeEach(() => {
   vi.useFakeTimers();
   vi.stubGlobal('matchMedia', () => ({ matches: true }));
-  vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Spreadsheets/Mine.xlsx', name: 'Mine.xlsx', uid: 'm1' }]);
+  vi.spyOn(P, 'listFiles').mockResolvedValue([{ path: 'Sheets/Mine.xlsx', name: 'Mine.xlsx', uid: 'm1' }]);
   vi.spyOn(P, 'listSharedWithMe').mockResolvedValue([{ name: 'Team.xlsx', path: '/ana/u1/Team.xlsx', uid: 'u1', mode: 'read', owner: 'ana' }]);
   document.body.replaceChildren();
 });
@@ -70,7 +70,7 @@ it('offers Share in a file’s menu where the host can share', async () => {
   view.destroy();
 });
 
-it('shows the newest few shared spreadsheets, and the rest on asking', async () => {
+it('shows the newest few shared sheets, and the rest on asking', async () => {
   P.listSharedWithMe.mockResolvedValue(Array.from({ length: 12 }, (_, i) => ({ name: `S${i}.xlsx`, path: `/ana/u${i}/S${i}.xlsx`, uid: `u${i}`, mode: 'read', owner: 'ana' })));
   const view = homeView({});
   document.body.append(view.el);

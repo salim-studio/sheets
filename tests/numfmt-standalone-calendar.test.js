@@ -60,7 +60,7 @@ it('preserves calendar semantics through edits, HTML and metadata-free XLSX', as
     expect(wb.getDisplay(id, r, 0)).toBe(expected);
     expect(wb.getValue(id, r, 1)).toBe(expected);
     const html = cellsToHtml([[expected]], [[wb.getCell(id, r, 0)]], null, [[value]]);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(value); expect(pasted.s.code).toBe(code);
   }

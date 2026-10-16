@@ -34,7 +34,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 
 /** Sheet1 (home) and Sheet2 (other), the editor on Sheet1 at `cell`. */
 async function setup(cell) {
-  const doc = new Doc({ name: 'Sheets', path: 'Spreadsheets/Sheets.xlsx' });
+  const doc = new Doc({ name: 'Sheets', path: 'Sheets/Sheets.xlsx' });
   const wb = doc.wb;
   const home = wb.activeSheetId;
   const other = wb.addSheet('Sheet2').id;

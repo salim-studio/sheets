@@ -1,7 +1,7 @@
 /**
  * SmartArt in .xlsx files.
  *
- * Writing: a diagram is saved as what any spreadsheet program can show and edit — one group (xdr:grpSp) of
+ * Writing: a diagram is saved as what any sheets program can show and edit — one group (xdr:grpSp) of
  * ordinary shapes with their text, exactly as the app draws it — while the app's own record keeps the
  * diagram itself (its outline, layout, colours and style), so the app opens it again as a diagram.
  *

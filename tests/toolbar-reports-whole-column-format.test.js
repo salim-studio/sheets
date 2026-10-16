@@ -45,7 +45,7 @@ afterEach(() => {
 });
 
 it('reports the format a cell in a formatted column is in, wherever the cursor stands in it', async () => {
-  const doc = new Doc({ name: 'Prices', path: 'Spreadsheets/Prices.xlsx' });
+  const doc = new Doc({ name: 'Prices', path: 'Sheets/Prices.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   const name = wb.sheet(id).name;
@@ -77,7 +77,7 @@ it('reports the format a cell in a formatted column is in, wherever the cursor s
 });
 
 it('clears inherited formatting through the toolbar and refreshes the grid, chart, summary and print output', async () => {
-  const doc = new Doc({ name: 'Clear', path: 'Spreadsheets/Clear.xlsx' });
+  const doc = new Doc({ name: 'Clear', path: 'Sheets/Clear.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   // Values loaded after line formatting have no own styles, so clearing them changes only the sparse exceptions.
   wb.sheet(id).colStyles.set(1, { fmt: 'currency', cur: 'USD', bold: true, bg: '#ffff00' });

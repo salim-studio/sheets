@@ -44,7 +44,7 @@ afterEach(() => {
 });
 
 function setup() {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   doc.recoverable = { savedAt: Date.now() - 60000, revision: 1, workbook: new Doc({ name: 'x' }).wb.toJSON() };
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);

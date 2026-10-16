@@ -29,7 +29,7 @@ afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers()
 const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) => n.querySelector('.menu-label')?.textContent === label);
 
 async function setup(range, ranges = null) {
-  const doc = new Doc({ name: 'Borders', path: 'Spreadsheets/Borders.xlsx' });
+  const doc = new Doc({ name: 'Borders', path: 'Sheets/Borders.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.ensureSize(id, 1000, 80);
   if (ranges) wb.setSheetSelection(id, { active: { r: 0, c: 2 }, ranges, activeRange: ranges.length - 1 });

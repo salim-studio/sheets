@@ -11,7 +11,7 @@ beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); vi.useFakeTimers(); });
 afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0']?.v;
 const cellA1 = (doc) => doc.wb.getValue(doc.wb.activeSheetId, 0, 0);
 /** Every draft as the home screen lists it: [name, path, first cell]. */
@@ -33,7 +33,7 @@ async function newFileAtOldAddress() {
 // A draft compared only the file's time and content with its own, never the file's id: edits kept for a
 // file deleted elsewhere were offered as unsaved changes of whatever file later took its address, and
 // restoring them replaced that file's contents with the old edits.
-it('does not offer another file\'s draft for the file now at that address, and keeps it as an unsaved spreadsheet', async () => {
+it('does not offer another file\'s draft for the file now at that address, and keeps it as an unsaved sheet', async () => {
   await newFileAtOldAddress();
   const doc = await Doc.fromPath(PATH);
   try {

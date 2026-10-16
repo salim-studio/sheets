@@ -443,7 +443,7 @@ export function createRibbon(ctx) {
   // In the order on screen, which the person's arrangement of the tabs decides (see applyLayout).
   const visibleTabs = () => [...tabs.children].filter(b => !b.hidden);
   let collapsed = false;
-  try { collapsed = localStorage.getItem('spreadsheet:ribbon') === 'collapsed'; } catch { /* optional storage */ }
+  try { collapsed = localStorage.getItem('sheets:ribbon') === 'collapsed'; } catch { /* optional storage */ }
   // A double-click's first click already expands a collapsed ribbon; the double-click then leaves it expanded.
   let clickExpanded = false;
   const menus = () => menubarMenus(ctx.flags?.() || {});
@@ -670,7 +670,7 @@ export function createRibbon(ctx) {
   function setCollapsed(on) {
     if (on && content.contains(document.activeElement)) buttons[names.indexOf(active)].focus();
     collapsed = !!on;
-    try { localStorage.setItem('spreadsheet:ribbon', collapsed ? 'collapsed' : 'expanded'); } catch { /* optional storage */ }
+    try { localStorage.setItem('sheets:ribbon', collapsed ? 'collapsed' : 'expanded'); } catch { /* optional storage */ }
     refresh();
   }
   function refresh() {

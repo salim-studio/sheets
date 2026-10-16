@@ -23,7 +23,7 @@ import { appOption } from '../lib/app-options.js';
 import { applyFixedDecimal } from '../core/entry-options.js';
 import { confirmDialog } from './modal.js';
 /**
- * The grid: a virtualized, keyboard-first spreadsheet surface.
+ * The grid: a virtualized, keyboard-first sheets surface.
  *
  * Only the cells in (and just around) the viewport exist in the DOM. Column
  * and row headers live in their own clipped tracks and follow the scroll
@@ -343,7 +343,7 @@ export function createGrid(opts) {
   const paperLayer = el('div.grid-paper');
   const canvas = el('div.grid-canvas', {}, paperLayer, cellsLayer, pageLayer, hlLayer, refLayer, extraLayer, cutRangeEl, peerLayer, selRange, selActive, tableLayer, tablePreviewEl, fillHandle, fillPreviewEl, movePreviewEl, objectsLayer, notePop, promptPop, linkPop, listButton, editor);
   const viewport = el('div.grid-viewport', {
-    role: 'grid', tabindex: 0, 'aria-label': 'Spreadsheet grid', 'aria-multiselectable': 'true',
+    role: 'grid', tabindex: 0, 'aria-label': 'Sheets grid', 'aria-multiselectable': 'true',
   }, canvas);
   const resizeGuide = el('div.resize-guide', { hidden: true, 'aria-hidden': 'true' });
   const resizeFeedback = el('div.resize-feedback', { hidden: true, 'aria-hidden': 'true' });
@@ -1845,7 +1845,7 @@ export function createGrid(opts) {
       chartView = null;
       rebuildOffsets();
       viewport.setAttribute('role', 'grid');
-      viewport.setAttribute('aria-label', 'Spreadsheet grid');
+      viewport.setAttribute('aria-label', 'Sheets grid');
       viewport.setAttribute('aria-multiselectable', 'true');
       rendered.key = null;
     }
@@ -2779,7 +2779,7 @@ export function createGrid(opts) {
     if (link) {
       linkAnchor.href = link.url;
       linkAnchor.textContent = link.url.replace(/^mailto:/, '').replace(/^https?:\/\//, '').replace(/^#/, '');
-      linkAnchor.title = link.url.startsWith('#') ? 'Go to this place in the spreadsheet' : link.url;
+      linkAnchor.title = link.url.startsWith('#') ? 'Go to this place in the sheets' : link.url;
       showPop(linkPop, 0, activeBox.height + 4);
     } else linkPop.hidden = true;
     syncPopovers(view);
@@ -3891,7 +3891,7 @@ export function createGrid(opts) {
       schedule();
       return;
     }
-    // Ctrl/Cmd+click follows a link, as in every spreadsheet.
+    // Ctrl/Cmd+click follows a link, as in every sheets.
     if (isMod(e) && !edit && e.pointerType !== 'touch') {
       const link = wb.linkAt(sheetId, r, c);
       if (link) {
@@ -5137,7 +5137,7 @@ export function createGrid(opts) {
     // it to a range, Ctrl or ⌘ runs to the edge of the data), the way Excel and Sheets do. Once the
     // caret has been put into the text (Edit mode) they move it instead, until a click picks a reference.
     if (dir && edit.text.startsWith('=') && (edit.refInsert || (edit.mode === 'type' && acceptsRef()))) { e.preventDefault(); pointRef(dir, e.shiftKey, isMod(e)); return; }
-    // In "type" mode the arrows leave the cell, as in every spreadsheet's
+    // In "type" mode the arrows leave the cell, as in every sheets's
     // enter mode; after F2 or a double-click they move the caret.
     if (dir && input === editor && edit.mode === 'type' && !edit.text.startsWith('=')) { e.preventDefault(); commitEdit({ move: dir }); return; }
     if ((key === 'ArrowUp' || key === 'ArrowDown') && input === editor && edit.mode === 'type') { e.preventDefault(); commitEdit({ move: dir }); return; }
@@ -5171,7 +5171,7 @@ export function createGrid(opts) {
 
   /**
    * F4 while editing a formula: the reference at the caret cycles through
-   * $A$1 → A$1 → $A1 → A1, the way every spreadsheet does it.
+   * $A$1 → A$1 → $A1 → A1, the way every sheets does it.
    */
   function cycleRefAnchors() {
     const input = editInput();

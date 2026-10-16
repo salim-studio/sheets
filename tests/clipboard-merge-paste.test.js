@@ -27,7 +27,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount(prep) {
-  const doc = new Doc({ name: 'Merge', path: 'Spreadsheets/Merge.xlsx' });
+  const doc = new Doc({ name: 'Merge', path: 'Sheets/Merge.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   prep?.(wb, id);
@@ -109,8 +109,8 @@ it.each(['internal', 'another tab', 'foreign'])('copies merged perimeter borders
     wb.setCells(id, entries);
   });
   const own = await copy('A1:C3');
-  if (path === 'another tab') own['text/html'] = own['text/html'].replace(/data-spreadsheet-copy="[^"]*"/, 'data-spreadsheet-copy="different-tab"');
-  if (path === 'foreign') own['text/html'] = own['text/html'].replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  if (path === 'another tab') own['text/html'] = own['text/html'].replace(/data-sheets-copy="[^"]*"/, 'data-sheets-copy="different-tab"');
+  if (path === 'foreign') own['text/html'] = own['text/html'].replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   await pasteCopy('G5', own);
   expect(wb.activeSheet.merges).toContainEqual({ r1: 4, c1: 6, r2: 6, c2: 8 });
   expect(wb.getValue(id, 4, 6)).toBe('Outline');
@@ -124,7 +124,7 @@ it.each(['internal', 'another tab', 'foreign'])('copies merged perimeter borders
 it.each(['internal', 'another tab'])('preserves geometry and relative formulas when copied from %s', async path => {
   const { wb, id, copy, pasteCopy } = await mount(source);
   const own = await copy('A1:B3');
-  if (path === 'another tab') own['text/html'] = own['text/html'].replace(/data-spreadsheet-copy="[^"]*"/, 'data-spreadsheet-copy="different-tab"');
+  if (path === 'another tab') own['text/html'] = own['text/html'].replace(/data-sheets-copy="[^"]*"/, 'data-sheets-copy="different-tab"');
   await pasteCopy('G5', own);
   expect(wb.activeSheet.merges).toContainEqual({ r1: 4, c1: 6, r2: 4, c2: 7 });
   expect(wb.getCell(id, 4, 6).f).toBe('SUM(G7:H7)'); expect(wb.getValue(id, 4, 6)).toBe(25);
@@ -225,7 +225,7 @@ it.each(['internal', 'another tab', 'foreign'])('transfers %s formatting and mer
     source(wb, id); wb.setInput(id, 4, 3, '10'); wb.setInput(id, 4, 4, '=D5*2');
   });
   const data = path === 'foreign' ? { 'text/html': html } : await copy('A1:B3');
-  if (path === 'another tab') data['text/html'] = data['text/html'].replace(/data-spreadsheet-copy="[^"]*"/, 'data-spreadsheet-copy="different-tab"');
+  if (path === 'another tab') data['text/html'] = data['text/html'].replace(/data-sheets-copy="[^"]*"/, 'data-sheets-copy="different-tab"');
   await pasteSpecial('D5', 'Formatting only', data);
   expect(wb.activeSheet.merges).toContainEqual({ r1: 4, c1: 3, r2: 4, c2: 4 });
   expect(wb.getValue(id, 4, 3)).toBe(10); expect(wb.getValue(id, 4, 4)).toBe(20);
@@ -240,7 +240,7 @@ it.each(['internal', 'another tab'])('preserves underlying values when a merged 
   });
   await pasteSpecial('D5', 'Formatting only', await copy('A1:B3'));
   const data = await copy('D5:E7');
-  if (path === 'another tab') data['text/html'] = data['text/html'].replace(/data-spreadsheet-copy="[^"]*"/, 'data-spreadsheet-copy="different-tab"');
+  if (path === 'another tab') data['text/html'] = data['text/html'].replace(/data-sheets-copy="[^"]*"/, 'data-sheets-copy="different-tab"');
   await pasteCopy('H8', data);
   expect(wb.activeSheet.merges).toContainEqual({ r1: 7, c1: 7, r2: 7, c2: 8 });
   expect(wb.getValue(id, 7, 7)).toBe(10); expect(wb.getValue(id, 7, 8)).toBe(20);

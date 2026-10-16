@@ -44,8 +44,8 @@ describe('version names and folders', () => {
     expect(parseVersionName('2026-08-28T13-45-10Z Before Q3 changes.xlsx')).toEqual({ at: when.getTime(), label: 'Before Q3 changes' });
     expect(parseVersionName('2026-08-28T13-45-10Z.xlsx')).toEqual({ at: when.getTime(), label: '' });
     expect(parseVersionName('Budget.xlsx')).toBeNull();
-    expect(versionsFolder('Spreadsheets/Budget.xlsx')).toBe('Spreadsheets/.versions/Budget');
-    expect(versionsFolder('/u/Desktop/Budget.xlsx')).toMatch(/^Spreadsheets\/\.versions\/Budget [a-z0-9]+$/);
+    expect(versionsFolder('Sheets/Budget.xlsx')).toBe('Sheets/.versions/Budget');
+    expect(versionsFolder('/u/Desktop/Budget.xlsx')).toMatch(/^Sheets\/\.versions\/Budget [a-z0-9]+$/);
     expect(dueForVersion(null)).toBe(true);
     expect(dueForVersion(1000, 1000 + AUTO_VERSION_MS - 1)).toBe(false);
     expect(dueForVersion(1000, 1000 + AUTO_VERSION_MS)).toBe(true);
@@ -59,7 +59,7 @@ describe('snapshots on the drive', () => {
   afterEach(() => { delete globalThis.puter; });
 
   it('lists and retains the newest snapshot when several were saved within one second', async () => {
-    const path = 'Spreadsheets/Plan.xlsx';
+    const path = 'Sheets/Plan.xlsx';
     const saved = [];
     for (const ms of [100, 900, 500]) {
       saved.push(await saveVersion(path, new Blob([String(ms)]), '', new Date(Date.UTC(2026, 8, 11, 12, 0, 0, ms))));
@@ -72,7 +72,7 @@ describe('snapshots on the drive', () => {
   });
 
   it.each(['', 'Milestone'])('keeps concurrent snapshots labeled "%s" at the same instant as separate versions', async (label) => {
-    const path = 'Spreadsheets/Plan.xlsx';
+    const path = 'Sheets/Plan.xlsx';
     const when = new Date('2026-09-10T12:00:00.000Z');
     const first = new Blob(['first']);
     const second = new Blob(['second']);
@@ -86,7 +86,7 @@ describe('snapshots on the drive', () => {
   });
 
   it('saves, lists newest first, prunes unlabeled extras but keeps labeled ones', async () => {
-    const path = 'Spreadsheets/Plan.xlsx';
+    const path = 'Sheets/Plan.xlsx';
     const blob = new Blob(['x']);
     for (let i = 0; i < 5; i++) await saveVersion(path, blob, i === 2 ? 'keep me' : '', new Date(Date.UTC(2026, 0, 1 + i)));
     const all = await listVersions(path);
@@ -97,14 +97,14 @@ describe('snapshots on the drive', () => {
     expect(left.length).toBe(3);
     expect(left.some((v) => v.label === 'keep me')).toBe(true);
     expect(left.filter((v) => !v.label).length).toBe(2);
-    expect(await listVersions('Spreadsheets/Nothing.xlsx')).toEqual([]);
-    expect([...fs.keys()].every((k) => k.startsWith('Spreadsheets/.versions/Plan/'))).toBe(true);
+    expect(await listVersions('Sheets/Nothing.xlsx')).toEqual([]);
+    expect([...fs.keys()].every((k) => k.startsWith('Sheets/.versions/Plan/'))).toBe(true);
   });
 
   it('is written by the document after a save when due, and a restore brings the old contents back', async () => {
     vi.useFakeTimers();
     try {
-      const path = 'Spreadsheets/Plan.xlsx';
+      const path = 'Sheets/Plan.xlsx';
       const wb = new Workbook();
       const doc = new Doc({ wb, name: 'Plan', path });
       // The file is on the drive, as it is for any document that knows when it was last written.
@@ -143,18 +143,18 @@ describe('snapshots on the drive', () => {
 
 it('keeps the histories of Budget.csv and Budget.xlsx apart', async () => {
   const { versionsFolder } = await import('../src/lib/versions.js');
-  expect(versionsFolder('Spreadsheets/Budget.xlsx')).toBe('Spreadsheets/.versions/Budget');
-  expect(versionsFolder('Spreadsheets/Budget.csv')).toBe('Spreadsheets/.versions/Budget csv');
-  expect(versionsFolder('Spreadsheets/Budget.CSV')).toBe(versionsFolder('Spreadsheets/Budget.csv'));
-  expect(versionsFolder('Spreadsheets/Budget.csv')).not.toBe(versionsFolder('Spreadsheets/Budget.xlsx'));
-  expect(versionsFolder('Desktop/Budget.csv')).toMatch(/^Spreadsheets\/\.versions\/Budget csv \w+$/);
+  expect(versionsFolder('Sheets/Budget.xlsx')).toBe('Sheets/.versions/Budget');
+  expect(versionsFolder('Sheets/Budget.csv')).toBe('Sheets/.versions/Budget csv');
+  expect(versionsFolder('Sheets/Budget.CSV')).toBe(versionsFolder('Sheets/Budget.csv'));
+  expect(versionsFolder('Sheets/Budget.csv')).not.toBe(versionsFolder('Sheets/Budget.xlsx'));
+  expect(versionsFolder('Desktop/Budget.csv')).toMatch(/^Sheets\/\.versions\/Budget csv \w+$/);
 });
 
 it('ages out the snapshots taken before a restore like automatic ones, keeping only the user\'s labels', async () => {
   const { saveVersion, listVersions, pruneVersions, RESTORE_LABEL } = await import('../src/lib/versions.js');
   const { installMockPuter } = await import('./helpers/mock-puter.js');
   installMockPuter();
-  const path = 'Spreadsheets/Growth.xlsx';
+  const path = 'Sheets/Growth.xlsx';
   await saveVersion(path, new Blob(['keep']), 'Milestone');
   for (let i = 0; i < 40; i++) await saveVersion(path, new Blob([`r${i}`]), RESTORE_LABEL, new Date(2026, 0, 1, 0, i));
   await pruneVersions(path, 5);

@@ -41,7 +41,7 @@ afterEach(() => {
   document.body.replaceChildren();
 });
 
-const PATH = 'Spreadsheets/Budget.xlsx';
+const PATH = 'Sheets/Budget.xlsx';
 const cellA1 = (wb) => wb.getValue(wb.activeSheetId, 0, 0);
 const dialogs = () => [...document.querySelectorAll('.modal-root:not(.closing) [role="dialog"]')];
 const buttons = (dialog) => [...dialog.querySelectorAll('button')].map((b) => b.textContent).filter(Boolean);
@@ -130,7 +130,7 @@ it('offers the same way out for a file that is gone, and for one that could not 
   let leaving = view.flush();
   await vi.waitFor(() => expect(dialogs()).toHaveLength(1));
   expect(dialogs()[0].querySelector('.modal-title').textContent).toBe('This file was moved or deleted');
-  expect(dialogs()[0].textContent).toContain('Unsaved spreadsheets');
+  expect(dialogs()[0].textContent).toContain('Unsaved sheets');
   expect(buttons(dialogs()[0])).toEqual(['Keep editing', 'Leave', 'Keep it here']);
   press('Leave');
   expect(await leaving).toBe(true);

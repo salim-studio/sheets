@@ -9,7 +9,7 @@
  * later request of the chat it sat in.
  */
 
-import { isSpreadsheetFile } from './filetypes.js';
+import { isSheetsFile } from './filetypes.js';
 import { cutText } from './cell.js';
 
 /** How many files one message may carry. */
@@ -68,7 +68,7 @@ export function attachmentProblem(file, count = 0) {
   if (count >= MAX_ATTACHMENTS) return `Up to ${MAX_ATTACHMENTS} files can go with one message.`;
   const kind = attachmentKind(file);
   if (!kind) {
-    if (isSpreadsheetFile(file?.name || '')) return `To bring in ${file.name}, use File › Import. The assistant reads images, PDFs and text files.`;
+    if (isSheetsFile(file?.name || '')) return `To bring in ${file.name}, use File › Import. The assistant reads images, PDFs and text files.`;
     return `${file?.name || 'This file'} cannot be read by the assistant. Attach an image, a PDF or a text file such as a CSV.`;
   }
   if (!file.size) return `${file.name} is empty.`;

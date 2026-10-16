@@ -279,7 +279,7 @@ function normalizeChartBody(raw) {
       dx: num(raw.dx, 0),
       dy: num(raw.dy, 0),
       // Native pictures can be smaller than the interactive insertion minimum,
-      // including thin artwork saved as a picture by another spreadsheet reader.
+      // including thin artwork saved as a picture by another sheets reader.
       w: Math.max(raw.drawingShape ? 1 / 9525 : raw.nativeSize ? 1 : IMAGE_MIN, num(raw.w, 240)),
       h: Math.max(raw.drawingShape ? 1 / 9525 : raw.nativeSize ? 1 : IMAGE_MIN, num(raw.h, 160)),
       ...(raw.drawingShape ? { drawingShape: true } : {}),

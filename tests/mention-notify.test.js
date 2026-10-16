@@ -41,7 +41,7 @@ describe('who cannot open the workbook', () => {
 describe('telling the people mentioned', () => {
   function setup({ rows = [], available = true, ask = vi.fn(async () => ({ action: 'share', mode: 'write' })) } = {}) {
     const wb = new Workbook();
-    const doc = { wb, name: 'Plan', path: 'Spreadsheets/Plan.xlsx', uid: 'uid-7', collab: null, save: vi.fn() };
+    const doc = { wb, name: 'Plan', path: 'Sheets/Plan.xlsx', uid: 'uid-7', collab: null, save: vi.fn() };
     vi.spyOn(P, 'canShare').mockReturnValue(true);
     vi.spyOn(P, 'shareAccess').mockResolvedValue(rows);
     vi.spyOn(P, 'shareFile').mockResolvedValue({});
@@ -50,7 +50,7 @@ describe('telling the people mentioned', () => {
       available: () => available,
       sendMentions: vi.fn(async ({ recipients }) => ({ sent: recipients.length, failed: 0, results: recipients.map((r) => ({ email: r.email, status: 'sent' })) })),
     };
-    const notifier = createMentionNotifier({ doc, wb, mailer, me: () => ME, ask, location: { origin: 'https://spreadsheet.puter.com', pathname: '/' } });
+    const notifier = createMentionNotifier({ doc, wb, mailer, me: () => ME, ask, location: { origin: 'https://sheets.puter.com', pathname: '/' } });
     return { wb, doc, mailer, notifier, ask, toast };
   }
 
@@ -59,11 +59,11 @@ describe('telling the people mentioned', () => {
     const out = await notifier.notify(posted(wb, '@ana and @kim@example.org please check', [ANA]));
     expect(ask).toHaveBeenCalledWith([KIM], { unsaved: false });
     expect(P.shareFile).toHaveBeenCalledTimes(1);
-    expect(P.shareFile).toHaveBeenCalledWith('Spreadsheets/Plan.xlsx', 'kim@example.org', 'write');
+    expect(P.shareFile).toHaveBeenCalledWith('Sheets/Plan.xlsx', 'kim@example.org', 'write');
     expect(out.sent).toBe(2);
     const [req] = mailer.sendMentions.mock.calls[0];
     expect(req.recipients).toEqual([{ email: 'ana@puter.email', name: 'ana' }, { email: 'kim@example.org', name: 'kim@example.org' }]);
-    expect(req.link).toBe('https://spreadsheet.puter.com/#/file/uid-7?range=Sheet1!B4');
+    expect(req.link).toBe('https://sheets.puter.com/#/file/uid-7?range=Sheet1!B4');
     expect(req.comment).toMatchObject({ text: '@ana and @kim@example.org please check', cell: 'Sheet1!B4' });
     expect(req.comment.id).toMatch(/^\{[0-9A-F-]+\}$/);
     expect(req.assigned).toBe(false);
@@ -101,7 +101,7 @@ describe('telling the people mentioned', () => {
     const { wb, mailer, notifier, toast } = setup({ rows: [{ who: 'user', recipient: 'ana' }], available: false });
     await notifier.notify(posted(wb, '@ana hi', [ANA]));
     expect(mailer.sendMentions).not.toHaveBeenCalled();
-    expect(toast).toHaveBeenCalledWith('ana will see the mention when they open this spreadsheet', expect.anything());
+    expect(toast).toHaveBeenCalledWith('ana will see the mention when they open this sheet', expect.anything());
   });
 
   it('lists the people who can be mentioned: shared with, commenters, never the user', async () => {

@@ -29,7 +29,7 @@ describe('pasting text with line breaks', () => {
 
   async function mount(clipboard = {}) {
     vi.stubGlobal('navigator', { onLine: true, clipboard });
-    const doc = new Doc({ name: 'Lines', path: 'Spreadsheets/Lines.xlsx' });
+    const doc = new Doc({ name: 'Lines', path: 'Sheets/Lines.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.clearHistory();

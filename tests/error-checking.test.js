@@ -69,7 +69,7 @@ describe('the smart tag in the editor', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('marks the cell, and converts a number stored as text from the tag, as one undo step', async () => {
-    const doc = new Doc({ name: 'Errors', path: 'Spreadsheets/Errors.xlsx' });
+    const doc = new Doc({ name: 'Errors', path: 'Sheets/Errors.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 1, 1, "'1,250");

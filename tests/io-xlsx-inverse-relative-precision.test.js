@@ -44,7 +44,7 @@ it('copies tiny inverse results as native HTML numbers and preserves internal fo
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     expect(parseHtmlClipboard(html).cells[0].map(c => c.f)).toEqual(formulas);
-    const foreign = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const foreign = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     cellsFromHtmlRows(parseHtmlClipboard(foreign).rows).forEach(({ cell }, c) => relative(cell.v, expected[c]));
   } finally { vi.unstubAllGlobals(); }
 });

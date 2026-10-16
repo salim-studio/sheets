@@ -269,7 +269,7 @@ function sheetPages(wb, sheetId, { range = null, title = '' } = {}) {
  * A PDF of `parts` ([{ sheetId, range? }], in order) of the workbook. `title` names the document; each page's
  * footer names its sheet and number. Returns the file's bytes.
  */
-export function sheetsToPdf(wb, parts, { title = 'Spreadsheet' } = {}) {
+export function sheetsToPdf(wb, parts, { title = 'Sheets' } = {}) {
   const pages = [];
   for (const part of parts) {
     const sheet = wb.sheet(part.sheetId);
@@ -294,7 +294,7 @@ export function sheetsToPdf(wb, parts, { title = 'Spreadsheet' } = {}) {
   });
   objects[catalog - 1] = `<< /Type /Catalog /Pages ${pagesObj} 0 R >>`;
   objects[pagesObj - 1] = `<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${kids.length} >>`;
-  const info = add(`<< /Title ${pdfTextString(String(title).slice(0, 200))} /Producer (Spreadsheet on Puter) >>`);
+  const info = add(`<< /Title ${pdfTextString(String(title).slice(0, 200))} /Producer (Sheets on Puter) >>`);
   // Every string above holds one byte per character (pdfString encodes text that way), so lengths are offsets.
   let out = '%PDF-1.4\n%\xe2\xe3\xcf\xd3\n';
   const offsets = [];

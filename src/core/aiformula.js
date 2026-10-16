@@ -97,7 +97,7 @@ export function describeRange(wb, sheetId, range, { maxRows = 60, maxCols = 15 }
 
 export function askPrompt(question, context, data) {
   return [
-    'You answer questions about spreadsheet data for a non-expert. Use the data given; when you compute something, give the figure and say briefly how you got it. Plain language, at most a short paragraph or a few short lines; no headings, no code fences, no markdown.',
+    'You answer questions about sheets data for a non-expert. Use the data given; when you compute something, give the figure and say briefly how you got it. Plain language, at most a short paragraph or a few short lines; no headings, no code fences, no markdown.',
     'If the data cannot answer the question, say so in one sentence.',
     '',
     context,
@@ -110,7 +110,7 @@ export function askPrompt(question, context, data) {
 
 export function formulaPrompt(request, context) {
   return [
-    'You write spreadsheet formulas (Excel and Google Sheets syntax; functions are uppercase, arguments separated by commas, decimals use a period).',
+    'You write sheets formulas (Excel and Google Sheets syntax; functions are uppercase, arguments separated by commas, decimals use a period).',
     'Reply with exactly one line containing only the formula, starting with =, and nothing else. No explanation, no code fences.',
     '',
     context,
@@ -121,7 +121,7 @@ export function formulaPrompt(request, context) {
 
 export function explainPrompt(formula, context) {
   return [
-    'You explain spreadsheet formulas to a non-expert in two or three short sentences of plain language. No headings, no code fences, no bullet lists.',
+    'You explain sheets formulas to a non-expert in two or three short sentences of plain language. No headings, no code fences, no bullet lists.',
     '',
     context,
     '',

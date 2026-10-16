@@ -37,7 +37,7 @@ async function menu(...path) {
 }
 
 it("refuses to paste column widths once the copied cells' sheet is gone, as the Links paste does", async () => {
-  const doc = new Doc({ name: 'Widths', path: 'Spreadsheets/Widths.xlsx' });
+  const doc = new Doc({ name: 'Widths', path: 'Sheets/Widths.xlsx' });
   const wb = doc.wb;
   const home = wb.activeSheetId;
   const other = wb.addSheet('Sheet2').id;
@@ -71,7 +71,7 @@ it("refuses to paste column widths once the copied cells' sheet is gone, as the 
 });
 
 it('still pastes the widths while the copied sheet is there', async () => {
-  const doc = new Doc({ name: 'Widths', path: 'Spreadsheets/Widths.xlsx' });
+  const doc = new Doc({ name: 'Widths', path: 'Sheets/Widths.xlsx' });
   const wb = doc.wb;
   const home = wb.activeSheetId;
   const other = wb.addSheet('Sheet2').id;

@@ -41,12 +41,12 @@ it('leaves unsupported alignments unconverted instead of guessing a supported pl
   expect(alignments(parse('<table><tr><td valign=center>A</td><td valign=" top ">B</td><td style="vertical-align:baseline">C</td><td style="vertical-align:2px">D</td><td style="vertical-align:text-top">E</td></tr></table>'))).toEqual([undefined,undefined,undefined,undefined,undefined]);
 });
 
-it('writes explicit alignments and the implicit spreadsheet middle default into external clipboard HTML', () => {
+it('writes explicit alignments and the implicit sheets middle default into external clipboard HTML', () => {
   const cells = ['top','middle','bottom',undefined,null,'bad; color:red'].map(valign => ({v:'value',s:{valign}}));
   const html = cellsToHtml([cells.map(c=>c.v)],[cells]);
   const doc = new DOMParser().parseFromString(html,'text/html');
   expect([...doc.querySelectorAll('td')].map(td=>td.style.verticalAlign)).toEqual(['top','middle','bottom','middle','middle','middle']);
-  const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   expect(alignments(parse(external))).toEqual(['top','middle','bottom','middle','middle','middle']);
   const unstyled = new DOMParser().parseFromString(cellsToHtml([['x']],[[{v:'x'}]]),'text/html');
   expect(unstyled.querySelector('td').style.verticalAlign).toBe('middle');
@@ -66,11 +66,11 @@ it('preserves resolved row alignment through two native-only XLSX round trips an
     expect([0,1,2].map(c=>wb.styleAt(wb.activeSheetId,0,c).valign)).toEqual(['top','middle','bottom']);
   }
   const cells=wb.copyRange(wb.activeSheetId,{r1:0,c1:0,r2:0,c2:2});
-  const html=cellsToHtml([['A','B','C']],cells).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const html=cellsToHtml([['A','B','C']],cells).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   expect(alignments(parse(html))).toEqual(['top','middle','bottom']);
 });
 
-it('exports a web page with the same explicit and default vertical placement as the spreadsheet', () => {
+it('exports a web page with the same explicit and default vertical placement as the sheets', () => {
   const wb=new Workbook(),id=wb.activeSheetId;
   ['top','middle','bottom',undefined].forEach((valign,c)=>wb.setCells(id,[{r:0,c,cell:{v:'Line',s:{valign}}}]));
   const page=sheetToHtml(wb,id);

@@ -25,7 +25,7 @@ afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTim
 it('rereads IMPORTRANGE files on F9', async () => {
   let content = '42';
   const read = vi.spyOn(P, 'readFile').mockImplementation(async () => new TextEncoder().encode(content));
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   const wb = doc.wb, id = wb.activeSheetId;

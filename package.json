@@ -1,9 +1,11 @@
 {
-  "name": "spreadsheet",
+  "name": "sheets",
   "version": "1.0.0",
-  "description": "A fast, private spreadsheet app on Puter: formulas, formatting, and .xlsx files in your own cloud",
+  "description": "Sheets — a fast, private, AI-powered sheets app: 500+ formulas, charts, tables, and real .xlsx files in your own cloud",
   "type": "module",
   "private": true,
+  "author": "salim-slimani",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "npm run build:worker && vite build",
@@ -13,16 +15,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build:worker": "vite build --config vite.worker.config.js",
-    "deploy:email-worker": "puter worker deploy src/workers/email-worker.js spreadsheet-email"
+    "deploy:email-worker": "puter worker deploy src/workers/email-worker.js sheets-email"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HeyPuter/spreadsheet.git"
+    "url": "git+https://github.com/salim-studio/sheets.git"
   },
   "bugs": {
-    "url": "https://github.com/HeyPuter/spreadsheet/issues"
+    "url": "https://github.com/salim-studio/sheets/issues"
   },
-  "homepage": "https://github.com/HeyPuter/spreadsheet#readme",
+  "homepage": "https://salim-studio.github.io/sheets/",
   "dependencies": {
     "@noble/hashes": "^2.4.0",
     "@xmldom/xmldom": "0.9.12",

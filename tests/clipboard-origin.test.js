@@ -10,7 +10,7 @@ describe('embedded clipboard cells from another tab', () => {
   it('carry where they were copied from', () => {
     const cells = [[{ f: 'A1*2' }]];
     const html = cellsToHtml([['4']], cells, null, null, { r: 1, c: 0 });
-    expect(html).toContain('data-spreadsheet-origin="1,0"');
+    expect(html).toContain('data-sheets-origin="1,0"');
     expect(parseHtmlClipboard(html)).toEqual({ cells, origin: { r: 1, c: 0 } });
     // A malformed origin is ignored rather than trusted.
     expect(parseHtmlClipboard(html.replace('1,0', 'x,y'))).toEqual({ cells });

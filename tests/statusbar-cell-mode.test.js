@@ -82,7 +82,7 @@ it('customizes the summary and shortcuts from the right-click menu and remembers
   bar.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })); await flush();
   item('Sum').click(); await flush();
   expect(bar.querySelector('.status-left').textContent).not.toContain('Sum');
-  expect(JSON.parse(localStorage.getItem('spreadsheet:status-bar'))).toMatchObject({ numCount: true, sum: false });
+  expect(JSON.parse(localStorage.getItem('sheets:status-bar'))).toMatchObject({ numCount: true, sum: false });
   expect(bar.querySelector('button[aria-label="Normal"]').getAttribute('aria-pressed')).toBe('true');
   // Normal, Page Layout and Page Break Preview are all offered, in that order.
   expect([...bar.querySelectorAll('.status-view')].map(b => b.getAttribute('aria-label'))).toEqual(['Normal', 'Page Layout', 'Page Break Preview']);

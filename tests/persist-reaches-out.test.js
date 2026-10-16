@@ -7,7 +7,7 @@ import { workbookToXlsx } from '../src/core/io.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 import { installMockPuter } from './helpers/mock-puter.js';
 
-// The functions that reach outside the spreadsheet, and every other name they are registered under.
+// The functions that reach outside the sheets, and every other name they are registered under.
 const REACHING = ['IMPORTDATA', 'IMPORTHTML', 'IMPORTXML', 'IMPORTRANGE', 'AI', 'TRANSLATE', 'DETECTLANGUAGE', 'IMAGE'];
 const aliasesOf = (name) => Object.keys(FUNCTIONS).filter((other) => FUNCTIONS[other] === FUNCTIONS[name]);
 
@@ -47,7 +47,7 @@ describe('the scan of a file being opened', () => {
     wb.setInput(wb.activeSheetId, 0, 0, 'hello');
     wb.setInput(wb.activeSheetId, 1, 0, formula);
     const blob = await workbookToXlsx(wb);
-    const path = `Spreadsheets/${Math.random().toString(36).slice(2)}.xlsx`;
+    const path = `Sheets/${Math.random().toString(36).slice(2)}.xlsx`;
     mock.fs.set(path, { blob, size: blob.size, modified: 1 });
     return path;
   }

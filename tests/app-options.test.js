@@ -104,7 +104,7 @@ describe('options that reach past the editor', () => {
     expect(autoSaveEnabled()).toBe(true);
     setAppOptions({ autoSave: false });
     expect(autoSaveEnabled()).toBe(false);
-    localStorage.setItem('spreadsheet:autosave', 'on');
+    localStorage.setItem('sheets:autosave', 'on');
     expect(autoSaveEnabled()).toBe(true);
   });
 

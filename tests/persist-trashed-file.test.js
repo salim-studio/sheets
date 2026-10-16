@@ -17,7 +17,7 @@ async function openDocument() {
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'saved');
   await doc.rename('Budget');
   expect(await doc.save()).toBe(true);
-  expect(doc.path).toBe('Spreadsheets/Budget.xlsx');
+  expect(doc.path).toBe('Sheets/Budget.xlsx');
   return doc;
 }
 
@@ -70,7 +70,7 @@ it('asks as well when the file was renamed elsewhere to a name without the .xlsx
   } finally { doc.destroy(); }
 });
 
-it('opens the draft of a file since put in the trash as a new spreadsheet, not from the trash', async () => {
+it('opens the draft of a file since put in the trash as a new sheet, not from the trash', async () => {
   const original = await openDocument();
   const path = original.path;
   original.wb.setInput(original.wb.activeSheetId, 0, 0, 'never saved');

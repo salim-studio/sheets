@@ -36,7 +36,7 @@ it('retains arithmetic, dependency edits, Undo and shifted copies through native
 
 it('copies zero numbers and division errors as their external HTML types', () => {
   const values = [[0,{error:'#DIV/0!'},0.1]], shown = [['0','#DIV/0!','0.1']];
-  const html = cellsToHtml(shown,[values[0].map(v=>({v}))],null,values).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g,'');
+  const html = cellsToHtml(shown,[values[0].map(v=>({v}))],null,values).replace(/ data-sheets-[\w-]+="[^"]*"/g,'');
   vi.stubGlobal('DOMParser',new JSDOM('').window.DOMParser);
   try { expect(cellsFromHtmlRows(parseHtmlClipboard(html).rows).map(x=>x.cell.v)).toEqual(values[0]); }
   finally { vi.unstubAllGlobals(); }

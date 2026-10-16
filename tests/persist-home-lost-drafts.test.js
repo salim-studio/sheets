@@ -14,7 +14,7 @@ vi.mock('../src/ui/modal.js', () => ({ promptDialog: vi.fn(), confirmDialog: vi.
 beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); vi.useFakeTimers(); document.body.replaceChildren(); });
 afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); document.body.replaceChildren(); });
 
-/** A draft of edits to the file at `path` (or, without a path, to a spreadsheet that has no file yet). */
+/** A draft of edits to the file at `path` (or, without a path, to a sheets that has no file yet). */
 function draft(path, name, fileUid = undefined) {
   const wb = new Workbook();
   wb.setInput(wb.activeSheetId, 0, 0, `edits to ${name}`);
@@ -25,17 +25,17 @@ const file = (path, uid) => ({ path, name: path.split('/').pop(), modified: 1, s
 const names = (view) => [...view.el.querySelectorAll('.home-drafts .recent-name')].map((n) => n.textContent);
 
 // A draft of a file deleted elsewhere was listed nowhere: the home screen showed only drafts of
-// spreadsheets without a file, so only a stale link to the old address could still reach the edits,
+// sheets without a file, so only a stale link to the old address could still reach the edits,
 // and the draft otherwise sat in local storage for good.
-it('lists the drafts of files that no longer exist under unsaved spreadsheets, opening them by their old address', async () => {
-  draft('Spreadsheets/Gone.xlsx', 'Gone', 'uid-gone');
+it('lists the drafts of files that no longer exist under unsaved sheets, opening them by their old address', async () => {
+  draft('Sheets/Gone.xlsx', 'Gone', 'uid-gone');
   draft('/nj/Desktop/Elsewhere.xlsx', 'Elsewhere', 'uid-elsewhere'); // deleted too, from outside the folder
-  draft('Spreadsheets/Legacy.xlsx', 'Legacy'); // from before file ids were kept: its address decides
-  draft('Spreadsheets/Renamed.xlsx', 'Renamed', 'uid-renamed'); // the file lives on under another name: its draft is offered when that is opened
-  draft('Spreadsheets/Kept.xlsx', 'Kept', 'uid-kept');
+  draft('Sheets/Legacy.xlsx', 'Legacy'); // from before file ids were kept: its address decides
+  draft('Sheets/Renamed.xlsx', 'Renamed', 'uid-renamed'); // the file lives on under another name: its draft is offered when that is opened
+  draft('Sheets/Kept.xlsx', 'Kept', 'uid-kept');
   draft(null, 'Never saved');
-  vi.spyOn(P, 'listFiles').mockResolvedValue([file('Spreadsheets/Kept.xlsx', 'uid-kept'), file('Spreadsheets/Q3.xlsx', 'uid-renamed')]);
-  vi.spyOn(P, 'statByUid').mockImplementation(async (uid) => (uid === 'uid-renamed' ? file('Spreadsheets/Q3.xlsx', uid) : null));
+  vi.spyOn(P, 'listFiles').mockResolvedValue([file('Sheets/Kept.xlsx', 'uid-kept'), file('Sheets/Q3.xlsx', 'uid-renamed')]);
+  vi.spyOn(P, 'statByUid').mockImplementation(async (uid) => (uid === 'uid-renamed' ? file('Sheets/Q3.xlsx', uid) : null));
   vi.spyOn(P, 'statFile').mockResolvedValue(null);
   const openPath = vi.fn();
   const recoverDraft = vi.fn();
@@ -48,22 +48,22 @@ it('lists the drafts of files that no longer exist under unsaved spreadsheets, o
   expect(names(view)).toHaveLength(4);
   // Only files not in the list are asked after, and a file in the list is not.
   expect(P.statByUid).not.toHaveBeenCalledWith('uid-kept');
-  expect(P.statFile).toHaveBeenCalledWith('Spreadsheets/Legacy.xlsx');
-  // A lost file's draft opens through its old address, where the edits become a new spreadsheet.
+  expect(P.statFile).toHaveBeenCalledWith('Sheets/Legacy.xlsx');
+  // A lost file's draft opens through its old address, where the edits become a new sheet.
   [...drafts.querySelectorAll('.recent-open')].find((b) => b.textContent.includes('Gone')).click();
-  expect(openPath).toHaveBeenCalledWith('Spreadsheets/Gone.xlsx');
+  expect(openPath).toHaveBeenCalledWith('Sheets/Gone.xlsx');
   [...drafts.querySelectorAll('.recent-open')].find((b) => b.textContent.includes('Never saved')).click();
   expect(recoverDraft).toHaveBeenCalledWith(draftKey(null, 'Never saved'));
-  // Discarding removes it, as for any unsaved spreadsheet.
+  // Discarding removes it, as for any unsaved sheets.
   [...drafts.querySelectorAll('.recent-forget')].find((b) => b.getAttribute('aria-label') === 'Discard Gone').click();
   await vi.advanceTimersByTimeAsync(10);
-  expect(loadDraft(draftKey('Spreadsheets/Gone.xlsx'))).toBeNull();
+  expect(loadDraft(draftKey('Sheets/Gone.xlsx'))).toBeNull();
   expect(names(view)).not.toContain('Gone');
   view.destroy();
 });
 
 it('does not take a file for lost when the drive could not be asked, or the list could not be loaded', async () => {
-  draft('Spreadsheets/Gone.xlsx', 'Gone', 'uid-gone');
+  draft('Sheets/Gone.xlsx', 'Gone', 'uid-gone');
   vi.spyOn(P, 'listFiles').mockResolvedValue([]);
   vi.spyOn(P, 'statByUid').mockRejectedValue(new Error('network down'));
   const view = homeView({});

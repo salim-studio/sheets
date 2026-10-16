@@ -25,7 +25,7 @@ function transfer(view, kind, payload = {}) {
   viewport.dispatchEvent(e); return payload;
 }
 it.each(['all', 'Formatting only', 'Transposed', 'Values only', 'Formulas only'])('ordinary editor copy carries live rules through %s', async mode => {
-  const doc = new Doc({ name: 'Copy', path: 'Spreadsheets/Copy.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
+  const doc = new Doc({ name: 'Copy', path: 'Sheets/Copy.xlsx' }), wb = doc.wb, id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '4'); wb.setInput(id, 1, 0, '2');
   wb.addRule(id, { type: 'formula', range: { r1: 0, c1: 0, r2: 1, c2: 0 }, value: 'A1>3', style: { bg: '#ffaaaa' } });
   wb.addValidation(id, {type:'formula', source:'A1>0', range:{r1:0,c1:0,r2:1,c2:0}, prompt:'Positive'});
@@ -33,8 +33,8 @@ it.each(['all', 'Formatting only', 'Transposed', 'Values only', 'Formulas only']
   document.body.append(view.el); await vi.advanceTimersByTimeAsync(1);
   view.goTo('Sheet1!A1:A2');
   const payload = transfer(view, 'copy'); html = payload['text/html']; text = payload['text/plain'];
-  expect(html).toContain('data-spreadsheet-rules');
-  expect(html).toContain('data-spreadsheet-validations');
+  expect(html).toContain('data-sheets-rules');
+  expect(html).toContain('data-sheets-validations');
   view.goTo('Sheet1!C4'); wb.clearHistory();
   if (mode === 'all') transfer(view, 'paste', payload);
   else {
@@ -54,7 +54,7 @@ it.each(['all', 'Formatting only', 'Transposed', 'Values only', 'Formulas only']
   wb.undo(); expect(wb.activeSheet.validations).toHaveLength(1); expect(wb.activeSheet.rules).toHaveLength(1); expect(wb.getValue(id, 3, 2)).toBeNull();
 });
 it.each([false,true])('editor cut carries partial rules and supports one-step undo (hidden=%s)',async hidden=>{
-  const doc=new Doc({name:'Cut',path:'Spreadsheets/Cut.xlsx'}),wb=doc.wb,id=wb.activeSheetId;
+  const doc=new Doc({name:'Cut',path:'Sheets/Cut.xlsx'}),wb=doc.wb,id=wb.activeSheetId;
   [1,2,3,4,5].forEach((v,r)=>wb.setInput(id,r,0,String(v)));
   wb.addRule(id,{type:'formula',range:{r1:0,c1:0,r2:4,c2:0},value:'A1>2',style:{bg:'#ffaaaa'}});
   if(hidden)wb.activeSheet.hiddenRows.add(2);

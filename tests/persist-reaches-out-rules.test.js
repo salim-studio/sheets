@@ -22,7 +22,7 @@ async function fileWith(decorate) {
   wb.setInput(wb.activeSheetId, 0, 0, 'https://example.com/a.csv');
   decorate(wb, wb.activeSheetId);
   const blob = await workbookToXlsx(wb);
-  const path = `Spreadsheets/${Math.random().toString(36).slice(2)}.xlsx`;
+  const path = `Sheets/${Math.random().toString(36).slice(2)}.xlsx`;
   mock.fs.set(path, { blob, size: blob.size, modified: 1 });
   return path;
 }

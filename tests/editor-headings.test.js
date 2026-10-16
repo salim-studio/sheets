@@ -20,12 +20,12 @@ afterEach(() => {view?.destroy();view=null;vi.clearAllTimers();vi.useRealTimers(
 
 it('uses worksheet headings instead of a stale device override and persists the menu toggle with Undo',async()=>{
  const doc=new Doc({name:'Headings'}),wb=doc.wb,id=wb.activeSheetId;
- wb.setHeaders(id,false);wb.clearHistory();localStorage.setItem('spreadsheet:view',JSON.stringify({headers:true}));
+ wb.setHeaders(id,false);wb.clearHistory();localStorage.setItem('sheets:view',JSON.stringify({headers:true}));
  view=editorView({doc,goHome:vi.fn(),openPath:vi.fn(),newDoc:vi.fn(),templateDoc:vi.fn(),importFile:vi.fn()});document.body.append(view.el);await vi.advanceTimersByTimeAsync(1);
  expect(view.el.querySelector('.grid').classList.contains('no-headers')).toBe(true);
  view.el.querySelector('[data-menu="view"]').click();
  const item=[...document.querySelectorAll('.menu-item')].find(b=>b.querySelector('.menu-label')?.textContent==='Row and column headers');item.click();await vi.advanceTimersByTimeAsync(10);
  expect(wb.sheet(id).headers).toBe(true);expect(wb.undoLabel()).toBe('Row and column headers');expect(view.el.querySelector('.grid').classList.contains('no-headers')).toBe(false);
  wb.undo();await vi.advanceTimersByTimeAsync(10);expect(view.el.querySelector('.grid').classList.contains('no-headers')).toBe(true);
- localStorage.removeItem('spreadsheet:view');
+ localStorage.removeItem('sheets:view');
 });

@@ -30,7 +30,7 @@ afterEach(() => {
   history.replaceState(null, '', '#/');
 });
 
-it('opens the recovered edits of a deleted file as a new spreadsheet, says so, and forgets the old address', async () => {
+it('opens the recovered edits of a deleted file as a new sheet, says so, and forgets the old address', async () => {
   const path = '/nj/Desktop/Gone.xlsx';
   const recovered = Object.assign(new EventTarget(), { path: null, name: 'Gone' });
   mocks.fromPath.mockResolvedValue(recovered);

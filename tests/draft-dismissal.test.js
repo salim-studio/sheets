@@ -12,7 +12,7 @@ afterEach(() => { delete globalThis.puter; });
 // lives under the document's own key, so the next edit's draft must not
 // overwrite it, and a save must not clear it, until the user has decided.
 it('keeps a recoverable draft intact while it awaits a decision', async () => {
-  const path = 'Spreadsheets/Plan.xlsx';
+  const path = 'Sheets/Plan.xlsx';
   const precious = new Workbook();
   precious.setInput(precious.activeSheetId, 0, 0, 'EDITS THAT NEVER REACHED PUTER');
   const key = draftKey(path);
@@ -37,7 +37,7 @@ it('keeps a recoverable draft intact while it awaits a decision', async () => {
 });
 
 it('drafts again once the recoverable draft is discarded', () => {
-  const path = 'Spreadsheets/Other.xlsx';
+  const path = 'Sheets/Other.xlsx';
   const old = new Workbook();
   old.setInput(old.activeSheetId, 0, 0, 'old');
   saveDraft(draftKey(path), old, 'Other', 'rev-1');

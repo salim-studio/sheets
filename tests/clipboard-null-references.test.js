@@ -36,7 +36,7 @@ it('retains NUL values in the app’s verified clipboard snapshots', () => {
 
 const office = body => `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><table><tr>${body}</tr></table></html>`;
 const value = html => cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell?.v;
-const foreign = html => html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+const foreign = html => html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
 
 it('retains numeric NUL references only in explicit Office string attributes', () => {
   // Chrome system clipboard -> Excel for Mac -> saved XLSX, 2026-09-21.

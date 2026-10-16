@@ -49,7 +49,7 @@ const typeAt = (area, text) => {
 const key = (area, k) => area.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
 
 it('mentions, assigns, shares with and emails the people named in a new comment', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   doc.uid = 'uid-3';
   const wb = doc.wb, id = wb.activeSheetId;
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
@@ -87,11 +87,11 @@ it('mentions, assigns, shares with and emails the people named in a new comment'
   await vi.waitFor(() => expect(document.querySelector('.mention-share')).toBeTruthy());
   [...document.querySelectorAll('.mention-share button')].find((b) => b.textContent === 'Share and notify').click();
   await vi.waitFor(() => expect(exec).toHaveBeenCalledTimes(2));
-  expect(P.shareFile).toHaveBeenCalledWith('Spreadsheets/Budget.xlsx', 'kim@example.org', 'read');
+  expect(P.shareFile).toHaveBeenCalledWith('Sheets/Budget.xlsx', 'kim@example.org', 'read');
   const bodies = exec.mock.calls.map(([url, init]) => [url, JSON.parse(init.body)]);
   expect(bodies.map(([url, b]) => [url, b.recipients.map((r) => r.email), !!b.assigned])).toEqual([
-    ['https://spreadsheet-email.puter.work/mentions', ['kim@example.org'], false],
-    ['https://spreadsheet-email.puter.work/mentions', ['ana@puter.email'], true],
+    ['https://sheets-email.puter.work/mentions', ['kim@example.org'], false],
+    ['https://sheets-email.puter.work/mentions', ['ana@puter.email'], true],
   ]);
   expect(bodies[0][1].link).toMatch(/#\/file\/uid-3\?range=Sheet1!B2$/);
   expect(bodies[0][1].comment.cell).toBe('Sheet1!B2');
@@ -102,7 +102,7 @@ it('mentions, assigns, shares with and emails the people named in a new comment'
 });
 
 it('keeps a mention through a reply and does not ask again for people who were told', async () => {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   doc.uid = 'uid-3';
   const wb = doc.wb, id = wb.activeSheetId;
   addComment(wb, id, 0, 0, '@ana first', 'demo', null, { mentions: findMentions('@ana first', [{ name: 'ana', user: 'ana' }]) });

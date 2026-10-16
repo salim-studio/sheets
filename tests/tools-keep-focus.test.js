@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function mount() {
-  const doc = new Doc({ name: 'Focus', path: 'Spreadsheets/Focus.xlsx' });
+  const doc = new Doc({ name: 'Focus', path: 'Sheets/Focus.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   [['Name', 'Qty'], ['b', '2'], [null, null], ['a', '1'], ['c', '3']].forEach((row, r) => row.forEach((v, c) => { if (v != null) wb.setInput(id, r, c, v); }));

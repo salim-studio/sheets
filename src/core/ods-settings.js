@@ -5,7 +5,7 @@ const OFFICE = 'urn:oasis:names:tc:opendocument:xmlns:office:1.0';
 
 export function writeOdsSettings(meta, escape) {
   if (!meta) return '';
-  return `<office:settings xmlns:office="${OFFICE}" xmlns:config="${CONFIG}"><config:config-item-set config:name="puter-spreadsheet"><config:config-item config:name="document-state" config:type="string">${escape(JSON.stringify(meta))}</config:config-item></config:config-item-set></office:settings>`;
+  return `<office:settings xmlns:office="${OFFICE}" xmlns:config="${CONFIG}"><config:config-item-set config:name="puter-sheets"><config:config-item config:name="document-state" config:type="string">${escape(JSON.stringify(meta))}</config:config-item></config:config-item-set></office:settings>`;
 }
 
 export function readOdsSettings(xml, decode) {
@@ -31,7 +31,7 @@ export function readOdsSettings(xml, decode) {
     if (attrs.name !== 'document-state' || attrs.type !== 'string') continue;
     try {
       const meta = JSON.parse(decode(match[3]));
-      if (meta?.format === 'puter-spreadsheet' && meta.v === 1 && meta.sheets && typeof meta.sheets === 'object' && !Array.isArray(meta.sheets)) return meta;
+      if (meta?.format === 'puter-sheets' && meta.v === 1 && meta.sheets && typeof meta.sheets === 'object' && !Array.isArray(meta.sheets)) return meta;
     } catch { /* Unrecognized or damaged settings must not prevent opening cells. */ }
   }
   return null;

@@ -73,7 +73,7 @@ it.each([['Georgia', 'georgia'], ['Geneva', 'font:Geneva']])('preserves default 
   const wb = new Workbook({ normalFont: { name: 'Arial', sz: 16, bold: true, color: '#ff0000' } }), id = wb.activeSheetId;
   wb.pasteCells(id, [[cell]], 0, 0);
   expect(wb.styleAt(id, 0, 0)).toMatchObject({ font, bold: false, color: '#000000' });
-  const copied = cellsToHtml([['Data']], wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 0 })).replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const copied = cellsToHtml([['Data']], wb.copyRange(id, { r1: 0, c1: 0, r2: 0, c2: 0 })).replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(parseHtmlClipboard(copied).rows[0][0].style).toMatchObject({ font, bold: false, color: '#000000' });
   const blob = await workbookToXlsx(wb);
   const data = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsArrayBuffer(blob); });

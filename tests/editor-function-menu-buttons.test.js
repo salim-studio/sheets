@@ -29,7 +29,7 @@ beforeEach(() => {
 afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 it('marks the formula bar’s fx button and the toolbar’s Insert function button as menu openers', async () => {
-  const doc = new Doc({ name: 'Fx', path: 'Spreadsheets/Fx.xlsx' });
+  const doc = new Doc({ name: 'Fx', path: 'Sheets/Fx.xlsx' });
   view = editorView({ doc, goHome: vi.fn(), openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
   await vi.advanceTimersByTimeAsync(1);

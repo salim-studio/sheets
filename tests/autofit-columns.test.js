@@ -55,7 +55,7 @@ afterEach(() => {
 });
 
 it.each(['menu', 'header'])('fits columns containing only spilled results via %s and keeps empty columns unchanged', async (path) => {
-  const doc = new Doc({ name: 'Spilled widths', path: 'Spreadsheets/Spilled widths.xlsx' });
+  const doc = new Doc({ name: 'Spilled widths', path: 'Sheets/Spilled widths.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '={"M","MMMMMMMMMM"}');
   expect(wb.getValue(id, 0, 1)).toBe('MMMMMMMMMM');
@@ -83,7 +83,7 @@ it.each(['menu', 'header'])('fits columns containing only spilled results via %s
 });
 
 it.each(['manual', 'filter'])('includes longer vertical spills while excluding %s-hidden rows', async (hidden) => {
-  const doc = new Doc({ name: 'Spilled rows', path: 'Spreadsheets/Spilled rows.xlsx' });
+  const doc = new Doc({ name: 'Spilled rows', path: 'Sheets/Spilled rows.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '={"M";"MMMMM";"MMMMMMMMMM"}');
   if (hidden === 'manual') wb.setHidden(id, 'row', [2], true);
@@ -110,7 +110,7 @@ it.each(['manual', 'filter'])('includes longer vertical spills while excluding %
 });
 
 it('measures spilled number formats with the destination font, conditional bold and indentation', async () => {
-  const doc = new Doc({ name: 'Spilled formats', path: 'Spreadsheets/Spilled formats.xlsx' });
+  const doc = new Doc({ name: 'Spilled formats', path: 'Sheets/Spilled formats.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.setCells(id, [{ r: 0, c: 0, cell: { f: 'SEQUENCE(1,2)', s: { fmt: 'currency', cur: 'EUR', dec: 2, size: 40 } } }]);
   wb.sheet(id).colStyles.set(1, { size: 20, fmt: 'percent', dec: 0 });
@@ -130,7 +130,7 @@ it('measures spilled number formats with the destination font, conditional bold 
 });
 
 it.each(['menu', 'header'].flatMap((path) => [100, 200].flatMap((zoom) => [false, true].map((styled) => [path, zoom, styled]))))('fits the displayed font via %s with zoom=%s and styled=%s', async (path, zoom, styled) => {
-  const doc = new Doc({ name: 'Widths', path: 'Spreadsheets/Widths.xlsx' });
+  const doc = new Doc({ name: 'Widths', path: 'Sheets/Widths.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'MMMMM');
@@ -158,7 +158,7 @@ it.each(['menu', 'header'].flatMap((path) => [100, 200].flatMap((zoom) => [false
 });
 
 it('includes long labels after the first 2,001 populated cells when fitting from the header', async () => {
-  const doc = new Doc({ name: 'Long column', path: 'Spreadsheets/Long column.xlsx' });
+  const doc = new Doc({ name: 'Long column', path: 'Sheets/Long column.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setCells(id, Array.from({ length: 2200 }, (_, r) => ({ r, c: 0, cell: { v: r === 2199 ? 'MMMMMMMMMM' : 'M' } })));
@@ -175,7 +175,7 @@ it('includes long labels after the first 2,001 populated cells when fitting from
 });
 
 it.each(['menu', 'header'])('fits the longest explicit line via %s', async (path) => {
-  const doc = new Doc({ name: 'Multiline', path: 'Spreadsheets/Multiline.xlsx' });
+  const doc = new Doc({ name: 'Multiline', path: 'Sheets/Multiline.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'MMMMM\nMM\n');
@@ -198,7 +198,7 @@ it.each(['menu', 'header'])('fits the longest explicit line via %s', async (path
 });
 
 it('fits every selected column in one undo step without rescanning the sheet for each column', async () => {
-  const doc = new Doc({ name: 'Wide sheet', path: 'Spreadsheets/Wide sheet.xlsx' });
+  const doc = new Doc({ name: 'Wide sheet', path: 'Sheets/Wide sheet.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setCells(id, Array.from({ length: 71 }, (_, c) => ({ r: 0, c, cell: { v: 'MMMMM' } })));
@@ -232,7 +232,7 @@ it('fits every selected column in one undo step without rescanning the sheet for
 });
 
 it('keeps automatic column fitting on open clean and respects its narrower width limit', async () => {
-  const doc = new Doc({ name: 'Imported data', path: 'Spreadsheets/Imported data.csv' });
+  const doc = new Doc({ name: 'Imported data', path: 'Sheets/Imported data.csv' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'M'.repeat(100));
@@ -251,7 +251,7 @@ it('keeps automatic column fitting on open clean and respects its narrower width
 });
 
 it.each([false, true])('uses the displayed italic font for overflow and row height (italic=%s)', async (italic) => {
-  const doc = new Doc({ name: 'Italic metrics', path: 'Spreadsheets/Italic metrics.xlsx' });
+  const doc = new Doc({ name: 'Italic metrics', path: 'Sheets/Italic metrics.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '12345');
@@ -272,7 +272,7 @@ it.each([false, true])('uses the displayed italic font for overflow and row heig
 it.each(['menu', 'header'].flatMap((path) => [
   [undefined, 'MMMMM', 115], ['right', '12345', 115], ['center', 'MMMMM', 79], [undefined, 'TRUE', 66],
 ].map(([align, input, width]) => [path, align, input, width])))('includes visible indentation via %s for align=%s and value=%s', async (path, align, input, width) => {
-  const doc = new Doc({ name: 'Indented', path: 'Spreadsheets/Indented.xlsx' });
+  const doc = new Doc({ name: 'Indented', path: 'Sheets/Indented.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, input);
@@ -292,7 +292,7 @@ it.each(['menu', 'header'].flatMap((path) => [
 });
 
 it.each(['left', 'right', 'center'])('fits wrapped rows within the space left by %s indentation', async (align) => {
-  const doc = new Doc({ name: 'Indented rows', path: 'Spreadsheets/Indented rows.xlsx' });
+  const doc = new Doc({ name: 'Indented rows', path: 'Sheets/Indented rows.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'MMMMM');
@@ -305,7 +305,7 @@ it.each(['left', 'right', 'center'])('fits wrapped rows within the space left by
 });
 
 it.each([105, 106])('retains both margins at the indented overflow boundary (%spx)', async width => {
-  const doc = new Doc({ name: 'Indent edge', path: 'Spreadsheets/Indent edge.xlsx' });
+  const doc = new Doc({ name: 'Indent edge', path: 'Sheets/Indent edge.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '12345');
   wb.setInput(id, 1, 0, 'MMMMM');
@@ -321,7 +321,7 @@ it.each([105, 106])('retains both margins at the indented overflow boundary (%sp
 });
 
 it.each([100, 200].flatMap((zoom) => [0, 3].map((indent) => [zoom, indent])))('uses the remaining cell space for overflow at zoom=%s and indent=%s', async (zoom, indent) => {
-  const doc = new Doc({ name: 'Indented overflow', path: 'Spreadsheets/Indented overflow.xlsx' });
+  const doc = new Doc({ name: 'Indented overflow', path: 'Sheets/Indented overflow.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   for (let r = 0; r < 4; r++) wb.setInput(id, r, 0, r % 2 ? 'MMMMM' : '12345');
@@ -342,7 +342,7 @@ it.each([100, 200].flatMap((zoom) => [0, 3].map((indent) => [zoom, indent])))('u
 });
 
 it.each(['menu', 'header'].flatMap((path) => [false, true].map((conditional) => [path, conditional])))('measures conditional bold text for overflow and %s fitting (conditional=%s)', async (path, conditional) => {
-  const doc = new Doc({ name: 'Conditional metrics', path: 'Spreadsheets/Conditional metrics.xlsx' });
+  const doc = new Doc({ name: 'Conditional metrics', path: 'Sheets/Conditional metrics.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, '12345');
@@ -369,7 +369,7 @@ it.each(['menu', 'header'].flatMap((path) => [false, true].map((conditional) => 
 });
 
 it.each(['menu', 'header'].flatMap(path => [['Arial', 6, 8], ['Courier New', 12, 28]].map(font => [path, ...font])))('fits using Normal-font indentation via %s (%s %spt)', async (path, name, sz, unit) => {
-  const doc = new Doc({ name: 'Normal indent', path: 'Spreadsheets/Normal indent.xlsx' });
+  const doc = new Doc({ name: 'Normal indent', path: 'Sheets/Normal indent.xlsx' });
   const wb = doc.wb, id = wb.activeSheetId;
   wb.normalFont = { name, sz };
   wb.setCells(id, [{ r: 0, c: 0, cell: { v: 'MMMMM', s: { font: 'arial', size: 13, indent: 2 } } }]);

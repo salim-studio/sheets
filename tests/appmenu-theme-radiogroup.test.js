@@ -31,7 +31,7 @@ const key = (target, k) => { const e = new KeyboardEvent('keydown', { key: k, bu
 const radios = () => [...document.querySelectorAll('.segmented [role="radio"]')];
 const checked = () => radios().map((r) => r.getAttribute('aria-checked'));
 
-// The Help menu's "Keyboard shortcuts…" and "About Spreadsheet…" carry the ellipsis of an item that opens
+// The Help menu's "Keyboard shortcuts…" and "About Sheets…" carry the ellipsis of an item that opens
 // a dialog; the account menu's two copies of them did not.
 describe('the account menu', () => {
   it('marks Keyboard shortcuts and About, which open dialogs, with an ellipsis', () => {

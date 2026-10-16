@@ -53,7 +53,7 @@ describe('the toolbar’s Cell styles menu', () => {
   afterEach(() => { closeMenu(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('shows the same samples, from the tokens', { timeout: 20000 }, async () => {
-    const doc = new Doc({ name: 'Chips', path: 'Spreadsheets/Chips.xlsx' });
+    const doc = new Doc({ name: 'Chips', path: 'Sheets/Chips.xlsx' });
     view = editorView({ doc, goHome() {}, openPath() {}, newDoc() {}, importFile() {} });
     document.querySelector('#app').append(view.el);
     await vi.advanceTimersByTimeAsync(1);

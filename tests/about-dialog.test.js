@@ -9,18 +9,18 @@ afterEach(() => { closeAllModals(); document.body.replaceChildren(); });
 it('names the app, its version and its maker, and describes itself to a screen reader', () => {
   openAbout();
   const panel = document.querySelector('.modal-panel.about');
-  expect(panel.getAttribute('aria-label')).toBe('About Spreadsheet');
+  expect(panel.getAttribute('aria-label')).toBe('About Sheets');
   expect(panel.querySelector('.about-icon img')).not.toBeNull();
-  expect(panel.querySelector('.about-meta').textContent).toBe(`Version ${version} · by Puter Technologies Inc.`);
-  expect(document.getElementById(panel.getAttribute('aria-describedby'))?.textContent).toContain('private spreadsheet');
-  expect(panel.querySelector('.about-legal').textContent).toBe(`© ${new Date().getFullYear()} Puter Technologies Inc. All rights reserved.`);
+  expect(panel.querySelector('.about-meta').textContent).toBe(`Version ${version} · by salim-slimani`);
+  expect(document.getElementById(panel.getAttribute('aria-describedby'))?.textContent).toContain('AI-powered sheets');
+  expect(panel.querySelector('.about-legal').textContent).toBe(`© ${new Date().getFullYear()} salim-slimani All rights reserved.`);
 });
 
-it('links Puter\'s pages and every bundled license, each in a new tab', () => {
+it('links the project pages and every bundled license, each in a new tab', () => {
   openAbout();
   const links = [...document.querySelectorAll('.about-links a')];
-  expect(links.map((a) => a.textContent)).toEqual(['Website', 'Privacy', 'Terms']);
-  expect(links.map((a) => a.getAttribute('href'))).toEqual(['https://puter.com', 'https://puter.com/privacy', 'https://puter.com/terms']);
+  expect(links.map((a) => a.textContent)).toEqual(['Website', 'Source', 'Issues']);
+  expect(links.map((a) => a.getAttribute('href'))).toEqual(['https://salim-studio.github.io/sheets/', 'https://github.com/salim-studio/sheets', 'https://github.com/salim-studio/sheets/issues']);
   const credits = [...document.querySelectorAll('.about-credit')];
   expect(credits.map((a) => a.querySelector('.about-credit-name').textContent)).toEqual([
     'SheetJS Community Edition', 'xmldom', 'Apache POI', '.NET Runtime', 'Unicode Character Database',

@@ -66,7 +66,7 @@ it('retains raw numbers and literal formats through edit, clipboard and metadata
     const cell = wb.getCell(id, r, 0), display = wb.getDisplay(id, r, 0);
     const html = cellsToHtml([[display]], [[cell]], null, [[v]]);
     expect(parseHtmlClipboard(html).cells[0][0].v).toBe(v);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(v); expect(pasted.s.code).toBe(code);
   });

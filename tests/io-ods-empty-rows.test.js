@@ -8,8 +8,8 @@ function file(rows, extension = 'fods') {
 <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
  xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
  xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2"
- office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
- <office:body><office:spreadsheet><table:table table:name="Data">${rows}</table:table></office:spreadsheet></office:body>
+ office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.sheets">
+ <office:body><office:sheets><table:table table:name="Data">${rows}</table:table></office:sheets></office:body>
 </office:${root}>`);
   if (extension === 'fods') return xml;
   const book = XLSX.utils.book_new();

@@ -29,7 +29,7 @@ describe('pastes over merged cells', () => {
 
   async function mount(clipboard) {
     vi.stubGlobal('navigator', { onLine: true, clipboard });
-    const doc = new Doc({ name: 'Merged', path: 'Spreadsheets/Merged.xlsx' });
+    const doc = new Doc({ name: 'Merged', path: 'Sheets/Merged.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.mergeCells(id, { r1: 0, c1: 1, r2: 1, c2: 1 }); // B1:B2

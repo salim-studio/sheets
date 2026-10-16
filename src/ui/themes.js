@@ -13,8 +13,8 @@ import {
   workbookTheme, applyGalleryTheme, applyWorkbookTheme, themeColorGrid, themedCellStyles, themedCellStylePatch,
 } from '../core/workbook-theme.js';
 
-const CUSTOM_COLORS_KEY = 'spreadsheet:themeColors';
-const CUSTOM_FONTS_KEY = 'spreadsheet:themeFonts';
+const CUSTOM_COLORS_KEY = 'sheets:themeColors';
+const CUSTOM_FONTS_KEY = 'sheets:themeFonts';
 const HEX = /^#[0-9a-f]{6}$/i;
 
 /** Colour and font schemes the person created, kept in this browser per user. */
@@ -34,7 +34,7 @@ function remember(key, valid, entry) {
 }
 
 /** What the menus call a built-in scheme. The default theme, colours, fonts and effects keep the name
- * "Office" in workbook files, where other spreadsheet apps look for it; on screen they are "Default". */
+ * "Office" in workbook files, where other sheets apps look for it; on screen they are "Default". */
 export const schemeLabel = name => (name === 'Office' ? 'Default' : name);
 
 const editing = ctx => !!ctx.grid?.editing && !ctx.grid.commitEdit?.();

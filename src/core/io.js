@@ -30,7 +30,7 @@ import { legacyCommentText } from './comments.js';
  *   xlsx-export completes the native styles and layout missing from the
  *   Community Edition writer. The app's original style inheritance and
  *   additional settings also travel in a very-hidden
- *   sheet named `_puter_meta` as JSON. Other spreadsheet apps ignore that
+ *   sheet named `_puter_meta` as JSON. Other sheets apps ignore that
  *   sheet; this app reads it back and removes it from view.
  */
 
@@ -94,7 +94,7 @@ const META_CHUNK = 30000;
 const MAX_FORMULA = 8192;
 export const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 export const CSV_MIME = 'text/csv;charset=utf-8';
-export const ODS_MIME = 'application/vnd.oasis.opendocument.spreadsheet';
+export const ODS_MIME = 'application/vnd.oasis.opendocument.sheets';
 
 // SheetJS error cells store numeric BIFF codes, including when writing .xlsx XML.
 // The errors Excel added since dynamic arrays are numbered as its XlCVError
@@ -165,7 +165,7 @@ function shiftSharedFormula(formula, dr, dc) {
   return shiftFormula(formula, dr, dc);
 }
 
-export { IMPORT_EXTENSIONS, isSpreadsheetFile } from './filetypes.js';
+export { IMPORT_EXTENSIONS, isSheetsFile } from './filetypes.js';
 
 /** "Budget.xlsx" → "Budget". */
 export function stripExtension(name) {
@@ -437,7 +437,7 @@ function buildSheet(X, wb, sheet, { ods = false } = {}) {
     const { r, c } = parseKey(key);
     const addr = X.utils.encode_cell({ r, c });
     const target = ws[addr] || (ws[addr] = { t: 'z' });
-    target.c = [{ a: 'Spreadsheet', t: fitText(text(note)) }];
+    target.c = [{ a: 'Sheets', t: fitText(text(note)) }];
     target.c.hidden = true;
     if (r > maxR) maxR = r;
     if (c > maxC) maxC = c;
@@ -534,7 +534,7 @@ function tableFileFormulas(table, externalWorkbooks = null) {
 /** The app's own state for the sidecar; `ods` adds what that format's writer and reader lose. */
 function collectMeta(wb, structuredNames = [], { ods = false, fileSheets = null, history = true } = {}) {
   // Sheet names are user data; names such as __proto__ must be ordinary keys.
-  const meta = { v: 1, format: 'puter-spreadsheet', ...(!ods ? { themeFonts: true } : {}), active: wb.activeSheet?.name || null, sheets: Object.create(null) };
+  const meta = { v: 1, format: 'puter-sheets', ...(!ods ? { themeFonts: true } : {}), active: wb.activeSheet?.name || null, sheets: Object.create(null) };
   let any = structuredNames.length > 0;
   if (ods && (wb.calculationCompatibility.version !== 2 || wb.calculationCompatibility.warnBelowVersion)) {
     meta.calculationCompatibility = wb.calculationCompatibility; any = true;
@@ -971,7 +971,7 @@ export function rangeToDelimited(wb, sheetId, range, delim) {
     for (let c = c1; c <= end; c++) {
       let text = wb.getDisplay(sheetId, r, c);
       // Text shaped like a formula is marked as text with a leading apostrophe and quoted,
-      // as spreadsheet programs do on export; a number such as -5 is left as it is.
+      // as sheets programs do on export; a number such as -5 is left as it is.
       const guarded = FORMULA_START.test(text) && formulaShaped(text, wb.getValue(sheetId, r, c));
       if (guarded) text = `'${text}`;
       row.push(guarded || quoteRe.test(text) ? `"${text.replace(/"/g, '""')}"` : text);
@@ -1019,7 +1019,7 @@ export function sheetToHtml(wb, sheetId, { title = '' } = {}) {
   const decorated = sheet.rules.length || sheet.tables?.length;
   const looks = decorated ? rows.map((r) => (filled(r) ? cols.map((c) => wb.conditionalStyle(sheetId, r, c, wb.getValue(sheetId, r, c)) || null) : [])) : null;
   const table = cellsToHtml(texts, cells, looks, values, null, { clipboard: false, styles, colorPalette: wb.colorPalette, normalFill: wb.nativeNormalFill, indentUnit: normalIndentUnit(wb.normalFont) })
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   const colgroup = `<colgroup>${cols.map((c) => `<col style="width:${wb.colWidth(sheetId, c)}px">`).join('')}</colgroup>`;
   return `${head}${table.replace(/^(<table[^>]*>)/, `$1${colgroup}`)}</body></html>`;
 }
@@ -1323,7 +1323,7 @@ function sheetParts(book) {
 
 /** CT_Selection: sqref may contain several ranges; activeCellId names one.
  * Only the active pane of the first workbook view drives the editor selection.
- * https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.selection
+ * https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.sheets.selection
  */
 function readSheetSelection(view) {
   const pane = view.match(/<(?:\w+:)?pane\b[^>]*>/)?.[0];
@@ -2142,7 +2142,7 @@ function workbookFromText(text, filename) {
 }
 
 /**
- * Parse spreadsheet file bytes (xlsx, xls, csv, ods, ...) into a Workbook.
+ * Parse sheets file bytes (xlsx, xls, csv, ods, ...) into a Workbook.
  * `data` may be an ArrayBuffer, Uint8Array, or Blob.
  */
 /**
@@ -2175,7 +2175,7 @@ export function decodeText(bytes) {
 
 /**
  * What a file's first bytes say it is: 'zip' (.xlsx, .xlsb, .ods, .numbers), 'cfb' (a
- * binary .xls), 'markup' (a flat XML spreadsheet, SpreadsheetML 2003, a saved web page,
+ * binary .xls), 'markup' (a flat XML sheets, SpreadsheetML 2003, a saved web page,
  * or a SYLK or DIF text the library reads), 'text' (delimited text: a UTF-16 byte-order
  * mark, or no control characters but tabs, line breaks and form feeds in the first
  * kilobyte), or 'binary' (anything else, such as an Excel 4 or 5 .xls, or no bytes at all).
@@ -2275,7 +2275,7 @@ export async function workbookFromFile(data, filename = '', { sourceWorkbook = n
   const candidates = book.SheetNames.filter((n) => /^_puter_meta\d*$/i.test(n))
     .map((name) => ({ name, data: readMeta(X, book.Sheets[name]) })).filter((m) => m.data);
   // Prefer marked sidecars; older files used the fixed name without a marker.
-  const sidecar = candidates.find((m) => m.data.format === 'puter-spreadsheet')
+  const sidecar = candidates.find((m) => m.data.format === 'puter-sheets')
     || candidates.find((m) => m.name === META_SHEET);
   const storedMeta = sidecar?.data || book.PuterSettings;
   const meta = storedMeta ? unpackNativeFillState(storedMeta) : storedMeta;

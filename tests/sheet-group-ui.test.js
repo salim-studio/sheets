@@ -122,7 +122,7 @@ describe('editor with grouped sheets', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount() {
-    const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+    const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
     const wb = doc.wb;
     wb.addSheet('Feb');
     wb.addSheet('Mar');

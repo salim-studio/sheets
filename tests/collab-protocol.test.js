@@ -84,9 +84,9 @@ describe('positions through structure', () => {
 
 describe('protocol', () => {
   it('builds and reads invitation links, and refuses other servers', () => {
-    const link = shareLink('https://sheets.example/app/', { server: 'https://spreadsheet-abc.puter.work', room: 'r00m', token: 'a'.repeat(72) });
+    const link = shareLink('https://sheets.example/app/', { server: 'https://sheets-abc.puter.work', room: 'r00m', token: 'a'.repeat(72) });
     expect(link).toMatch(/#\/live\/r00m\?server=/);
-    expect(parseLiveHash(new URL(link).hash)).toEqual({ server: 'https://spreadsheet-abc.puter.work', room: 'r00m', token: 'a'.repeat(72) });
+    expect(parseLiveHash(new URL(link).hash)).toEqual({ server: 'https://sheets-abc.puter.work', room: 'r00m', token: 'a'.repeat(72) });
     expect(parseLiveHash('#/edit/x.xlsx')).toBe(null);
     expect(() => parseLiveHash('#/live/r00m?server=https://evil.example')).toThrow();
     expect(() => parseLiveHash('#/live/r00m?server=https://x.puter.work&invite=%3Cscript%3E')).toThrow();

@@ -1,7 +1,7 @@
 /**
  * Data ▸ Forecast Sheet: read a timeline and its values, and build a new sheet holding them with
  * FORECAST.ETS forecasts (and confidence bounds) for the dates that follow, a table of the
- * forecast statistics and a chart of it all, as a spreadsheet's forecast worksheet does.
+ * forecast statistics and a chart of it all, as a sheets's forecast worksheet does.
  */
 import { colName } from './cell.js';
 import { quoteSheet } from './refs.js';

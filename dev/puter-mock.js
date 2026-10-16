@@ -8,7 +8,7 @@
  */
 (() => {
   const params = new URLSearchParams(location.search);
-  const LS = 'spreadsheet-mock-state';
+  const LS = 'sheets-mock-state';
   const state = (() => {
     try { return JSON.parse(sessionStorage.getItem(LS)) || { kv: {}, fs: {} }; } catch { return { kv: {}, fs: {} }; }
   })();
@@ -128,7 +128,7 @@
           const range = /Data occupies ([A-Z]+\d+:[A-Z]+\d+)/.exec(text)?.[1] || 'A1:A10';
           return { message: { role: 'assistant', content: `=SUM(${range})` } };
         }
-        if (/explain spreadsheet formulas/i.test(text)) {
+        if (/explain sheets formulas/i.test(text)) {
           const f = /Formula: (=.*)/.exec(text)?.[1] || '';
           return { message: { role: 'assistant', content: `Mock explanation: ${f} adds up or looks up the cells it names and shows the result here.` } };
         }
@@ -233,7 +233,7 @@
       async getShareLink(path) {
         const f = state.fs[norm(path)];
         if (!f) throw notFound(path);
-        return `https://puter.com/app/spreadsheet?file=${encodeURIComponent(f.uid)}`;
+        return `https://puter.com/app/sheets?file=${encodeURIComponent(f.uid)}`;
       },
     },
     ui: {

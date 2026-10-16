@@ -2,7 +2,7 @@
  * App-authored rules keep their separate, trimmed valueIdentity contract.
  */
 import { toNumber, compareValues } from './formula/functions.js';
-import { compareSpreadsheetText, compareFoldedText, foldComparisonText } from './formula/text-comparison.js';
+import { compareSheetsText, compareFoldedText, foldComparisonText } from './formula/text-comparison.js';
 import { wildcardMatcher } from './formula/wildcard.js';
 import { parseFormula } from './formula/parser.js';
 import { cellName } from './cell.js';
@@ -91,7 +91,7 @@ export class NativeDuplicateCounts {
         for (let i = lowerBound(this.texts, item => compareFoldedText(item.folded, folded)); count < 2 && i < this.texts.length; i++) {
           const item = this.texts[i];
           if (compareFoldedText(item.folded, folded) !== 0) break;
-          if (compareSpreadsheetText(item.text, value) === 0) count += item.count;
+          if (compareSheetsText(item.text, value) === 0) count += item.count;
         }
       }
     }

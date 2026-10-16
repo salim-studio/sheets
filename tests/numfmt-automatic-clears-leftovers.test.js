@@ -148,7 +148,7 @@ describe('in the editor', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   async function mount(style) {
-    const doc = new Doc({ name: 'Formats', path: 'Spreadsheets/Formats.xlsx' });
+    const doc = new Doc({ name: 'Formats', path: 'Sheets/Formats.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '5');

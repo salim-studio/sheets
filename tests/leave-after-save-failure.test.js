@@ -30,7 +30,7 @@ beforeEach(() => {
 afterEach(() => { closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 function setup() {
-  const doc = new Doc({ name: 'Budget', path: 'Spreadsheets/Budget.xlsx' });
+  const doc = new Doc({ name: 'Budget', path: 'Sheets/Budget.xlsx' });
   const goHome = vi.fn();
   view = editorView({ doc, goHome, openPath: vi.fn(), newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
@@ -40,7 +40,7 @@ function setup() {
 }
 const dialog = () => document.querySelector('.modal-root:not(.closing) .modal-panel[aria-label="Could not save"]');
 const button = (label) => [...dialog().querySelectorAll('button')].find((b) => b.textContent === label);
-const back = () => view.el.querySelector('[aria-label="Back to all spreadsheets"]').click();
+const back = () => view.el.querySelector('[aria-label="Back to all sheets"]').click();
 
 it('offers to keep editing, retry, or leave with the edits kept in the local draft', async () => {
   const { doc, goHome, save } = setup();

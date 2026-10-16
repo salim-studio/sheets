@@ -32,7 +32,7 @@ afterEach(() => { setLocale('en-US'); closeMenu(); view?.destroy(); view = null;
 
 /** Column A holds 1.5, 2 and 3 under a header, filtered; the menu opens on A1 with Alt+Down. */
 async function mount(prepare = null) {
-  const doc = new Doc({ name: 'List', path: 'Spreadsheets/List.xlsx' });
+  const doc = new Doc({ name: 'List', path: 'Sheets/List.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   wb.setInput(id, 0, 0, 'Key');

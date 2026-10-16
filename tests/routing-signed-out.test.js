@@ -15,7 +15,7 @@ vi.mock('../src/lib/puter.js', () => ({
 }));
 
 const editors = [];
-function doc(path) { return Object.assign(new EventTarget(), { path, name: path || 'Untitled spreadsheet' }); }
+function doc(path) { return Object.assign(new EventTarget(), { path, name: path || 'Untitled sheets' }); }
 let handlers;
 beforeEach(() => {
   vi.resetModules();
@@ -49,7 +49,7 @@ afterEach(() => {
 });
 
 describe('opening the app without a session', () => {
-  it('lands in a new spreadsheet, with no intro or sign-in screen', async () => {
+  it('lands in a new sheet, with no intro or sign-in screen', async () => {
     history.replaceState(null, '', '#/');
     await import('../src/main.js');
     await vi.waitFor(() => expect(editors).toHaveLength(1));
@@ -66,26 +66,26 @@ describe('opening the app without a session', () => {
   });
 
   it('asks for the sign-in before reading a cloud file from the address, then opens it', async () => {
-    history.replaceState(null, '', '#/edit/Spreadsheets%2FBudget.xlsx');
+    history.replaceState(null, '', '#/edit/Sheets%2FBudget.xlsx');
     await import('../src/main.js');
     const app = document.querySelector('#app');
-    await vi.waitFor(() => expect(app.textContent).toContain('Sign in to open this spreadsheet'));
+    await vi.waitFor(() => expect(app.textContent).toContain('Sign in to open this sheet'));
     expect(mocks.fromPath).not.toHaveBeenCalled();
-    expect(location.hash).toBe('#/edit/Spreadsheets%2FBudget.xlsx');
+    expect(location.hash).toBe('#/edit/Sheets%2FBudget.xlsx');
 
     [...app.querySelectorAll('button')].find((b) => b.textContent === 'Sign in to Puter').click();
     await vi.waitFor(() => expect(mocks.session.signIn).toHaveBeenCalledOnce());
     await vi.waitFor(() => expect(editors).toHaveLength(1));
-    expect(mocks.fromPath).toHaveBeenCalledWith('Spreadsheets/Budget.xlsx');
-    expect(editors[0].view.doc.path).toBe('Spreadsheets/Budget.xlsx');
+    expect(mocks.fromPath).toHaveBeenCalledWith('Sheets/Budget.xlsx');
+    expect(editors[0].view.doc.path).toBe('Sheets/Budget.xlsx');
   });
 
-  it('offers a new spreadsheet instead of the sign-in', async () => {
-    history.replaceState(null, '', '#/edit/Spreadsheets%2FBudget.xlsx');
+  it('offers a new sheet instead of the sign-in', async () => {
+    history.replaceState(null, '', '#/edit/Sheets%2FBudget.xlsx');
     await import('../src/main.js');
     const app = document.querySelector('#app');
-    await vi.waitFor(() => expect(app.textContent).toContain('Sign in to open this spreadsheet'));
-    [...app.querySelectorAll('button')].find((b) => b.textContent === 'New spreadsheet').click();
+    await vi.waitFor(() => expect(app.textContent).toContain('Sign in to open this sheet'));
+    [...app.querySelectorAll('button')].find((b) => b.textContent === 'New sheets').click();
     await vi.waitFor(() => expect(editors).toHaveLength(1));
     expect(editors[0].view.doc.path).toBeNull();
     expect(mocks.fromPath).not.toHaveBeenCalled();

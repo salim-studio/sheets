@@ -64,7 +64,7 @@ it('carries cross-tab HTML validation snapshots and ignores malformed or edited 
  const parsed=parseHtmlClipboard(html,'2\n3\n4'),other=new Workbook();paste(other,parsed);expect(at(other,5,2).prompt).toBe('Check');
  expect(parseHtmlClipboard(html.replace('>2<','>20<'),'20\n3\n4').validations).toBeUndefined();
  for(const rule of [{...data.validations[0].rule,source:42},{...data.validations[0].rule,type:'bad'}]) {
-  const doc=new DOMParser().parseFromString(html,'text/html');doc.querySelector('table').setAttribute('data-spreadsheet-validations',JSON.stringify([{...data.validations[0],rule}]));
+  const doc=new DOMParser().parseFromString(html,'text/html');doc.querySelector('table').setAttribute('data-sheets-validations',JSON.stringify([{...data.validations[0],rule}]));
   expect(parseHtmlClipboard(doc.body.innerHTML,'2\n3\n4').validations).toBeUndefined();
  }
 });

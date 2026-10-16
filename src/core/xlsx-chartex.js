@@ -145,7 +145,7 @@ export function chartExFrame(ch, id, relId, nonVisual) {
     + tag('xdr:spPr', {}, tag('a:xfrm', {}, tag('a:off', { x: 0, y: 0 }) + tag('a:ext', { cx: 4572000, cy: 2743200 })) + tag('a:prstGeom', { prst: 'rect' }, tag('a:avLst'))
       + paint('#ffffff') + tag('a:ln', { w: 9525 }, paint('#d9d9d9')))
     + tag('xdr:txBody', {}, tag('a:bodyPr', { vertOverflow: 'clip', horzOverflow: 'clip' }) + tag('a:lstStyle')
-      + tag('a:p', {}, tag('a:r', {}, tag('a:rPr', { lang: 'en-US', sz: 1100 }) + tag('a:t', {}, `This ${{ treemap: 'treemap', sunburst: 'sunburst', boxWhisker: 'box and whisker', funnel: 'funnel' }[ch.type] || ''} chart needs a newer spreadsheet app to be shown.`)))));
+      + tag('a:p', {}, tag('a:r', {}, tag('a:rPr', { lang: 'en-US', sz: 1100 }) + tag('a:t', {}, `This ${{ treemap: 'treemap', sunburst: 'sunburst', boxWhisker: 'box and whisker', funnel: 'funnel' }[ch.type] || ''} chart needs a newer sheets app to be shown.`)))));
   return tag('mc:AlternateContent', { 'xmlns:mc': 'http://schemas.openxmlformats.org/markup-compatibility/2006' },
     tag('mc:Choice', { [`xmlns:${prefix}`]: ns, Requires: prefix }, frame) + tag('mc:Fallback', {}, note));
 }

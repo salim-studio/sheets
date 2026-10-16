@@ -136,7 +136,7 @@ it('preserves comma semantics through TEXT, edits, clipboard and metadata-free X
     expect(wb.getValue(id, r, 1)).toBe(expected);
     const cell = wb.getCell(id, r, 0), html = cellsToHtml([[expected]], [[cell]], null, [[value]]);
     expect(parseHtmlClipboard(html).cells[0][0].s.code).toBe(code);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(value); expect(pasted.s.code).toBe(code);
   });

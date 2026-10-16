@@ -34,7 +34,7 @@ it('deflates the entries of an .ods and keeps the mimetype entry first and store
   const bytes = new Uint8Array(await (await workbookToOds(wb)).arrayBuffer());
   const list = entries(bytes);
   expect(list[0]).toMatchObject({ name: 'mimetype', method: 0, offset: 0, extraLength: 0, size: 46 });
-  expect(new TextDecoder().decode(bytes.subarray(38, 38 + 46))).toBe('application/vnd.oasis.opendocument.spreadsheet');
+  expect(new TextDecoder().decode(bytes.subarray(38, 38 + 46))).toBe('application/vnd.oasis.opendocument.sheets');
   const content = list.find((e) => e.name === 'content.xml');
   expect(content.method).toBe(8);
   expect(content.compressed).toBeLessThan(content.size / 4);

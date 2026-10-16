@@ -64,7 +64,7 @@ describe('working without a Puter session', () => {
     expect(session.username).toBe('nariman');
     expect(storageScope()).toBe('uuid:u-9');
     await expect(doc.save()).resolves.toBe(true);
-    expect(writes()).toEqual(['Spreadsheets/Untitled spreadsheet.xlsx']);
+    expect(writes()).toEqual(['Sheets/Untitled sheets.xlsx']);
     expect(doc.wb.dirty).toBe(false);
   });
 
@@ -72,7 +72,7 @@ describe('working without a Puter session', () => {
     await session.init();
     await session.setTheme('dark');
     expect(puter.kv.set).not.toHaveBeenCalled();
-    expect(JSON.parse(localStorage.getItem('spreadsheet:settings:v1')).theme).toBe('dark');
+    expect(JSON.parse(localStorage.getItem('sheets:settings:v1')).theme).toBe('dark');
 
     await session.signIn();
     // The account had a light theme; the choice made a moment ago wins and is persisted.

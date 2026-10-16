@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { calc } from './helpers/calc.js';
 
 // INT, QUOTIENT, ISEVEN and ISODD take their number at 15 significant digits, as TRUNC, ROUNDDOWN,
-// FLOOR, EVEN and ODD already do: 0.3/0.1 is 2.9999999999999996 in binary and 3 to a spreadsheet,
+// FLOOR, EVEN and ODD already do: 0.3/0.1 is 2.9999999999999996 in binary and 3 to a sheets,
 // so INT(0.3/0.1) is 3 like TRUNC(0.3/0.1), QUOTIENT(0.3,0.1) is the integer part of that
 // division, and ISODD(0.3/0.1) is TRUE, instead of 2, 2 and FALSE beside TRUNC's 3.
 describe('INT, QUOTIENT, ISEVEN and ISODD at fifteen significant digits', () => {

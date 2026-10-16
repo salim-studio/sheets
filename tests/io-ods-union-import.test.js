@@ -7,12 +7,12 @@ function fixture(formula, format, expression = null) {
   const root = format === 'ods' ? 'document-content' : 'document';
   const names = expression ? `<table:named-expressions><table:named-expression table:name="Combined" table:expression="${escape('of:=' + expression)}" table:base-cell-address="$Data.$A$1"/></table:named-expressions>` : '';
   let bytes = new TextEncoder().encode(`<?xml version="1.0" encoding="UTF-8"?>
-    <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
-      <office:body><office:spreadsheet><table:table table:name="Data">
+    <office:${root} xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" office:mimetype="application/vnd.oasis.opendocument.sheets">
+      <office:body><office:sheets><table:table table:name="Data">
         <table:table-row>${[10, 20, 30].map((v) => `<table:table-cell office:value-type="float" office:value="${v}"/>`).join('')}</table:table-row>
         <table:table-row><table:table-cell office:value-type="float" office:value="40"/></table:table-row>
         <table:table-row><table:table-cell table:number-columns-repeated="3"/><table:table-cell office:value-type="float" office:value="0" table:formula="${escape('of:=' + formula)}"/></table:table-row>
-      </table:table>${names}</office:spreadsheet></office:body>
+      </table:table>${names}</office:sheets></office:body>
     </office:${root}>`);
   if (format === 'ods') {
     const book = X.utils.book_new(); X.utils.book_append_sheet(book, X.utils.aoa_to_sheet([[0]]), 'Data');

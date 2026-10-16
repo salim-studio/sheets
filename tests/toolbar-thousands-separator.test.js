@@ -81,7 +81,7 @@ describe('in the editor', () => {
   afterEach(() => { closeMenu(); closeAllModals(); view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
   it('turns the separator off and on again without touching the decimals or the currency', async () => {
-    const doc = new Doc({ name: 'Grouping', path: 'Spreadsheets/Grouping.xlsx' });
+    const doc = new Doc({ name: 'Grouping', path: 'Sheets/Grouping.xlsx' });
     const { wb } = doc;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, '1234567.5');

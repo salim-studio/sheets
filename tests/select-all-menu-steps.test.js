@@ -32,7 +32,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 
 /** A1:B2 hold data; nothing else does. */
 async function setup() {
-  const doc = new Doc({ name: 'All', path: 'Spreadsheets/All.xlsx' });
+  const doc = new Doc({ name: 'All', path: 'Sheets/All.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   [['a', 'b'], ['c', 'd']].forEach((row, r) => row.forEach((t, c) => wb.setInput(id, r, c, t)));

@@ -400,7 +400,7 @@ function habits() {
 }
 
 export const TEMPLATES = [
-  { id: 'blank', name: 'Blank spreadsheet', description: 'An empty grid.', icon: 'filePlus', build: () => new Workbook() },
+  { id: 'blank', name: 'Blank sheets', description: 'An empty grid.', icon: 'filePlus', build: () => new Workbook() },
   { id: 'budget', name: 'Monthly budget', description: 'Planned against actual spending, fed by an expense log on a second sheet.', icon: 'currency', build: () => sampleWorkbook() },
   { id: 'expenses', name: 'Expense tracker', description: 'A log table with category dropdowns, totals by category, and a donut chart.', icon: 'chartPie', build: expenses },
   { id: 'invoice', name: 'Invoice', description: 'A line-item table with quantities, prices, tax, and the total due.', icon: 'sheet', build: invoice },

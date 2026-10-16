@@ -10,7 +10,7 @@ import { MAX_FORMULA_LENGTH, MAX_FORMULA_NESTING, Workbook } from '../src/core/w
 // tab (or any page that writes the attribute) went into the sheet with no such limits, so a
 // paste could store what a typed entry never could.
 describe('limits on cells embedded in pasted HTML', () => {
-  const embed = (cells) => parseHtmlClipboard(stampClipboardHtml(`<table data-spreadsheet-cells='${JSON.stringify(cells)}'><tr>${cells[0].map(() => '<td>x</td>').join('')}</tr></table>`)).cells;
+  const embed = (cells) => parseHtmlClipboard(stampClipboardHtml(`<table data-sheets-cells='${JSON.stringify(cells)}'><tr>${cells[0].map(() => '<td>x</td>').join('')}</tr></table>`)).cells;
 
   it('keeps no more text than a typed cell may hold', () => {
     const [[cell]] = embed([[{ v: 'x'.repeat(MAX_TEXT + 5), f: null, s: { bold: true } }]]);

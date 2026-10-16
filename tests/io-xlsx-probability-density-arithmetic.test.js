@@ -45,7 +45,7 @@ it('preserves precise densities, raw-input errors and bounds through XLSX edits 
 it('uses external numeric HTML inputs without losing density precision or error semantics', () => {
   const values = [[0.5], [0]];
   const html = cellsToHtml(values.map(row => row.map(String)), values.map(row => row.map(v => ({ v }))), null, values)
-    .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   vi.stubGlobal('DOMParser', new JSDOM('').window.DOMParser);
   try {
     const wb = new Workbook(), id = wb.activeSheetId;

@@ -24,7 +24,7 @@ it('rebases supplemental source relationships without changing cache data or the
 
 it('represents known drive paths without inventing a local filesystem URL', () => {
   expect(workbookPathUri('/drive/100% #1.xlsx')).toBe('/drive/100%25%20%231.xlsx');
-  expect(workbookPathUri('Spreadsheets/Report.xlsx')).toBeNull();
-  expect(workbookPathUri('~/Spreadsheets/Report.xlsx')).toBeNull();
+  expect(workbookPathUri('Sheets/Report.xlsx')).toBeNull();
+  expect(workbookPathUri('~/Sheets/Report.xlsx')).toBeNull();
   expect(workbookPathUri(null)).toBeNull();
 });

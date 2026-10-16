@@ -1,4 +1,4 @@
-/** Plain XPRESS (MS-XCA §2.4.4), used by the embedded Spreadsheet Data Model.
+/** Plain XPRESS (MS-XCA §2.4.4), used by the embedded Sheets Data Model.
  * https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-xca/34cb9ab9-5ce6-42d7-a518-107c1c7c65e7
  * All lengths are checked before allocation, reads and back-reference copies.
  */

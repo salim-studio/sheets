@@ -36,7 +36,7 @@ describe('menu paste with a picture on the clipboard', () => {
     vi.stubGlobal('Image', class { naturalWidth = 100; naturalHeight = 60; set src(value) { this.onload?.(); } });
     const picture = new Blob(['image'], { type: 'image/png' });
     vi.stubGlobal('navigator', { onLine: true, clipboard: { read: async () => [{ types: ['image/png'], getType: async () => picture }] } });
-    const doc = new Doc({ name: 'Picture', path: 'Spreadsheets/Picture.xlsx' });
+    const doc = new Doc({ name: 'Picture', path: 'Sheets/Picture.xlsx' });
     const wb = doc.wb;
     const id = wb.activeSheetId;
     wb.setInput(id, 0, 0, 'stale');

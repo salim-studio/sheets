@@ -41,7 +41,7 @@ const item = (label) => [...document.querySelectorAll('.menu-item')].find((n) =>
 const column = (wb, id, c, n) => Array.from({ length: n }, (_, r) => wb.getValue(id, r, c));
 
 async function open(cells) {
-  const doc = new Doc({ name: 'Ranges', path: 'Spreadsheets/Ranges.xlsx' });
+  const doc = new Doc({ name: 'Ranges', path: 'Sheets/Ranges.xlsx' });
   const { wb } = doc;
   const id = wb.activeSheetId;
   for (const [r, c, text] of cells) wb.setInput(id, r, c, text);

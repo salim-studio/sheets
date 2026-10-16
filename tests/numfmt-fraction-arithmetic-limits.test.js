@@ -80,7 +80,7 @@ it('distinguishes TEXT errors from literal hashes and preserves precise values t
     const cell = { v: value, f: null, s: { fmt: 'custom', code } };
     const html = cellsToHtml([[text ?? '#####']], [[cell]], null, [[value]]);
     expect(parseHtmlClipboard(html).cells).toEqual([[cell]]);
-    const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+    const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(external).rows)[0].cell;
     expect(pasted.v).toBe(value);
     expect(formatValue(pasted.v, pasted.s)).toBe(text ?? '#####');

@@ -6,7 +6,7 @@ import { workbookFromFile, workbookToXlsx } from '../src/core/io.js';
 import * as X from '../src/vendor/xlsx.mjs';
 
 const parse = (html, mode = 'normal') => parseHtmlClipboard(`<table style="white-space:${mode}"><tr><td>${html}</td></tr></table>`).rows[0][0];
-const external = html => html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+const external = html => html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
 // Excel for Mac HTML paste references, saved 2026-09-19.
 const native = [
   ['a&nbsp;b', 'a\u00a0b'], ['&nbsp;&nbsp;x', '\u00a0\u00a0x'], ['x&nbsp;&nbsp;', 'x\u00a0\u00a0'],

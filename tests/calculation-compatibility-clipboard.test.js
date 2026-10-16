@@ -14,7 +14,7 @@ it.each([1, 2])('copies Version %i results externally and calculates formulas us
   destination.pasteCells(destination.activeSheetId, internal.cells, 2, 0, { r: 0, c: 0 });
   expect(destination.getCell(destination.activeSheetId, 2, 1).f).toBe('LEN(A3)');
   expect(destination.getValue(destination.activeSheetId, 2, 1)).toBe(version === 1 ? 2 : 3);
-  const external = html.replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+  const external = html.replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
   expect(cellsFromHtmlRows(parseHtmlClipboard(external).rows).map(({ cell }) => cell.v)).toEqual(['😀x', n, n]);
   const excel = '<table xmlns:x="urn:schemas-microsoft-com:office:excel"><tr><td>😀x</td><td x:num="3">3</td><td x:num="3">3</td></tr></table>';
   const incoming = cellsFromHtmlRows(parseHtmlClipboard(excel).rows);

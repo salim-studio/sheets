@@ -22,7 +22,7 @@ beforeEach(() => {
 afterEach(() => { view?.destroy(); view = null; vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); document.body.replaceChildren(); });
 
 async function setup() {
-  const doc = new Doc({ name: 'Percent', path: 'Spreadsheets/Percent.xlsx' });
+  const doc = new Doc({ name: 'Percent', path: 'Sheets/Percent.xlsx' });
   const wb = doc.wb;
   const id = wb.activeSheetId;
   // A1 takes its percent format from the formula it holds (impliedFormulaStyle names no decimals);

@@ -18,7 +18,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.stubGlobal('matchMedia', () => ({ matches: true, addEventListener() {}, removeEventListener() {} }));
   document.body.innerHTML = '<div id="app"></div>';
-  mocks.doc = Object.assign(new EventTarget(), { path: null, name: 'Untitled spreadsheet', draftKept: true });
+  mocks.doc = Object.assign(new EventTarget(), { path: null, name: 'Untitled sheets', draftKept: true });
   mocks.editor.mockImplementation((options) => ({ el: document.createElement('div'), doc: options.doc, flush: vi.fn().mockResolvedValue(true), destroy: vi.fn(), goTo: vi.fn(), options }));
   mocks.home.mockImplementation(() => ({ el: document.createElement('div'), destroy: vi.fn() }));
   handlers = [];
@@ -52,8 +52,8 @@ it('warns that leaving loses the edits when this browser could not keep a copy o
   expect(await pending).toBe('stay');
 });
 
-// While the local draft holds the edits, leaving said the spreadsheet would be discarded, though the
-// home screen lists it under Unsaved spreadsheets for recovery.
+// While the local draft holds the edits, leaving said the sheets would be discarded, though the
+// home screen lists it under Unsaved sheets for recovery.
 it('says the edits stay on this device and where to find them, while the local draft holds them', async () => {
   await import('../src/main.js');
   await vi.waitFor(() => expect(mocks.editor).toHaveBeenCalledOnce());
@@ -61,7 +61,7 @@ it('says the edits stay on this device and where to find them, while the local d
   const pending = leaveDialog();
   expect(dialogText()).toMatch(/not saved to Puter yet\. Sign in/);
   expect(dialogText()).toMatch(/stays? on this device/);
-  expect(dialogText()).toMatch(/Unsaved spreadsheets/);
+  expect(dialogText()).toMatch(/Unsaved sheets/);
   expect(dialogText()).not.toMatch(/discard|lose|could not keep a copy/);
   keepEditing();
   expect(await pending).toBe('stay');

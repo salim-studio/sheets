@@ -16,10 +16,10 @@ it('transfers source caches through actual HTML parsing without destination link
 });
 it.each(['missing','malformed','empty','unknown index'])('refuses %s supporting metadata instead of silently using destination links', kind => {
   const doc = new DOMParser().parseFromString(html(),'text/html'), table = doc.querySelector('table');
-  if (kind === 'missing') table.removeAttribute('data-spreadsheet-external-workbooks');
-  if (kind === 'malformed') table.setAttribute('data-spreadsheet-external-workbooks','{');
-  if (kind === 'empty') table.setAttribute('data-spreadsheet-external-workbooks','null');
-  if (kind === 'unknown index') table.setAttribute('data-spreadsheet-cells',JSON.stringify([[{f:'[2]Data!A1'}]]));
+  if (kind === 'missing') table.removeAttribute('data-sheets-external-workbooks');
+  if (kind === 'malformed') table.setAttribute('data-sheets-external-workbooks','{');
+  if (kind === 'empty') table.setAttribute('data-sheets-external-workbooks','null');
+  if (kind === 'unknown index') table.setAttribute('data-sheets-cells',JSON.stringify([[{f:'[2]Data!A1'}]]));
   expect(parseHtmlClipboard(table.outerHTML,'3').error).toMatch(/external workbook links/);
 });
 it('does not mistake a bracketed string literal for an external formula', () => {
@@ -45,7 +45,7 @@ it('omits unrelated supporting data and remaps retained formulas before HTML ser
   expect(wb.getValue(id,0,0)).toBe(3);
   expect(cells[0][0].f).toBe('[2]Data!$A$1');
   const plain=cellsToHtml([['42']],[[{v:42}]],null,[[42]],null,{externalWorkbooks:source});
-  expect(plain).not.toContain('data-spreadsheet-external-workbooks');
+  expect(plain).not.toContain('data-sheets-external-workbooks');
   expect(plain).not.toContain('unrelated private value');
 });
 it('carries a saved formula result through graph selection and destination reindexing', () => {

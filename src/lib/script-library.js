@@ -1,7 +1,7 @@
 /**
  * The user's own scripts, apart from any workbook, and the user's trust in scripts that came inside files.
  *
- * My Scripts: each script is a .js file in the Scripts folder beside the app's spreadsheets on the user's Puter
+ * My Scripts: each script is a .js file in the Scripts folder beside the app's sheets on the user's Puter
  * drive, named after the script, so it can be run on any workbook (and is a plain file the user can see, back up
  * or share like any other).
  *
@@ -15,8 +15,8 @@ import { storageScope, accountStorageKey } from './account-storage.js';
 import { scriptFingerprint } from '../core/scripts.js';
 
 export const LIBRARY_FOLDER = `${P.FOLDER}/Scripts`;
-const TRUST_KEY = 'spreadsheet:script-trust:v1';
-const TRUST_RECORD = 'spreadsheet:script-trust:v1:';
+const TRUST_KEY = 'sheets:script-trust:v1';
+const TRUST_RECORD = 'sheets:script-trust:v1:';
 const MAX_TRUSTED = 1000;
 
 /** A file name for a script name: the characters a drive refuses replaced, and .js on the end. */

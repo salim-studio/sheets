@@ -84,12 +84,12 @@ function askToShare(people, { unsaved }) {
     const done = (value) => { answer = value; modal.close(); };
     const content = el('div.mention-share', {},
       el('p.modal-text', {}, unsaved
-        ? `This spreadsheet is not saved to Puter yet, so ${list} cannot open the comment. Save it and share it with ${people.length === 1 ? 'them' : 'them all'}?`
-        : `${list} cannot open this spreadsheet yet. Share it with ${people.length === 1 ? 'them' : 'them all'} so they can see the comment?`),
+        ? `This sheet is not saved to Puter yet, so ${list} cannot open the comment. Save it and share it with ${people.length === 1 ? 'them' : 'them all'}?`
+        : `${list} cannot open this sheet yet. Share it with ${people.length === 1 ? 'them' : 'them all'} so they can see the comment?`),
       el('div.row.mention-share-mode', {}, el('span.field-label', {}, 'Give them'), mode),
       el('div.row.row-end', {},
         el('button.btn.btn-ghost', { type: 'button', onclick: () => done(null) }, 'Don’t notify'),
-        // An unsaved spreadsheet opens for nobody else: telling them without sharing would send a link to nothing.
+        // An unsaved sheets opens for nobody else: telling them without sharing would send a link to nothing.
         !unsaved && el('button.btn.btn-outline', { type: 'button', onclick: () => done({ action: 'notify' }) }, 'Notify without sharing'),
         el('button.btn.btn-primary', { type: 'button', onclick: () => done({ action: 'share', mode: mode.value }) }, unsaved ? 'Save, share and notify' : 'Share and notify')));
     const modal = openModal({ title: 'Share with the people you mentioned?', content, onClose: () => resolve(answer) });
@@ -117,7 +117,7 @@ export function createMentionNotifier({ doc, wb, mailer, me, ask = askToShare, l
 
   async function share(people, mode) {
     if (!doc.path) await doc.save();
-    if (!doc.path) throw new Error('Save the spreadsheet first, then share it');
+    if (!doc.path) throw new Error('Save the sheets first, then share it');
     const failed = [];
     const client = doc.collab;
     const owner = client && client.user?.uuid === client.owner;
@@ -146,7 +146,7 @@ export function createMentionNotifier({ doc, wb, mailer, me, ask = askToShare, l
       if (!answer) return { sent: 0, skipped: true };
       if (answer.action === 'share') {
         try { shareFailures = await share(missing, answer.mode); }
-        catch (e) { toast(e?.message || 'Could not share the spreadsheet', { icon: 'alert', duration: 4500 }); return { sent: 0 }; }
+        catch (e) { toast(e?.message || 'Could not share the sheets', { icon: 'alert', duration: 4500 }); return { sent: 0 }; }
         if (shareFailures.length) toast(`Not shared: ${shareFailures.join('; ')}`, { icon: 'alert', duration: 6000 });
         else toast(`Shared with ${missing.map((p) => p.name).join(', ')}`, { icon: 'check', duration: 2500 });
       }
@@ -157,7 +157,7 @@ export function createMentionNotifier({ doc, wb, mailer, me, ask = askToShare, l
     const names = people.map((p) => p.name).join(', ');
     if (!recipients.length) return { sent: 0 };
     if (!mailer.available() || !doc.uid) {
-      toast(`${names} will see the mention when they open this spreadsheet`, { icon: 'comment', duration: 3500 });
+      toast(`${names} will see the mention when they open this sheet`, { icon: 'comment', duration: 3500 });
       return { sent: 0 };
     }
     const sheet = wb.sheet(sheetId);
@@ -206,7 +206,7 @@ export function createMentionAlerts({ wb, me, fileKey, goTo, storage = globalThi
   const keyOf = () => {
     const user = me();
     const file = fileKey();
-    return user?.username && file ? `spreadsheet:mentions-seen:${user.username}:${file}` : null;
+    return user?.username && file ? `sheets:mentions-seen:${user.username}:${file}` : null;
   };
   const readSeen = (key) => {
     try { return new Set(JSON.parse(storage?.getItem(key) || '[]')); } catch { return new Set(); }

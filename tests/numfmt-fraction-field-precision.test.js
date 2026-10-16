@@ -42,7 +42,7 @@ it('preserves raw boundary values through editing, HTML clipboard and metadata-f
     wb.setCells(id, [{ r, c: 0, cell: { v, s: { fmt: 'custom', code } } }]);
     expect(wb.getDisplay(id, r, 0)).toBe(expected);
     const html = cellsToHtml([[expected]], [[wb.getCell(id, r, 0)]], null, [[v]])
-      .replace(/ data-spreadsheet-[\w-]+="[^"]*"/g, '');
+      .replace(/ data-sheets-[\w-]+="[^"]*"/g, '');
     const pasted = cellsFromHtmlRows(parseHtmlClipboard(html).rows)[0].cell;
     expect(pasted.v).toBe(v);
     expect(pasted.s.code).toBe(code);
