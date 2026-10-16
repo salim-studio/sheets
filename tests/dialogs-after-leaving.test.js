@@ -63,7 +63,7 @@ it('does not open a file picked after the editor was left', async () => {
   const openPath = vi.fn();
   view = editorView({ doc, goHome: vi.fn(), openPath, newDoc: vi.fn(), templateDoc: vi.fn(), importFile: vi.fn() });
   document.querySelector('#app').append(view.el);
-  fileMenu('Open from Puter…');
+  view.el.dispatchEvent(new KeyboardEvent('keydown', { key: 'o', ctrlKey: true, bubbles: true }));
   await vi.advanceTimersByTimeAsync(1);
   expect(P.pickFile).toHaveBeenCalledOnce();
   leave();

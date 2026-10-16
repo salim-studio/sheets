@@ -48,7 +48,8 @@ describe('menu bar definitions', () => {
   it('reaches every palette command except the contextual chart and helper ones', () => {
     const inMenus = new Set(menubarMenus(richFlags).flatMap((m) => menuLeaves(m.items)).map((it) => it.cmd).filter(Boolean));
     const palette = paletteCommands({ ...richFlags, chart: 'c1' });
-    const allowed = new Set(['editChart', 'replaceImage', 'duplicateChart', 'copyChart', 'downloadChart', 'deleteChart', 'scrollToActive', 'cellStylesMenu', 'selectSpecialMenu', 'pasteSpecialMenu']);
+    // 'open' lives only in the palette and on Ctrl/Cmd+O: it is hidden from the File menu and home screen.
+    const allowed = new Set(['open', 'editChart', 'replaceImage', 'duplicateChart', 'copyChart', 'downloadChart', 'deleteChart', 'scrollToActive', 'cellStylesMenu', 'selectSpecialMenu', 'pasteSpecialMenu']);
     const missing = palette.map((c) => c.cmd).filter((cmd) => cmd && !inMenus.has(cmd) && !allowed.has(cmd));
     expect(missing).toEqual([]);
   });

@@ -47,7 +47,7 @@ export function openAppMenu(anchor, { onOptions = null } = {}) {
   // than a parenthesis nested in one; the spoken name carries both.
   const localeName = LOCALES.find(([c]) => c === getLocale())?.[1] || getLocale();
   const items = [
-    { header: session.signedOut ? 'Not signed in' : session.username },
+    { header: session.signedOut ? 'Not signed in' : 'Signed in' },
     { custom: themeRow },
     { separator: true },
     { label: 'Regional format…', icon: 'monitor', shortcut: localeName, ariaLabel: `Regional format, ${localeName}`, onSelect: openLocaleDialog },
@@ -65,42 +65,21 @@ export function openAppMenu(anchor, { onOptions = null } = {}) {
 }
 
 const accountButtons = new WeakMap();
-const accountFaceKey = () => `${session.state}:${session.user?.uuid || ''}:${session.username}`;
+const accountFaceKey = () => `${session.state}:${session.user?.uuid || ''}`;
 
-/** The account button's face: a picture when available, otherwise an initial or plain figure. */
+/** The account button's face: always a plain figure, never a name or picture, so no account identity shows. */
 export function renderAccountButton(button) {
   const signedOut = session.signedOut;
-  button.title = signedOut ? 'Not signed in' : session.username;
-  button.setAttribute('aria-label', signedOut ? 'Account menu. Not signed in' : `Account menu for ${session.username}`);
+  button.title = signedOut ? 'Not signed in' : 'Account';
+  button.setAttribute('aria-label', signedOut ? 'Account menu. Not signed in' : 'Account menu');
   const key = accountFaceKey();
   let face = accountButtons.get(button);
   if (face?.key !== key) {
-    const avatar = signedOut
-      ? el('span.user-avatar.user-avatar-anon', { html: icon('user', 17, 2) })
-      : el('span.user-avatar', {}, session.username.charAt(0));
-    face = { key, avatar, initial: session.username.charAt(0), picture: null, request: null };
+    const avatar = el('span.user-avatar.user-avatar-anon', { html: icon('user', 17, 2) });
+    face = { key, avatar };
     accountButtons.set(button, face);
     button.replaceChildren(avatar);
   }
-  // The header renders immediately. Only a known account asks for its own picture.
-  if (!session.signedIn || !session.user) return;
-  const request = P.getProfilePicture(session.user);
-  if (face.request === request) return;
-  face.request = request;
-  const current = () => accountButtons.get(button) === face && accountFaceKey() === key;
-  request.then((picture) => {
-    if (!current() || face.request !== request || face.picture === picture) return;
-    face.picture = picture;
-    if (!picture) { face.avatar.replaceChildren(face.initial); return; }
-    // Keep the current face until the image loads; malformed images retain the initial.
-    // Reusing the same face on settings changes avoids repeated image loads and flicker.
-    const image = el('img.user-avatar-picture', {
-      alt: '', width: 32, height: 32, decoding: 'async',
-      onload: () => { if (current() && face.picture === picture) face.avatar.replaceChildren(image); },
-      onerror: () => { if (current() && face.picture === picture) face.avatar.replaceChildren(face.initial); },
-    });
-    image.src = picture;
-  });
 }
 
 export async function confirmSignOut() {

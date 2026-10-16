@@ -71,7 +71,6 @@ export function menubarMenus(f = {}) {
   const file = [
     i('New sheets', 'filePlus', 'new'),
     f.templates && i('New from template…', 'sparkle', 'newFromTemplate'),
-    f.pick && i('Open from Puter…', 'folderOpen', 'open', null, { shortcut: `${M}+O` }),
     sub('Import', 'upload', [
       i('From this device…', 'upload', 'import'),
       i('From a URL…', 'external', 'importUrl'),

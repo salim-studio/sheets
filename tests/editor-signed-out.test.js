@@ -80,7 +80,7 @@ describe('editing without a Puter session', () => {
     await vi.waitFor(() => expect(doc.wb.dirty).toBe(false));
     expect(pill.classList.contains('signed-out')).toBe(false);
     expect(pill.textContent).toContain('Saved');
-    expect(account.title).toBe('nariman');
+    expect(account.title).toBe('Account');
 
     // From here on autosave runs as usual.
     doc.wb.setInput(doc.wb.activeSheetId, 0, 1, 'after');

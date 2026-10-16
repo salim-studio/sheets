@@ -81,37 +81,25 @@ describe('profile picture cache', () => {
 });
 
 describe('account avatar', () => {
-  it('keeps the initial until loaded, shares requests between buttons and preserves images on settings changes', async () => {
+  it('never shows a name, initial or picture: the face stays a plain figure', async () => {
     const home = document.createElement('button');
     const editor = document.createElement('button');
     renderAccountButton(home);
     renderAccountButton(editor);
     renderAccountButton(home);
-    expect(home.textContent).toBe('d');
-    await vi.waitFor(() => expect(images).toHaveLength(2));
-    expect(auth.getProfilePicture).toHaveBeenCalledTimes(1);
-    expect(home.querySelector('img')).toBeNull();
-    images.forEach((image) => image.dispatchEvent(new Event('load')));
-    const image = home.querySelector('img');
-    expect(image.src).toBe(picture);
-    expect(image.alt).toBe('');
-    expect(home.getAttribute('aria-label')).toBe('Account menu for demo');
-    renderAccountButton(home);
-    expect(home.querySelector('img')).toBe(image);
-    expect(images).toHaveLength(2);
-    expect(auth.getProfilePicture).toHaveBeenCalledTimes(1);
-  });
-
-  it('keeps the initial on image decode failure without repeatedly loading the same bad image', async () => {
-    const button = document.createElement('button');
-    renderAccountButton(button);
-    await vi.waitFor(() => expect(images).toHaveLength(1));
-    images[0].dispatchEvent(new Event('error'));
-    renderAccountButton(button);
+    expect(home.querySelector('.user-avatar-anon')).not.toBeNull();
+    expect(home.textContent).not.toContain('demo');
+    expect(home.getAttribute('aria-label')).toBe('Account menu');
+    expect(home.title).toBe('Account');
+    expect(editor.querySelector('.user-avatar-anon')).not.toBeNull();
     await Promise.resolve();
-    expect(button.textContent).toBe('d');
-    expect(button.querySelector('img')).toBeNull();
-    expect(images).toHaveLength(1);
+    // No profile picture is ever requested for the face.
+    expect(auth.getProfilePicture).not.toHaveBeenCalled();
+    expect(home.querySelector('img')).toBeNull();
+    // Re-renders keep the same anonymous face.
+    renderAccountButton(home);
+    expect(home.querySelector('.user-avatar-anon')).not.toBeNull();
+    expect(home.querySelector('img')).toBeNull();
   });
 
   it('does not fetch for guests or an unresolved identity', () => {
@@ -123,38 +111,31 @@ describe('account avatar', () => {
     expect(button.getAttribute('aria-label')).toContain('Not signed in');
     session.state = 'in';
     renderAccountButton(button);
-    expect(button.textContent).toBe('P');
+    expect(button.querySelector('.user-avatar-anon')).not.toBeNull();
+    expect(button.textContent).not.toContain('P');
     expect(auth.getProfilePicture).not.toHaveBeenCalled();
   });
 
-  it('ignores a late picture response after signing out', async () => {
-    let resolve;
-    auth.getProfilePicture.mockImplementationOnce(() => new Promise((done) => { resolve = done; }));
+  it('keeps the anonymous face after signing out', async () => {
     const button = document.createElement('button');
     renderAccountButton(button);
     await Promise.resolve();
     session.state = 'out';
     session.user = null;
     renderAccountButton(button);
-    resolve(picture);
-    await P.getProfilePicture(user);
-    await Promise.resolve();
     expect(button.querySelector('.user-avatar-anon')).not.toBeNull();
-    expect(images).toHaveLength(0);
+    expect(button.textContent).not.toContain('demo');
   });
 
-  it('ignores a late image load after switching accounts', async () => {
+  it('keeps the anonymous face after switching accounts', async () => {
     const button = document.createElement('button');
     renderAccountButton(button);
-    await vi.waitFor(() => expect(images).toHaveLength(1));
-    const previous = images[0];
+    await Promise.resolve();
     session.user = { username: 'other', uuid: 'u-2' };
     renderAccountButton(button);
-    previous.dispatchEvent(new Event('load'));
-    expect(button.textContent).toBe('o');
+    expect(button.querySelector('.user-avatar-anon')).not.toBeNull();
+    expect(button.textContent).not.toContain('other');
     expect(button.querySelector('img')).toBeNull();
-    await vi.waitFor(() => expect(images).toHaveLength(2));
-    images[1].dispatchEvent(new Event('load'));
-    expect(button.querySelector('img')).toBe(images[1]);
+    expect(auth.getProfilePicture).not.toHaveBeenCalled();
   });
 });
