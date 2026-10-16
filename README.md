@@ -73,14 +73,6 @@ Every push to `main` is deployed automatically to GitHub Pages via
   After replacing it, run `npm run icons` (requires ImageMagick) to regenerate
   favicons, the Apple touch icon, and the standard/maskable install icons.
 
-## Origin
-
-Sheets is a rebranded, standalone fork of the `src/spreadsheet` app from
-[HeyPuter/everything](https://github.com/HeyPuter/everything) (MIT licensed).
-All user-facing names, links, storage keys and the visual theme were renamed
-from Spreadsheet to Sheets; third-party code under `src/vendor/` is unchanged.
-
 ## License
 
 MIT — © 2026 salim-slimani. See [LICENSE](./LICENSE).
-Upstream portions © 2026 Puter Technologies Inc.
