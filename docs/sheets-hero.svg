@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-label="Sheets — fast, private, AI-powered sheets">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A5C3B"/>
+      <stop offset="0.55" stop-color="#0E7A4D"/>
+      <stop offset="1" stop-color="#149A63"/>
+    </linearGradient>
+    <linearGradient id="cell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.06"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <g stroke="#ffffff" stroke-opacity="0.14" stroke-width="1.5">
+    <path d="M0 90 H1200 M0 170 H1200 M0 250 H1200 M0 330 H1200"/>
+    <path d="M150 0 V400 M300 0 V400 M450 0 V400 M600 0 V400 M750 0 V400 M900 0 V400 M1050 0 V400"/>
+  </g>
+  <g>
+    <rect x="880" y="70" width="220" height="120" rx="14" fill="url(#cell)" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2"/>
+    <line x1="880" y1="110" x2="1100" y2="110" stroke="#ffffff" stroke-opacity="0.55" stroke-width="2"/>
+    <rect x="905" y="130" width="90" height="38" rx="8" fill="#4CC38A"/>
+    <rect x="1005" y="130" width="70" height="38" rx="8" fill="#ffffff" fill-opacity="0.28"/>
+    <circle cx="1062" cy="232" r="52" fill="#4CC38A"/>
+    <path d="M1040 232 l15 15 l30 -32" fill="none" stroke="#06281C" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="905" y="102" font-family="Verdana, Geneva, sans-serif" font-size="26" font-weight="bold" fill="#ffffff">fx</text>
+    <text x="948" y="102" font-family="Verdana, Geneva, sans-serif" font-size="24" fill="#ffffff" fill-opacity="0.85">= SUM(A1:A9)</text>
+  </g>
+  <g>
+    <rect x="96" y="118" width="116" height="116" rx="26" fill="#ffffff"/>
+    <rect x="118" y="140" width="72" height="14" rx="4" fill="#0E7A4D"/>
+    <rect x="118" y="162" width="72" height="14" rx="4" fill="#0E7A4D" fill-opacity="0.65"/>
+    <rect x="118" y="184" width="48" height="14" rx="4" fill="#0E7A4D" fill-opacity="0.4"/>
+    <rect x="118" y="206" width="60" height="14" rx="4" fill="#4CC38A"/>
+  </g>
+  <text x="250" y="196" font-family="Verdana, Geneva, sans-serif" font-size="84" font-weight="bold" fill="#ffffff" letter-spacing="1">Sheets</text>
+  <text x="252" y="242" font-family="Verdana, Geneva, sans-serif" font-size="30" fill="#ffffff" fill-opacity="0.92">Fast, private, AI-powered sheets — right in your browser.</text>
+</svg>

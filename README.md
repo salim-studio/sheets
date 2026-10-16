@@ -1,4 +1,4 @@
-<img src="./icon.png" alt="Sheets icon" width="80" height="80" />
+![Sheets — fast, private, AI-powered sheets, right in your browser](./docs/sheets-hero.svg)
 
 # Sheets
 
