@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+.npm/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+.vite/
+
+# Test and coverage
+coverage/
+playwright-report/
+test-results/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
