@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite';
-import puterLocalhost from '../../dev/puter-localhost.mjs';
 
 export default defineConfig({
-  plugins: [puterLocalhost('spreadsheet')],
+  // Note: upstream used a dev-only plugin from the everything monorepo
+  // (dev/puter-localhost.mjs) which is not part of this standalone copy.
+  // Dev server still works on localhost:5173 without it.
+  plugins: [],
   base: './',
   build: {
     target: 'es2022',
