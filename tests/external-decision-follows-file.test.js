@@ -16,24 +16,18 @@ function reachingOut(formula = '=IMPORTDATA("https://example.com/a.csv")') {
   return workbookToXlsx(wb);
 }
 const place = (path, blob) => mock.fs.set(path, { blob, size: blob.size, modified: 1 });
-/** Another device of the same account: nothing remembered in this browser. */
-const otherDevice = () => localStorage.clear();
-
-// Whether a file may load outside content was remembered by path in this browser only. Any
-// file that turned up in the app folder by other means (shared, synced, written by another
-// app) opened trusted, and an import blocked on one device opened trusted on the next.
-it('keeps a blocked import blocked on another device once it is saved to the app folder', async () => {
+// Whether a file may load outside content is remembered in this browser, by path and by the
+// file's id, so it follows the file through a rename. Everything is local: no account, no sync.
+it('keeps a blocked import blocked once it is saved to the app folder', async () => {
   const bytes = await reachingOut();
   const imported = await Doc.fromBrowserFile(new File([await bytes.arrayBuffer()], 'evil.xlsx'));
   expect(imported.wb.externalAllowed).toBe(false);
   expect(await imported.save()).toBe(true);
   expect(imported.path).toBe('Sheets/evil.xlsx');
-  otherDevice();
   const elsewhere = await Doc.fromPath('Sheets/evil.xlsx');
   expect(elsewhere.wb.externalAllowed).toBe(false);
   expect(elsewhere.wb.getValue(elsewhere.wb.activeSheetId, 0, 0)).toEqual({ error: '#BLOCKED!' });
   imported.allowExternal();
-  otherDevice();
   expect((await Doc.fromPath('Sheets/evil.xlsx')).wb.externalAllowed).toBe(true);
   imported.destroy();
 });
@@ -43,9 +37,8 @@ it('does not trust a file that reaches out just because it turned up in the app 
   const doc = await Doc.fromPath('Sheets/shared-in.xlsx');
   expect(doc.wb.externalAllowed).toBe(false);
   expect(doc.wb.getValue(doc.wb.activeSheetId, 0, 0)).toEqual({ error: '#BLOCKED!' });
-  // Once allowed, the decision holds for the account, not just this browser.
+  // Once allowed, the decision holds for the file here.
   doc.allowExternal();
-  otherDevice();
   expect((await Doc.fromPath('Sheets/shared-in.xlsx')).wb.externalAllowed).toBe(true);
   doc.destroy();
 });
@@ -70,27 +63,14 @@ it('keeps the decision with the file when it is renamed elsewhere', async () => 
   doc.allowExternal();
   doc.destroy();
   await puter.fs.rename('Sheets/Q.xlsx', 'R.xlsx'); // the file keeps its identity
-  otherDevice();
   expect((await Doc.fromPath('Sheets/R.xlsx')).wb.externalAllowed).toBe(true);
 });
 
-it('still distrusts files from elsewhere on the drive until allowed, then remembers it for the account', async () => {
+it('still distrusts files from elsewhere on the drive until allowed, then remembers it here', async () => {
   place('Desktop/shared.xlsx', await Doc.blank().toXlsxBlob());
   expect((await Doc.fromPath('Desktop/shared.xlsx')).wb.externalAllowed).toBe(false);
   const opened = await Doc.fromPath('Desktop/shared.xlsx');
   opened.allowExternal();
   opened.destroy();
-  otherDevice();
   expect((await Doc.fromPath('Desktop/shared.xlsx')).wb.externalAllowed).toBe(true);
-});
-
-it('falls back to what this browser remembers when the account store cannot be reached', async () => {
-  place('Sheets/flaky.xlsx', await reachingOut());
-  const doc = await Doc.fromPath('Sheets/flaky.xlsx');
-  doc.allowExternal();
-  doc.destroy();
-  puter.kv.get = async () => { throw new Error('Network request failed'); };
-  expect((await Doc.fromPath('Sheets/flaky.xlsx')).wb.externalAllowed).toBe(true);
-  otherDevice();
-  expect((await Doc.fromPath('Sheets/flaky.xlsx')).wb.externalAllowed).toBe(false);
 });
