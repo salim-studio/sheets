@@ -9,10 +9,13 @@
 import { applyTheme } from '../ui/theme.js';
 import { setLocale } from '../core/format.js';
 import * as P from './platform.js';
+import { setGuestStorage } from './account-storage.js';
 
 class Session extends EventTarget {
   constructor() {
     super();
+    // One namespace on this device, the same on every visit: there is no account to name it.
+    setGuestStorage();
     this.settings = { theme: 'system' };
     this.user = P.LOCAL_USER;
     this.state = 'in';

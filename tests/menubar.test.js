@@ -63,8 +63,8 @@ describe('menu bar definitions', () => {
     expect(labels(menubarMenus({ saving: true }), 'file')).toContain('Excel workbook (.xlsx)…');
     expect(labels(bare, 'help')).toEqual(['Search the menus…']);
     expect(labels(bare, 'insert')).toContain('Note');
-    expect(labels(bare, 'insert')).not.toContain('From Puter…');
-    expect(labels(menubarMenus(richFlags), 'insert')).toContain('From Puter…');
+    expect(labels(bare, 'insert')).toContain('From this device…');
+    expect(labels(bare, 'insert')).toContain('From a URL…');
     expect(labels(bare, 'data')).toContain('Filter');
     expect(labels(bare, 'data')).toContain('Create table…');
     expect(labels(bare, 'tools')).not.toContain('Write a formula with AI…');

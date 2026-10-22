@@ -59,7 +59,7 @@ it('says the edits stay on this device and where to find them, while the local d
   await vi.waitFor(() => expect(mocks.editor).toHaveBeenCalledOnce());
   const { leaveDialog } = mocks.editor.mock.calls[0][0];
   const pending = leaveDialog();
-  expect(dialogText()).toMatch(/not saved to Puter yet\. Sign in/);
+  expect(dialogText()).toMatch(/not saved as a file yet/);
   expect(dialogText()).toMatch(/stays? on this device/);
   expect(dialogText()).toMatch(/Unsaved sheets/);
   expect(dialogText()).not.toMatch(/discard|lose|could not keep a copy/);

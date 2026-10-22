@@ -78,25 +78,3 @@ it('follows the file by the edits kept beside a draft that does not name it, and
   } finally { doc.destroy(); }
 });
 
-it('takes the edits kept beside a draft along when the file is opened by another spelling of its address', async () => {
-  const bytes = await Doc.blank().toXlsxBlob();
-  const absolute = '/nj/AppData/app/Sheets/Budget.xlsx';
-  mock.fs.set(absolute, { blob: bytes, size: bytes.size, modified: 1 });
-  mock.fs.set('/nj/AppData/app/Sheets/.keep', { blob: new Blob(['']), size: 0, modified: 1 });
-  expect(saveDraft(draftKey(PATH), book('recovered edits'), 'Budget', 'rev-old')).toBe(true);
-  expect(saveDraft(liveDraftKey(draftKey(PATH)), book('meanwhile'), 'Budget', 'rev-live')).toBe(true);
-  // The drive answers for the relative address with the absolute one it keeps.
-  const stat = puter.fs.stat.bind(puter.fs);
-  puter.fs.stat = async (p) => stat(p === PATH ? absolute : p === 'Sheets' ? '/nj/AppData/app/Sheets' : p);
-  const read = puter.fs.read.bind(puter.fs);
-  puter.fs.read = async (p) => read(p === PATH ? absolute : p);
-  const doc = await Doc.fromPath(PATH);
-  try {
-    expect(doc.path).toBe(absolute);
-    expect(text(doc.recoverable)).toBe('meanwhile');
-    expect(loadDraft(draftKey(PATH))).toBeNull();
-    expect(loadDraft(liveDraftKey(draftKey(PATH)))).toBeNull();
-    expect(text(loadDraft(draftKey(absolute)))).toBe('meanwhile');
-    expect(unsaved()).toEqual([['Budget', 'recovered edits']]);
-  } finally { doc.destroy(); }
-});

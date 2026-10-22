@@ -19,7 +19,8 @@ describe('command palette', () => {
     expect(paletteCommands({ chart: 'c1', chartIsImage: true }).some((c) => c.cmd === 'replaceImage')).toBe(true);
     expect(base.some((c) => c.cmd === 'deleteChart')).toBe(false);
     expect(base.some((c) => c.cmd === 'insertImagePuter')).toBe(false);
-    expect(paletteCommands({ pick: true }).find(c => c.cmd === 'insertImagePuter')?.label).toBe('Image from Puter…');
+    expect(paletteCommands({}).find((c) => c.cmd === 'insertImage')?.label).toBe('Image…');
+    expect(paletteCommands({}).find((c) => c.cmd === 'insertImageUrl')?.label).toBe('Image from URL…');
     // Every entry names a section and has a label; no duplicate labels.
     const labels = rich.map((c) => c.label);
     expect(new Set(labels).size).toBe(labels.length);
