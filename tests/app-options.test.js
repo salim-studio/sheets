@@ -89,14 +89,12 @@ describe('options that reach past the editor', () => {
 
   it('turning AI features off makes AI unavailable', () => {
     installAppOptions();
-    vi.stubGlobal('puter', { ai: { chat: () => {} } });
-    globalThis.window.puter = globalThis.puter;
+    localStorage.setItem('sheets:ai:v1', JSON.stringify({ key: 'test-key' }));
     expect(canAI()).toBe(true);
     setAppOptions({ aiFeatures: false });
     expect(canAI()).toBe(false);
     setAppOptions({ aiFeatures: true });
     expect(canAI()).toBe(true);
-    delete globalThis.window.puter;
   });
 
   it('AutoSave by default applies where the device never chose', () => {
