@@ -11,6 +11,7 @@ afterEach(() => { delete globalThis.puter; vi.restoreAllMocks(); });
 // wrote a fresh snapshot under the new name first, and the old history was left behind.
 it('has the history under the new name by the time rename resolves', async () => {
   const doc = new Doc({ name: 'Old', path: 'Sheets/Old.xlsx' });
+  mock.fs.set('Sheets/Old.xlsx', { blob: new Blob(['v1']), size: 2, modified: 1 });
   await saveVersion('Sheets/Old.xlsx', new Blob(['v1']), 'first');
   expect(await listVersions('Sheets/Old.xlsx')).toHaveLength(1);
   const slowMove = puter.fs.rename;
