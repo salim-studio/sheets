@@ -15,6 +15,8 @@ copy. The file itself, kept where you keep your things.
 
 🌐 **Try it now:** https://salim-studio.github.io/sheets/
 
+💻 **Desktop (Windows):** [Download Sheets.exe](https://github.com/salim-studio/sheets/releases/latest/download/Sheets.exe) — portable, no install needed.
+
 ## Principles
 
 1. **Start instantly.** A new sheet is one click away, account or not. Drafts
@@ -59,6 +61,8 @@ npm run dev      # local development at http://localhost:5173
 npm test         # unit tests (vitest)
 npm run build    # production build into dist/
 npm run preview  # preview the production build
+npm run desktop  # run the desktop app (Electron)
+npm run desktop:build  # build the portable Windows executable
 ```
 
 Every push to `main` ships to GitHub Pages through
