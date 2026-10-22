@@ -50,11 +50,11 @@ describe('finding mentions in comment text', () => {
     expect(mentionRuns(text, findMentions(text, [ANA])).map((r) => [r.text, !!r.mention])).toEqual([['Hey ', false], ['@ana', true], ['!', false]]);
   });
 
-  it('tells whom a mention is of, and where its email goes', () => {
+  it('tells whom a mention is of, and that no address is invented', () => {
     const [m] = findMentions('@ana', [ANA]);
     expect(mentionIsOf(m, { username: 'Ana' })).toBe(true);
     expect(mentionIsOf(m, { username: 'bob' })).toBe(false);
-    expect(mentionAddress(m)).toBe('ana@puter.email');
+    expect(mentionAddress(m)).toBe('');
     const [b] = findMentions('@Ben Ode', [BEN]);
     expect(mentionIsOf(b, { email: 'BEN@example.com' })).toBe(true);
     expect(mentionAddress(b)).toBe('ben@example.com');

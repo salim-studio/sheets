@@ -44,7 +44,7 @@ it('announces the wait and the failure, marks the button busy, and clears a stal
   panel.querySelector('form').requestSubmit();
   expect(button.getAttribute('aria-busy')).toBe('true');
   expect(button.disabled).toBe(true);
-  expect(status.textContent).toBe('Asking Puter AI…');
+  expect(status.textContent).toBe('Asking the AI…');
   fail(new Error('boom'));
   await vi.advanceTimersByTimeAsync(0);
   expect(button.hasAttribute('aria-busy')).toBe(false);

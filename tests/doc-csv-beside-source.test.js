@@ -52,7 +52,7 @@ it('saves into the app folder when the source\'s folder will not take the file',
   csvAt('/alice/Shared/data.csv');
   const write = globalThis.puter.fs.write;
   globalThis.puter.fs.write = async (p, ...rest) => {
-    if (p.startsWith('/alice/')) throw Object.assign(new Error('Permission denied'), { code: 'access_denied' });
+    if (p.includes('alice/')) throw Object.assign(new Error('Permission denied'), { code: 'access_denied' });
     return write(p, ...rest);
   };
   const doc = await Doc.fromPath('/alice/Shared/data.csv');

@@ -42,8 +42,9 @@ it('settles back to saved when the book is marked clean after a fit on open, and
   expect(doc.status).toBe('saved');
   expect(statuses).toEqual(['unsaved', 'saved']);
   await new Promise((r) => setTimeout(r, 1700)); // past the autosave and draft timers
-  expect(mock.calls.filter(([op]) => op === 'write')).toEqual([]);
+  const documentWrites = () => mock.calls.filter(([op, p]) => op === 'write' && !p.includes('/.versions/'));
+  expect(documentWrites()).toEqual([]);
   expect(await doc.save({ auto: true })).toBe(true);
-  expect(mock.calls.filter(([op]) => op === 'write')).toEqual([]);
+  expect(documentWrites()).toEqual([]);
   expect(doc.path).toBe('Desktop/data.csv');
 });
