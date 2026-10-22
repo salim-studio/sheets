@@ -26,11 +26,12 @@ const edit = (doc, text) => doc.wb.setInput(doc.wb.activeSheetId, 0, 0, text);
 it('saves after the file was renamed here without reporting a change made elsewhere', async () => {
   const doc = await openDocument();
   const conflicts = watchConflicts(doc);
-  const before = mock.fs.get(doc.path).modified;
+  const ms = (m) => (m > 1e12 ? m : m * 1000); // the store may stamp seconds or milliseconds
+  const before = ms(mock.fs.get(doc.path).modified);
   await vi.advanceTimersByTimeAsync(2000); // the rename lands in a later second than the save
   try {
     expect(await doc.rename('Budget 2')).toBeNull();
-    expect(mock.fs.get(doc.path).modified).toBeGreaterThan(before); // the mock stamps the rename as the server does
+    expect(ms(mock.fs.get(doc.path).modified)).toBeGreaterThan(before); // the mock stamps the rename as the server does
     edit(doc, 'edited after the rename');
     await vi.advanceTimersByTimeAsync(2000);
     expect(conflicts).toEqual([]);
