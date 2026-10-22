@@ -148,7 +148,7 @@ describe('the language pane', () => {
     const { pane } = setup();
     pane.show('thesaurus');
     pane.lookup('word');
-    expect(pane.el.querySelector('.lang-status').textContent).toMatch(/needs Puter/);
+    expect(pane.el.querySelector('.lang-status').textContent).toMatch(/needs (Puter|an AI model)/);
   });
 
   it('translates the selected cells and puts each translation back in its cell, as one step', async () => {
