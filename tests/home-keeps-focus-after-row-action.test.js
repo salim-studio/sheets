@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { memoryStorage } from './helpers/memory-storage.js';
+import { installMockPuter } from './helpers/mock-puter.js';
 import { homeView } from '../src/views/home.js';
 import { session } from '../src/lib/session.js';
 import { closeMenu } from '../src/ui/menu.js';
@@ -9,50 +10,31 @@ import { closeMenu } from '../src/ui/menu.js';
 // left the document and focus fell to <body> — the top of the page, a dozen tab stops from the next
 // file. Each rebuild now puts focus back on the same row, the row that took its place, or the heading.
 
-let sdk, view;
+let view, mock;
 const files = [
-  { path: 'Sheets/Budget.xlsx', name: 'Budget.xlsx', size: 12, modified: 3 },
-  { path: 'Sheets/Plan.xlsx', name: 'Plan.xlsx', size: 14, modified: 2 },
-  { path: 'Sheets/Taxes.xlsx', name: 'Taxes.xlsx', size: 16, modified: 1 },
+  { path: 'Sheets/Budget.xlsx', modified: 3 },
+  { path: 'Sheets/Plan.xlsx', modified: 2 },
+  { path: 'Sheets/Taxes.xlsx', modified: 1 },
 ];
+const seed = (list) => {
+  for (const key of mock.fs.keys()) mock.fs.delete(key);
+  for (const f of list) {
+    const blob = new Blob([new Uint8Array(12)]);
+    mock.fs.set(f.path, { blob, size: blob.size, modified: f.modified });
+  }
+};
 
 beforeEach(() => {
   vi.stubGlobal('localStorage', memoryStorage());
   vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
-  sdk = {
-    env: 'web',
-    _signedIn: true,
-    _files: files.map((f) => ({ ...f })),
-    auth: {
-      isSignedIn: () => sdk._signedIn,
-      signIn: vi.fn(async () => { sdk._signedIn = true; }),
-      getUser: async () => ({ username: 'nariman', uuid: 'u-1' }),
-    },
-    kv: { get: async () => null, set: async () => true, del: async () => true },
-    fs: {
-      readdir: vi.fn(async () => sdk._files),
-      stat: async () => null,
-      mkdir: async () => {},
-      read: async () => new Blob([new Uint8Array([1, 2, 3])]),
-      write: vi.fn(async (path) => ({ name: path.slice(path.lastIndexOf('/') + 1), path, uid: 'new-uid' })),
-      delete: vi.fn(async (path) => { sdk._files = sdk._files.filter((f) => f.path !== path); return true; }),
-      rename: vi.fn(async (path, name) => {
-        const f = sdk._files.find((x) => x.path === path);
-        if (f) { f.name = name; f.path = `Sheets/${name}`; }
-        return true;
-      }),
-    },
-    ui: {},
-  };
-  vi.stubGlobal('puter', sdk);
+  mock = installMockPuter();
+  seed(files);
 });
 
 afterEach(() => {
   view?.destroy();
   closeMenu();
   document.body.replaceChildren();
-  session.state = 'unknown';
-  session.user = null;
   vi.unstubAllGlobals();
 });
 
@@ -101,7 +83,7 @@ it('keeps focus on the last row when the file at the end is deleted', async () =
 });
 
 it('falls back to the list heading when the last file goes', async () => {
-  sdk._files = [{ path: 'Sheets/Only.xlsx', name: 'Only.xlsx', size: 9, modified: 1 }];
+  seed([{ path: 'Sheets/Only.xlsx', modified: 1 }]);
   await mount();
   await fromRowMenu(0, 'Delete');
   dialogButton('Delete').click();

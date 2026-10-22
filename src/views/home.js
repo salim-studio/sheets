@@ -483,7 +483,8 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     let group = null;
     list.append(...shown.flatMap((file) => {
       const label = grouped && groupOf(file.modified) !== group ? (group = groupOf(file.modified)) : null;
-      const row = el('div.file-row', { role: 'listitem', dataset: { focusKey: file.path } },
+      // A file keeps its id through a rename, so focus finds it again even when the rename re-sorts the list.
+      const row = el('div.file-row', { role: 'listitem', dataset: { focusKey: file.uid || file.path } },
         el('a.file-main', {
           href: `#/edit/${encodeURIComponent(file.path)}`,
           title: file.name, // a long name is cut short on screen; the whole of it on hover

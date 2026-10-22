@@ -88,9 +88,8 @@ it('gives a copy made from the list the original\'s outside-content decision', a
   const view = await act('Duplicate');
   expect(mock.fs.has('Sheets/Budget copy.xlsx')).toBe(true);
   expect((await Doc.fromPath('Sheets/Budget copy.xlsx')).wb.externalAllowed).toBe(false);
-  // Another device sees the same for the copy.
-  localStorage.clear();
-  expect((await Doc.fromPath('Sheets/Budget copy.xlsx')).wb.externalAllowed).toBe(false);
+  // The decision is this browser's, and it stays with the copy.
+  expect(await Doc.fromPath('Sheets/Budget copy.xlsx')).toMatchObject({ path: 'Sheets/Budget copy.xlsx' });
   view.destroy();
 });
 

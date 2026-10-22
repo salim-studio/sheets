@@ -25,7 +25,6 @@ afterEach(() => { vi.clearAllTimers(); vi.useRealTimers(); vi.restoreAllMocks();
 
 it('lists a file opened elsewhere under its new name, and opens a remembered file by its id', async () => {
   vi.spyOn(P, 'listFiles').mockResolvedValue([]);
-  vi.spyOn(P, 'listSharedWithMe').mockResolvedValue([]);
   const openPath = vi.fn();
   const openFile = vi.fn();
   const view = homeView({ openPath, openFile, newDoc() {}, sampleDoc() {}, templateDoc() {}, importFile() {} });
