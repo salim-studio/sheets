@@ -19,6 +19,7 @@ import * as RL from '../core/ribbon-layout.js';
 import { chordFromEvent, formatChord, chordProblem, chordConflicts, chordsFor } from '../core/keymap.js';
 import { currentTheme } from './theme.js';
 import { session } from '../lib/session.js';
+import { aiConfig, saveAIConfig } from '../lib/ai.js';
 
 export const OPTION_SECTIONS = [
   { id: 'general', title: 'General', icon: 'sliders', about: 'How the app starts, what a new workbook looks like, and your name on comments.' },
@@ -136,6 +137,15 @@ export function openOptionsDialog(ctx, { section = 'general' } = {}) {
 
   const button = (label, onclick, words = []) => row([label, ...words], el('div.opt-actions', {}, el('button.btn.btn-outline.btn-sm', { type: 'button', onclick }, label)));
   const note = (textContent) => el('p.opt-note', {}, textContent);
+  /** A field of the AI provider's settings, kept in this browser beside the workbook options. */
+  function aiRow(key, label, hint, { type = 'text', placeholder = '' } = {}) {
+    const id = fieldId('opt-ai');
+    const input = el('input.input.opt-text', { type, id, placeholder, autocomplete: 'off', spellcheck: false });
+    input.value = aiConfig()[key] || '';
+    input.addEventListener('change', () => saveAIConfig({ [key]: input.value.trim() }));
+    return row([label, hint, key], el('div.opt-field', {}, el('label.opt-label', { for: id }, label), input,
+      hint && el('span.opt-hint', { id: `${id}-hint` }, hint)));
+  }
 
   /* ---------- Pages ---------- */
 
@@ -297,6 +307,10 @@ export function openOptionsDialog(ctx, { section = 'general' } = {}) {
       return [
         group('AI features',
           check('aiFeatures', 'Offer AI features', 'The AI assistant, Write a formula with AI and the AI() function send the cells and words you give them to the AI provider you configure here. Off: they are hidden and nothing is sent.')),
+        group('Your AI provider',
+          aiRow('endpoint', 'Endpoint', 'An OpenAI-compatible API address, such as https://api.openai.com/v1.', { placeholder: 'https://api.openai.com/v1' }),
+          aiRow('model', 'Model', 'The model name the provider expects, such as gpt-4o-mini.', { placeholder: 'gpt-4o-mini' }),
+          aiRow('key', 'API key', 'Kept in this browser only, and sent only to that address with your requests.', { type: 'password', placeholder: 'sk-…' })),
       ];
     },
 

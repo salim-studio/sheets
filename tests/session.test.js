@@ -2,49 +2,35 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 let session;
-let writes;
 beforeEach(async () => {
   vi.resetModules();
-  writes = [];
-  vi.stubGlobal('puter', {
-    auth: { isSignedIn: () => true, getUser: async () => ({ username: 'demo' }) },
-    kv: {
-      get: async () => null,
-      set: vi.fn((key, value) => new Promise((resolve) => writes.push({ value, resolve }))),
-    },
-  });
+  localStorage.clear();
   ({ session } = await import('../src/lib/session.js'));
   await session.init();
 });
 afterEach(() => vi.unstubAllGlobals());
 
+const stored = () => JSON.parse(localStorage.getItem('sheets:settings:v1') || 'null');
+
 describe('session settings', () => {
   it('preserves every preference when updates overlap', async () => {
-    const theme = session.setTheme('dark');
-    const locale = session.setLocale('de-DE');
-    await vi.waitFor(() => expect(writes.length).toBeGreaterThan(0));
-    expect(writes[0].value.theme).toBe('dark');
-    writes[0].resolve();
-    await theme;
-    await vi.waitFor(() => expect(writes).toHaveLength(2));
-    writes[1].resolve();
-    await locale;
+    await Promise.all([session.setTheme('dark'), session.setLocale('de-DE')]);
     expect(session.settings).toMatchObject({ theme: 'dark', locale: 'de-DE' });
-    expect(writes[1].value).toMatchObject({ theme: 'dark', locale: 'de-DE' });
+    expect(stored()).toMatchObject({ theme: 'dark', locale: 'de-DE' });
   });
 
-  it('saves rapid theme changes in order and keeps the latest choice visible', async () => {
-    const dark = session.setTheme('dark');
-    const light = session.setTheme('light');
-    await vi.waitFor(() => expect(writes).toHaveLength(1));
+  it('saves rapid theme changes and keeps the latest choice', async () => {
+    await Promise.all([session.setTheme('dark'), session.setTheme('light')]);
     expect(session.settings.theme).toBe('light');
-    writes[0].resolve();
-    await dark;
-    await vi.waitFor(() => expect(writes).toHaveLength(2));
-    expect(session.settings.theme).toBe('light');
-    writes[1].resolve();
-    await light;
-    expect(writes.map(({ value }) => value.theme)).toEqual(['dark', 'light']);
-    expect(session.settings.theme).toBe('light');
+    expect(stored().theme).toBe('light');
+  });
+
+  it('starts with the theme kept from an earlier visit', async () => {
+    localStorage.setItem('sheets:settings:v1', JSON.stringify({ theme: 'dark', locale: 'de-DE' }));
+    vi.resetModules();
+    ({ session } = await import('../src/lib/session.js'));
+    await session.init();
+    expect(session.settings).toMatchObject({ theme: 'dark', locale: 'de-DE' });
+    expect(document.documentElement.dataset.theme).toBe('dark');
   });
 });

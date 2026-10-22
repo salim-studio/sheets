@@ -65,15 +65,15 @@ it('tracks actual cloud saves and copies, skipping failed and unchanged saves', 
   ]);
 });
 
-it('tracks an export only after the Puter picker writes a file', async () => {
-  puter.ui.showSaveFilePicker = vi.fn().mockRejectedValueOnce(new Error('disk full')).mockResolvedValueOnce(null)
-    .mockResolvedValueOnce({ name: 'Renamed private file.csv', path: '/private.csv' });
-  const blob = new Blob(['secret']);
-  await expect(P.saveFileAs(blob, 'Private.csv')).rejects.toThrow('disk full');
-  expect(await P.saveFileAs(blob, 'Private.csv')).toBeNull();
-  expect(plausible).not.toHaveBeenCalled();
-  await P.saveFileAs(blob, 'Private.csv');
-  expect(plausible.mock.calls).toEqual([['Sheets Exported', { props: { format: 'csv', method: 'puter' } }]]);
+it('tracks a Save As download once, with its format and method only', async () => {
+  vi.stubGlobal('URL', { createObjectURL: () => 'blob:export', revokeObjectURL: vi.fn() });
+  vi.useFakeTimers();
+  vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+  try {
+    expect(await P.saveFileAs(new Blob(['secret']), 'Private.csv')).toEqual({ path: null, name: 'Private.csv' });
+    expect(plausible.mock.calls).toEqual([['Sheets Exported', { props: { format: 'csv', method: 'browser' } }]]);
+    vi.runAllTimers();
+  } finally { vi.useRealTimers(); }
 });
 
 it('tracks a browser export after starting the download', () => {
@@ -88,13 +88,17 @@ it('tracks a browser export after starting the download', () => {
 });
 
 it('tracks an AI answer without sending its prompt or reply, skipping failures and empty replies', async () => {
-  window.puter.ai = { chat: vi.fn().mockRejectedValueOnce(new Error('offline'))
-    .mockResolvedValueOnce({ success: false, error: { message: 'quota' } }).mockResolvedValueOnce('')
-    .mockResolvedValueOnce({ message: { content: [{ text: 'Private answer' }] } }) };
+  localStorage.setItem('sheets:ai:v1', JSON.stringify({ endpoint: 'https://ai.test/v1', model: 'test', key: 'key' }));
+  const reply = (content) => new Response(JSON.stringify({ choices: [{ message: { content } }] }), { headers: { 'content-type': 'application/json' } });
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValueOnce(new Error('offline'))
+    .mockResolvedValueOnce(new Response('{}', { status: 500, headers: { 'content-type': 'application/json' } }))
+    .mockResolvedValueOnce(reply(''))
+    .mockResolvedValueOnce(reply('Private answer')));
   await expect(P.aiChat('Private prompt')).rejects.toThrow();
   await expect(P.aiChat('Private prompt')).rejects.toThrow();
   expect(await P.aiChat('Private prompt')).toBe('');
   expect(plausible).not.toHaveBeenCalled();
   expect(await P.aiChat('Private prompt', { feature: 'ask-data' })).toBe('Private answer');
   expect(plausible.mock.calls).toEqual([['AI Interaction', { props: { feature: 'ask-data' } }]]);
+  expect(JSON.stringify(plausible.mock.calls)).not.toContain('Private');
 });

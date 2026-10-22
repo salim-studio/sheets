@@ -1,4 +1,5 @@
 import { optionState } from './option-state.js';
+import { trackEvent } from './analytics.js';
 
 /**
  * The assistant's model: any OpenAI-compatible chat API the user points the
@@ -53,7 +54,10 @@ function authHeaders(config) {
 function readableError(status, body) {
   const message = body?.error?.message || body?.message || (typeof body === 'string' ? body : '');
   const hint = status === 401 ? ' Check the API key in Settings.' : status === 404 ? ' Check the endpoint and model in Settings.' : '';
-  return new Error(`${message || `The AI service answered ${status}`}${hint}`.trim());
+  const error = new Error(`${message || `The AI service answered ${status}`}${hint}`.trim());
+  const code = body?.error?.code || body?.code;
+  if (code) error.code = code;
+  return error;
 }
 
 async function post(config, payload) {
@@ -127,6 +131,7 @@ export async function* aiChatStream(messages, { model, tools, maxTokens } = {}) 
     model: model || config.model,
     messages: openAIMessages(messages),
     stream: true,
+    stream_options: { include_usage: true },
     ...(tools?.length ? { tools, tool_choice: 'auto' } : {}),
     ...(maxTokens ? { max_tokens: maxTokens } : {}),
   };
@@ -137,6 +142,20 @@ export async function* aiChatStream(messages, { model, tools, maxTokens } = {}) 
     throw new Error('Could not reach the AI service. Check your connection and the endpoint in Settings.');
   }
   if (!res.ok) throw readableError(res.status, await res.json().catch(() => null));
+  // A provider that does not stream answers with the whole reply at once.
+  if (!(res.headers?.get?.('content-type') || '').includes('text/event-stream')) {
+    const body = await res.json().catch(() => null);
+    if (!body) throw new Error('The AI service did not answer.');
+    if (body.error) throw readableError(0, body);
+    const reply = body.choices?.[0];
+    const text = textOf(reply?.message?.content);
+    if (text) yield { type: 'text', text };
+    for (const call of reply?.message?.tool_calls || []) {
+      yield { type: 'tool', id: call.id || `call_${crypto.randomUUID().slice(0, 8)}`, name: call.function?.name, input: parseArgs(call.function?.arguments) };
+    }
+    if (reply?.finish_reason === 'length' || (maxTokens && (body.usage?.completion_tokens ?? body.usage?.output_tokens) >= maxTokens)) yield { type: 'cut' };
+    return;
+  }
   if (!res.body?.getReader) throw new Error('The AI service cannot stream in this browser.');
 
   const reader = res.body.getReader();
@@ -188,6 +207,8 @@ export async function* aiChatStream(messages, { model, tools, maxTokens } = {}) 
           let event;
           try { event = JSON.parse(data); } catch { continue; }
           if (event.error) throw readableError(0, event);
+          const used = event.usage?.output_tokens ?? event.usage?.completion_tokens;
+          if (maxTokens && used != null && used >= maxTokens) cut = true;
           for (const part of handle(event)) yield part;
         }
       }
@@ -207,4 +228,4 @@ function parseArgs(raw) {
   try { return JSON.parse(raw); } catch { return { __unreadable: raw }; }
 }
 
-function trackAI(feature) { void feature; }
+function trackAI(feature) { trackEvent('AI Interaction', { feature }); }

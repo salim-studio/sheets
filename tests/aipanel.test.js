@@ -227,7 +227,7 @@ describe('assistant panel', () => {
     expect(reply.querySelector('.cell-ref').textContent).toBe('A3');
     expect(reply.getAttribute('aria-busy')).toBeNull();
     expect(plausible.mock.calls).toEqual([['AI Interaction', { props: { feature: 'assistant', changed: true } }]]);
-    expect(P.aiChatStream.mock.calls[0][1].model).toBe('claude-opus-5-5');
+    expect(P.aiChatStream.mock.calls[0][1].model).toBeNull(); // the model comes from the AI settings
     const undo = reply.querySelector('.ai-undo');
     expect(undo.disabled).toBe(false);
     undo.click();
@@ -730,7 +730,7 @@ describe('assistant panel', () => {
       .mockImplementationOnce(() => stream([{ type: 'text', text: 'Back.' }]));
     await send('hello');
     const alert = panel.el.querySelector('[role="alert"]');
-    expect(alert.textContent).toContain('allowance');
+    expect(alert.textContent).toContain('credit');
     expect(plausible).not.toHaveBeenCalled();
     [...alert.querySelectorAll('button')].find((b) => b.textContent === 'Try again').click();
     for (let i = 0; i < 10; i++) await new Promise((r) => setTimeout(r, 0));
@@ -890,8 +890,8 @@ describe('failures in plain words', () => {
     ['prompt is too long: 250000 tokens > 200000 maximum', /too long/],
     ['Rate limit exceeded, retry in 20s', /busy/],
     ['429 Too Many Requests', /busy/],
-    ['insufficient_funds', /allowance/],
-    ['Usage limit reached for this month', /allowance/],
+    ['insufficient_funds', /quota|credit/],
+    ['Usage limit reached for this month', /quota|credit/],
     ['Failed to fetch', /reached/],
     ['context_length_exceeded', /too long/],
     ['The input token count (1200000) exceeds the maximum number of tokens allowed (1048576).', /too long/],

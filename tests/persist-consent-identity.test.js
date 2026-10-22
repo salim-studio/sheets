@@ -13,12 +13,12 @@ afterEach(() => { delete globalThis.puter; });
 
 const consentKey = (path) => `${accountStorageKey('sheets:external')}${path}`;
 /** A file at `path`; placed again, it is another file with an id of its own. */
+let placed = 0;
 async function place(path) {
   const blob = await workbookToXlsx(new Workbook());
-  mock.fs.set(path, { blob, size: blob.size, modified: 1 });
+  mock.fs.set(path, { blob, size: blob.size, modified: 1, uid: `file-${++placed}` });
 }
 const opensTrusted = async (path) => (await Doc.fromPath(path)).wb.externalAllowed;
-const unreachableStore = () => { puter.kv.get = async () => { throw new Error('offline'); }; };
 
 // The decision this browser kept by path answered for whatever file was at that path: a file
 // allowed to load outside content, replaced outside the app by another at the same address,
@@ -32,14 +32,12 @@ it('does not trust a different file that took the place of an allowed one', asyn
   expect(await opensTrusted(path)).toBe(true);
   await place(path);
   expect(await opensTrusted(path)).toBe(false);
-  expect(await puter.kv.get(`sheets:external:v1:${mock.fs.get(path).uid}`)).toBeNull();
 });
 
-it('honours the record this browser kept when the store cannot be reached, for the same file only', async () => {
+it('honours the record this browser kept for the same file only', async () => {
   const path = 'Desktop/Report.xlsx';
   await place(path);
   (await Doc.fromPath(path)).allowExternal();
-  unreachableStore();
   expect(await opensTrusted(path)).toBe(true);
   await place(path);
   expect(await opensTrusted(path)).toBe(false);
@@ -52,9 +50,6 @@ it('keeps honouring a blocking record kept by path alone, but asks again before 
   await place('Desktop/Other.xlsx');
   localStorage.setItem(consentKey('Desktop/Other.xlsx'), '1');
   expect(await opensTrusted('Desktop/Other.xlsx')).toBe(false);
-  // Unless the store cannot say otherwise: then the record stands, as it did when it was the only copy.
-  unreachableStore();
-  expect(await opensTrusted('Desktop/Other.xlsx')).toBe(true);
 });
 
 it('carries the file id along when the record follows a rename', async () => {
@@ -62,6 +57,5 @@ it('carries the file id along when the record follows a rename', async () => {
   const doc = await Doc.fromPath('Desktop/Shared.xlsx');
   doc.allowExternal();
   expect(await doc.rename('Renamed')).toBeNull();
-  unreachableStore();
   expect(await opensTrusted('Desktop/Renamed.xlsx')).toBe(true);
 });

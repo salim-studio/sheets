@@ -5715,6 +5715,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   const quickAnalysis = createQuickAnalysis({ ...ctx, run });
   const errorTag = createErrorSmartTag({ ...ctx, run, focusFormulaBar: () => formulaBar.focusInput(), refreshErrorTag: () => errorTag.sync() });
   // Threaded comments: the card beside a cell and the Comments pane (Review ▸ Comments).
+  const comments = createComments(ctx, { author: () => displayUserName(session.user?.username) || 'You', keepFocus: () => keepFocus(),
+    refused: (what) => refusedByProtection(what), onPaneToggle: () => notify() });
   comments.attach();
   ctx.comments = comments;
   ctx.subscribe(() => comments.sync());

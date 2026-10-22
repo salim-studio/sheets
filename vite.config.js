@@ -20,6 +20,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.js'],
+    setupFiles: ['tests/setup.js'],
     // The timeout catches a hang, not a slow machine: a few stress tests (whole-sheet pivots,
     // deeply nested clipboard HTML) take several seconds alone and longer beside 2,000 other files.
     testTimeout: 30000,
