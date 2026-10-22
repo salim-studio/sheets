@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { editorView } from '../src/views/editor.js';
 import { Doc } from '../src/lib/doc.js';
 import { session } from '../src/lib/session.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import { closeMenu } from '../src/ui/menu.js';
 
 const PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';

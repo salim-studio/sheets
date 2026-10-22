@@ -8,7 +8,7 @@ import { openModal, fieldAlert, promptDialog } from './modal.js';
 import { openMenu } from './menu.js';
 import { toast } from './toast.js';
 import { icon } from './icons.js';
-import * as P from '../lib/puter.js';
+import * as P from '../lib/platform.js';
 import { workbookFromFile, detectDelimiter, decodeText } from '../core/io.js';
 import { parseCellRef, colName } from '../core/cell.js';
 import {
@@ -16,7 +16,7 @@ import {
   displayValue, TYPE_MARKS, TYPE_LABELS, queryById, loadedTable,
 } from '../core/queries.js';
 
-/** What a query may reach outside the workbook through: the web (through Puter), the drive, and the file readers. */
+/** What a query may reach outside the workbook through: the web, the app drive, and the file readers. */
 export function queryIo(ctx) {
   return {
     fetchBytes: (url) => P.fetchBytes(url),
@@ -55,7 +55,7 @@ export function cellNode(v, type) {
   return td;
 }
 
-/** Pick a file: the drive's Open dialog inside Puter (the path lets Refresh read it again), else the browser's. */
+/** Pick a file from this device (the copy keeps a path, so Refresh can read it again). */
 async function pickFile(accept) {
   if (P.canPickFiles?.()) {
     const picked = await P.pickFile({ accept });

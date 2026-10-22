@@ -6,7 +6,7 @@ import { Doc } from '../src/lib/doc.js';
 import { saveDraft, loadDraft, draftKey } from '../src/lib/drafts.js';
 import { accountStorageKey } from '../src/lib/account-storage.js';
 import { listVersions, saveVersion } from '../src/lib/versions.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import { Workbook } from '../src/core/workbook.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 import { installMockPuter } from './helpers/mock-puter.js';

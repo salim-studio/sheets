@@ -107,18 +107,18 @@ export function mentionRuns(text, mentions) {
   return runs;
 }
 
-/** Whether a mention names this person (a Puter user, by username or by address). */
+/** Whether a mention names this person (by username or by address). */
 export function mentionIsOf(m, { username = '', email = '' } = {}) {
   if (!m) return false;
   if (username && m.user && m.user.toLowerCase() === String(username).toLowerCase()) return true;
   if (email && m.email && m.email === String(email).toLowerCase()) return true;
-  return !!username && !!m.email && m.email === `${String(username).toLowerCase()}@puter.email`;
+  return !!username && m.user === username;
 }
 
-/** Where a mention's email goes: their address, else their Puter mailbox; '' when neither is known. */
+/** Where a mention's email goes: their address, else '' when none is known. */
 export function mentionAddress(m) {
   if (m?.email) return m.email;
-  return m?.user ? `${m.user.toLowerCase()}@puter.email` : '';
+  return m?.email || '';
 }
 
 /** The people a comment mentions, once each (by username or address), in the order first mentioned. */

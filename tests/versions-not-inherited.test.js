@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 import { Doc } from '../src/lib/doc.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import { listVersions, saveVersion, readVersion, moveVersions, versionsFolder } from '../src/lib/versions.js';
 import { workbookFromFile } from '../src/core/io.js';
 import { Workbook } from '../src/core/workbook.js';

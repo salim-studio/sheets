@@ -80,11 +80,6 @@ export function menubarMenus(f = {}) {
     i('Save', 'save', 'save', null, { shortcut: `${M}+S` }),
     i('Save a copy…', 'duplicate', 'saveAs'),
     i('Rename…', 'pencil', 'rename'),
-    (f.share || f.mail) && sub('Share', 'share', [
-      f.share && i('Share with people…', 'share', 'share'),
-      f.mail && i('Send a copy…', 'sendCopy', 'sendCopy'),
-      f.mail && f.share && i('Send a link…', 'sendLink', 'sendLink'),
-    ]),
     i('Version history…', 'clock', 'versions'),
     i('Show changes', 'showChanges', 'showChanges', null, { checked: !!f.changesPane }),
     i('Document details…', 'info', 'docInfo'),
@@ -265,13 +260,11 @@ export function menubarMenus(f = {}) {
     i('Sparklines…', 'chartLine', 'insertSparklines'),
     sub('Image', 'image', [
       i('From this device…', 'image', 'insertImage'),
-      f.pick && i('From Puter…', 'folderOpen', 'insertImagePuter'),
       i('From a URL…', 'external', 'insertImageUrl'),
       sep,
       // The picture as the active cell's value, sized to the cell: it moves, sorts and copies with it.
       sub('Place in Cell', 'placeInCell', [
         i('From this device…', 'image', 'insertImage', 'cell'),
-        f.pick && i('From Puter…', 'folderOpen', 'insertImagePuter', 'cell'),
         i('From a URL…', 'external', 'insertImageUrl', 'cell'),
       ]),
     ]),

@@ -6,7 +6,7 @@
 import { el, fieldId } from './dom.js';
 import { openModal, fieldAlert, confirmDialog } from './modal.js';
 import { toast } from './toast.js';
-import * as P from '../lib/puter.js';
+import * as P from '../lib/platform.js';
 import * as S from '../core/selection.js';
 import { colName } from '../core/cell.js';
 import { quoteSheet } from '../core/refs.js';

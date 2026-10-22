@@ -2,13 +2,13 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { editorView } from '../src/views/editor.js';
 import { Doc } from '../src/lib/doc.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import * as notifications from '../src/ui/toast.js';
 
 // Inside the Puter app an export goes through Puter's save dialog. When that write failed
 // (out of space, offline) the failure was swallowed, so the export seemed to do nothing; a
 // browser download reported the same failure. Both say what went wrong now.
-vi.mock('../src/lib/puter.js', async (importOriginal) => ({
+vi.mock('../src/lib/platform.js', async (importOriginal) => ({
   ...(await importOriginal()),
   isApp: () => true,
   canSaveFiles: () => true,

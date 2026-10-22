@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { appOptions, appOption, setAppOptions, resetAppOptions, onAppOptions, reloadAppOptions, normalizeOption, normalizeOptions, OPTION_DEFAULTS, displayUserName } from '../src/lib/app-options.js';
 import { installAppOptions } from '../src/lib/apply-options.js';
 import { parseInput, twoDigitYearCutoff, expandTwoDigitYear, setTwoDigitYearCutoff } from '../src/core/format.js';
-import { canAI } from '../src/lib/puter.js';
+import { canAI } from '../src/lib/platform.js';
 import { autoSaveEnabled } from '../src/lib/doc.js';
 
 function memoryStorage() {

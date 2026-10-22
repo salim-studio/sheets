@@ -2,16 +2,13 @@
  * The app's own addresses. Documents open at #/edit/<path>; adding
  * ?range=Sheet!A1:B9 opens the file with those cells selected, which is what
  * "Copy link to this range" hands out. #/file/<uid> opens a file by its id,
- * which is what a shared sheets's link hands out: the people it is shared
- * with reach it at an address of their own, not at the owner's path; with
- * ?range= it opens at those cells (a comment's link in a mention email).
+ * wherever it lives now; with ?range= it opens at those cells.
  */
 
 import { quoteSheet } from '../core/refs.js';
 import { rangeName } from '../core/cell.js';
-import { parseLiveHash } from '../collab/protocol.js';
 
-/** The route a location hash names: { route: 'home' | 'new' | 'sample' | 'template' | 'edit' | 'file' | 'live', path?, id?, range?, server?, room?, token? }. */
+/** The route a location hash names: { route: 'home' | 'new' | 'sample' | 'template' | 'edit' | 'file', path?, id?, range? }. */
 export function parseAppHash(hash) {
   const h = String(hash || '').replace(/^#\/?/, '');
   const q = h.indexOf('?');
@@ -28,11 +25,6 @@ export function parseAppHash(hash) {
     }
     if (base === 'sample') return { route: 'sample' };
     if (base.startsWith('template/')) return { route: 'template', id: decodeURIComponent(base.slice(9)) };
-    // A shared workbook: #/live/<room>?server=…&invite=… (see collab/protocol.js).
-    if (base.startsWith('live/')) {
-      const live = parseLiveHash(h.startsWith('#') ? h : `#/${h}`);
-      if (live) return { route: 'live', ...live };
-    }
     if (base.startsWith('file/')) {
       const id = decodeURIComponent(base.slice(5));
       if (id) return { route: 'file', id, range: params.get('range') || null };

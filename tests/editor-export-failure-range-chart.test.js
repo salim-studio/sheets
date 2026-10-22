@@ -2,13 +2,13 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { editorView } from '../src/views/editor.js';
 import { Doc } from '../src/lib/doc.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import * as notifications from '../src/ui/toast.js';
 import { closeMenu } from '../src/ui/menu.js';
 
 // The sheet exports say why Puter's save failed; the selection-as-CSV and chart exports still
 // swallowed the failure, so they seemed to do nothing.
-vi.mock('../src/lib/puter.js', async (importOriginal) => ({
+vi.mock('../src/lib/platform.js', async (importOriginal) => ({
   ...(await importOriginal()),
   isApp: () => true,
   canSaveFiles: () => true,

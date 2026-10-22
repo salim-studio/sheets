@@ -2,7 +2,7 @@ import { beforeEach, expect, it, vi } from 'vitest';
 import { memoryStorage } from './helpers/memory-storage.js';
 
 const drive = vi.hoisted(() => ({ files: new Map(), offline: false }));
-vi.mock('../src/lib/puter.js', () => ({
+vi.mock('../src/lib/platform.js', () => ({
   inAppFolder: (path) => /^Sheets\/[^/]+$/.test(path) || /^\/nj\/AppData\/app\/Sheets\/[^/]+$/.test(path),
   inTrash: (path) => /^\/[^/]+\/Trash(\/|$)/.test(path),
   statByUid: async (uid) => {

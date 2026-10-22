@@ -144,15 +144,9 @@ import { openAppMenu, openLocaleDialog, openAbout, renderAccountButton } from '.
 import { createMenubar, SPECIAL_KINDS } from '../ui/menubar.js';
 import { paletteCommands, openCommandPalette } from '../ui/palette.js';
 import { openVersionHistory } from '../ui/versions.js';
-import { openShareDialog } from '../ui/share.js';
-import { openSendCopyDialog, openSendLinkDialog } from '../ui/send-mail.js';
-import { createMentionNotifier, createMentionAlerts } from '../ui/mention-notify.js';
-import { createMailer } from '../lib/mail.js';
-import { createPeopleBar, peopleHere, roomStatus } from '../ui/coauthor.js';
-import { mapLine, mapGap } from '../collab/ops.js';
 import { openShortcuts } from '../ui/shortcuts.js';
 import { session } from '../lib/session.js';
-import * as P from '../lib/puter.js';
+import * as P from '../lib/platform.js';
 import { trackEvent } from '../lib/analytics.js';
 import { VIEW_ONLY, autoSaveEnabled } from '../lib/doc.js';
 import { cellName, colName, normalizeRange, rangeName, parseRange, parseCellRef, parseKey } from '../core/cell.js';
@@ -198,7 +192,7 @@ const MAX_FORMAT_CELLS = 20000;
 // Clipboard height can exceed JavaScript's argument limit, even when the
 // cells ultimately pasted are clipped to the sheet's supported dimensions.
 const clipboardWidth = (rows) => rows.reduce((width, row) => Math.max(width, row.length), 0);
-export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importFile, openLive = null, initialRange = null, leaveDialog = null }) {
+export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importFile, initialRange = null, leaveDialog = null }) {
   let destroyed = false;
   let palette = null; // the open command palette, closed with the view
   const { wb } = doc;
@@ -209,7 +203,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   wb.addEventListener('change', syncChartTheme);
   // The app's options (File ▸ Options): applied before anything reads them, AI features among them.
   installAppOptions();
-  // AI() formulas ask Puter's AI; without the SDK, or with AI features turned off in the options, they show #N/A.
+  // AI() formulas ask the configured model; without a key, or with AI features turned off in the options, they show #N/A.
   // TRANSLATE and DETECTLANGUAGE: the same AI, with the reply tidied to just the answer. Review ▸ Translate asks the same way.
   const aiTranslate = async (prompt) => String(await P.aiChat(prompt, { feature: 'translate' })).trim().replace(/^["'\u201c\u2018]+|["'\u201d\u2019]+$/g, '');
   const setAiProviders = () => {
@@ -231,7 +225,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     if (!/^https?:\/\/\S+$/i.test(text)) return 'Enter a web address starting with http:// or https://';
     return (P.isPublicHttpUrl?.(text) ?? true) ? null : NOT_PUBLIC;
   };
-  // IMPORTDATA: a CSV or TSV from the web, through Puter's fetch.
+  // IMPORTDATA: a CSV or TSV from the web.
   wb.setAsyncProvider('IMPORTDATA', async (text) => {
     const [url, delimiter] = JSON.parse(text);
     let body;
@@ -297,8 +291,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     });
   };
 
-  // Email from this workbook: Send a copy, Send a link, and @mention notes (lib/mail.js).
-  const mailer = createMailer();
 
   /* ---------- Context shared by the components ---------- */
 
@@ -1244,7 +1236,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     const cell = wb.getCell(sheetId, r, c);
     const sheet = wb.sheet(sheetId);
     return {
-      templates: !!templateDoc, pick: P.canPickFiles(), share: P.canShare(), mail: mailer.available(), ai: P.canAI(), aiPanel: !!aiPanel?.isOpen, saving: P.isApp() && P.canSaveFiles(),
+      templates: !!templateDoc, pick: P.canPickFiles(), ai: P.canAI(), aiPanel: !!aiPanel?.isOpen, saving: P.canSaveFiles(),
       fullscreen: !!document.fullscreenEnabled, isFullscreen: isFullscreen(), filter: !!wb.filterAt(sheetId, grid.active.r, grid.active.c),
       hasFormula: cell?.f != null, hasTable: !!wb.tableAt(sheetId, r, c), table: wb.tableAt(sheetId, r, c),
       tableFilterButton: tableFilterButtonOn(wb, sheetId, wb.tableAt(sheetId, r, c)), pivotReport: !!nativePivotAt(wb, sheetId, r, c), hasNote: !!wb.getNote(sheetId, r, c), hasLink: !!wb.linkAt(sheetId, r, c),
@@ -2640,7 +2632,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       case 'docInfo': {
         if (!committed()) return;
         const st = doc.path ? await P.statFile(doc.path).catch(() => null) : null;
-        if (destroyed) return; // the editor was left while Puter answered
+        if (destroyed) return; // the editor was left while the model answered
         let cells = 0;
         let formulas = 0;
         const rows = wb.sheets.map((sh) => {
@@ -2697,34 +2689,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         openVersionHistory(doc, { onRestored: () => { grid.refresh(); keepFocus(); } });
         return;
       }
-      case 'sendCopy': {
-        // Email the workbook as it is now, from the signed-in user (ui/send-mail.js).
-        if (!committed()) return;
-        if (session.signedOut && (!await session.signIn() || destroyed)) return;
-        openSendCopyDialog({ doc, sheetId: grid.sheetId, range: S.isSingle(grid.selection) ? null : { ...grid.range }, mailer, user: session.user, onClose: () => keepFocus() });
-        return;
-      }
-      case 'sendLink': {
-        if (!await savedForSharing()) return;
-        openSendLinkDialog({ doc, mailer, user: session.user, onClose: () => keepFocus() });
-        return;
-      }
-      case 'share': {
-        if (!await savedForSharing()) return;
-        openShareDialog({
-          path: doc.path, name: doc.name, uid: doc.uid, doc: openLive ? doc : null,
-          onEmailLink: mailer.available() ? () => run('sendLink') : null,
-          // Editing together started (or stopped): the workbook opens again as the room's (or as the file).
-          onLive: async (room) => {
-            if (destroyed) return;
-            if (room) openLive?.({ ...room, path: doc.path, uid: doc.uid });
-            else openPath(doc.path, { reload: true });
-          },
-        });
-        return;
-      }
       case 'importUrl': {
-        // A file on the web (a published CSV, an .xlsx on a server) fetched through Puter.
+        // A file on the web (a published CSV, an .xlsx on a server), fetched here.
         if (session.signedOut && (!await session.signIn() || destroyed)) return;
         const url = await promptDialog({
           title: 'Import from URL', label: 'Address of a .csv, .tsv, .xlsx, or .ods file', placeholder: 'https://example.com/data.csv', confirmLabel: 'Import',
@@ -2910,7 +2876,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         return;
       }
       case 'copySheetTo': {
-        // Copying reads and writes other files on Puter; the document itself stays open, so this is not a leave.
+        // Copying reads and writes other files in the app drive; the document itself stays open, so this is not a leave.
         if (session.signedOut && (!await session.signIn() || destroyed)) return;
         if (!committed()) return;
         openCopySheetDialog(ctx, arg || grid.sheetId);
@@ -3785,34 +3751,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
         }
         replaceImageId = id; imageIntoCell = false; if (replaceImageId) imageInput.click(); return;
       }
-      case 'insertImagePuter': {
-        if (!P.canPickFiles() || !committed()) return;
-        if (refusedByProtection('insert images')) return;
-        // The picker and file read may finish after the user has moved to another cell or sheet.
-        const target = { sheetId: grid.sheetId, anchor: { ...grid.active }, inCell: arg === 'cell' };
-        if (session.signedOut && (!await session.signIn() || destroyed)) return;
-        const picked = await P.pickFile({ accept: ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'] });
-        if (destroyed) return;
-        if (!picked) { keepFocus(); return; }
-        if (picked.item?.size > MAX_IMAGE_BYTES) {
-          toast(`${picked.name} is too large to put on the sheet (over ${MAX_IMAGE_BYTES / (1024 * 1024)} MB)`, { icon: 'info', duration: 3500 });
-          keepFocus(); return;
-        }
-        try {
-          const bytes = await P.readFile(picked.path);
-          if (destroyed || !wb.sheet(target.sheetId)) return;
-          const type = sniffImageType(bytes);
-          if (!type) { toast('That file is not a supported image. Choose a PNG, JPEG, GIF, WebP, or SVG', { icon: 'alert', duration: 4000 }); keepFocus(); return; }
-          await insertImageFile(new File([bytes], picked.name, { type }), target);
-        } catch (e) {
-          if (destroyed) return;
-          toast(`Could not load that image from Puter: ${e?.message || e?.error?.message || 'unknown error'}`, { icon: 'alert', duration: 4000 });
-          keepFocus();
-        }
-        return;
-      }
       case 'insertImageUrl': {
-        // A picture from the web, fetched through Puter so it lands in the file like an uploaded one.
+        // A picture from the web, fetched so it lands in the file like an uploaded one.
         const url = await promptDialog({
           title: arg === 'cell' ? 'Place picture in cell from URL' : 'Insert image from URL', label: 'Address of a PNG, JPEG, GIF, WebP, or SVG image', placeholder: 'https://example.com/logo.png', confirmLabel: arg === 'cell' ? 'Place in Cell' : 'Insert',
           validate: urlProblem,
@@ -5341,8 +5281,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       return saved;
     } catch (e) {
       if (destroyed) return false;
-      if (!leaving) { toast('Could not save to Puter. Your changes are still open', { icon: 'alert', duration: 5000 }); return false; }
-      // Puter would not take the save (offline, out of space). The draft
+      if (!leaving) { toast('Could not save the sheet. Your changes are still open', { icon: 'alert', duration: 5000 }); return false; }
+      // The write failed (offline, out of space). The draft
       // written above keeps the edits on this device, so a save that keeps
       // failing must not keep the user in the editor for ever.
       if (abandoned) return true;
@@ -5387,8 +5327,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const why = reason ? ` (${String(reason).replace(/\.$/, '')})` : '';
       const content = el('div', {},
         el('p.modal-text', {}, kept
-          ? `Puter could not save this sheet${why}. Your changes are kept in this browser, and saving is offered again when you open it here.`
-          : `Puter could not save this sheet${why}, and this browser could not keep a copy of your changes either. Leaving now discards them.`),
+          ? `The sheet could not be saved${why}. Your changes are kept in this browser, and saving is offered again when you open it here.`
+          : `The sheet could not be saved${why}, and this browser could not keep a copy of your changes either. Leaving now discards them.`),
         el('div.row.row-end', { style: { flexWrap: 'wrap' } },
           el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Keep editing'),
           el(`button.btn${kept ? '' : '.btn-danger'}`, { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, kept ? 'Leave' : 'Leave without saving'),
@@ -5412,7 +5352,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
 
   async function saveNow() {
     if (grid.editing && !grid.commitEdit()) return;
-    // Saving needs a session; Puter's own dialog asks for it, then the save goes ahead.
     if (session.signedOut && (!await session.signIn() || destroyed)) return;
     try {
       const saved = await doc.save();
@@ -5432,26 +5371,9 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     });
     if (name == null || name === doc.name) return;
     const err = await doc.rename(name);
-    if (destroyed) return; // the editor was left while Puter renamed; the next screen keeps its own title
+    if (destroyed) return; // the editor was left while the rename ran; the next screen keeps its own title
     if (err) toast(err, { icon: 'alert' });
     else refreshTitle();
-  }
-
-  /**
-   * Sharing hands out a file: an unsaved sheet is saved first, as for a link to a range. Saved by hand,
-   * not flushed: a flush has nothing to write for a blank book that was never changed. A file that is not an
-   * .xlsx (a .csv opened from the drive) is saved as one first, where its edits go from now on: shared as it
-   * was, it would never see them. Resolves whether there is a file to share now.
-   */
-  async function savedForSharing() {
-    if (grid.editing && !grid.commitEdit()) return false;
-    if (session.signedOut && (!await session.signIn() || destroyed)) return false;
-    if (!doc.path || !doc.isXlsxPath) {
-      try { await doc.save(); } catch (e) { toast(e?.message || 'Could not save the sheets', { icon: 'alert', duration: 4000 }); return false; }
-      if (destroyed) return false;
-    }
-    if (!doc.path) { toast('Save the sheets first, then share it', { icon: 'info' }); return false; }
-    return true;
   }
 
   async function saveAs() {
@@ -5459,7 +5381,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     if (session.signedOut && (!await session.signIn() || destroyed)) return;
     const name = await promptDialog({
       title: 'Save a copy', label: 'Name', value: `${doc.name} copy`, confirmLabel: 'Save copy',
-      hint: `Saved to ${P.FOLDER}/ in your cloud. You will continue in the copy.`,
+      hint: `Saved to ${P.FOLDER}/ on this device. You will continue in the copy.`,
       validate: (v) => (fileBaseName(v) ? null : 'Enter a name'),
     });
     if (name == null) return;
@@ -5476,13 +5398,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const perSheet = kind === 'csv' || kind === 'tsv' || kind === 'html';
       const blob = kind === 'csv' ? doc.toCsvBlob(grid.sheetId) : kind === 'tsv' ? doc.toTsvBlob(grid.sheetId) : kind === 'html' ? doc.toHtmlBlob(grid.sheetId) : kind === 'ods' ? await doc.toOdsBlob() : await doc.toXlsxBlob();
       const name = perSheet ? `${P.sanitizeName(doc.name)}${wb.sheets.length > 1 ? ` - ${sheet.name}` : ''}.${kind}` : `${P.sanitizeName(doc.name)}.${kind === 'ods' ? 'ods' : 'xlsx'}`;
-      if (P.isApp() && P.canSaveFiles()) {
-        // Puter's save dialog is not awaited (a cancelled one never settles), so its failure is reported from here.
-        P.saveFileAs(blob, name).then((saved) => saved && toast(`Saved ${saved.name}`, { icon: 'check' }))
-          .catch((e) => { if (!destroyed) toast(`Could not export: ${e?.message || 'unknown error'}`, { icon: 'alert' }); });
-      } else {
-        P.downloadBlob(blob, name);
-      }
+      P.downloadBlob(blob, name);
     } catch (e) {
       toast(`Could not export: ${e?.message || 'unknown error'}`, { icon: 'alert' });
     }
@@ -5649,78 +5565,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
 
   /* ---------- Top bar and menu bar ---------- */
 
-  /* ---------- Editing together (a shared workbook; see collab/ and coauthor.js) ---------- */
-
-  const room = doc.collab || null;
-  const FLAG_MS = 4000;
-  /** Show where someone is: their sheet, with their selection. */
-  const jumpTo = (person) => {
-    if (!person.sheet || !wb.sheet(person.sheet)) { toast(`${person.name} has not picked a cell yet`, { icon: 'info', duration: 2200 }); return; }
-    if (grid.editing && !grid.commitEdit()) return;
-    if (wb.activeSheetId !== person.sheet) wb.setActiveSheet(person.sheet);
-    const target = person.sel || { r1: person.active.r, c1: person.active.c, r2: person.active.r, c2: person.active.c };
-    grid.setRanges([target], person.active || { r: target.r1, c: target.c1 });
-    statusBar?.announce(`At ${person.name}'s selection`);
-    keepFocus();
-  };
-  const peopleBar = room ? createPeopleBar({ client: room, wb, jump: jumpTo }) : null;
-  let lastPresence = '';
-  const sharePresence = () => {
-    if (!room) return;
-    const state = { sheet: grid.sheetId, sel: grid.range, active: grid.active, editing: grid.editing };
-    const key = JSON.stringify(state);
-    if (key === lastPresence) return;
-    lastPresence = key;
-    room.setPresence(state);
-  };
-  // A person's name flag shows while they move or type, then shrinks to a tab in their colour, so names do not cover the cells.
-  const movedAt = new Map(); // session → { key, at }
-  let flagTimer = null;
-  const showPeople = () => {
-    if (!room || destroyed) return;
-    const now = Date.now();
-    const people = peopleHere(room).map((p) => {
-      const key = JSON.stringify([p.sheet, p.sel, p.active, p.editing]);
-      const seen = movedAt.get(p.id);
-      if (seen?.key !== key) movedAt.set(p.id, { key, at: now });
-      return { ...p, quiet: !p.editing && now - movedAt.get(p.id).at > FLAG_MS };
-    });
-    peopleBar.update();
-    grid.setPeers(people);
-    clearTimeout(flagTimer);
-    const next = Math.min(...people.filter((p) => !p.quiet && !p.editing).map((p) => movedAt.get(p.id).at + FLAG_MS - now + 20));
-    if (Number.isFinite(next)) flagTimer = setTimeout(showPeople, Math.max(50, next));
-    const bySheet = new Map();
-    for (const p of people) if (p.sheet) bySheet.set(p.sheet, [...(bySheet.get(p.sheet) || []), { name: p.name, color: p.color }]);
-    sheetTabs.setPeers(bySheet);
-  };
-  const onRoomRefused = (e) => toast(e.detail?.message || 'That change could not be shared', { icon: 'alert', duration: 4000 });
-  const onRoomRole = (e) => toast(e.detail?.role === 'viewer' ? 'You can now only view this shared workbook' : 'You can now edit this shared workbook', { icon: 'info', duration: 4000 });
-  const onRoomClosed = (e) => toast(`${e.detail?.message || 'This shared workbook is no longer available'} What you see stays open; use File > Save a copy to keep it.`, { icon: 'alert', duration: 8000 });
-  // Rows or columns someone else inserted, deleted or moved carry this person's selection along with the cells.
-  const onRoomRemote = (e) => {
-    const ops = (e.detail?.ops || []).filter((op) => op.s === grid.sheetId && op.axis);
-    if (!ops.length || grid.editing) return;
-    const map = (range) => {
-      let { r1, c1, r2, c2 } = range;
-      for (const op of ops) {
-        const along = op.axis === 'row' ? ['r1', 'r2'] : ['c1', 'c2'];
-        const box = { r1, c1, r2, c2 };
-        let a = mapLine(op, op.s, op.axis, box[along[0]]), b = mapLine(op, op.s, op.axis, box[along[1]]);
-        if (a < 0 || b < 0) { a = Math.max(0, mapGap(op, op.s, op.axis, box[along[0]])); b = Math.max(a, mapGap(op, op.s, op.axis, box[along[1]] + 1) - 1); }
-        if (op.t === 'insert' && box[along[0]] < op.at && box[along[1]] >= op.at) b = box[along[1]] + op.n;
-        box[along[0]] = a; box[along[1]] = Math.max(a, b);
-        ({ r1, c1, r2, c2 } = box);
-      }
-      return { r1, c1, r2, c2 };
-    };
-    const ranges = grid.ranges.map(map);
-    const act = map({ r1: grid.active.r, c1: grid.active.c, r2: grid.active.r, c2: grid.active.c });
-    grid.setRanges(ranges, { r: act.r1, c: act.c1 });
-  };
-  const onRoomOnline = () => room?.resume();
-  const onRoomVisible = () => { if (document.visibilityState === 'visible') room?.resume(); };
-
   // The tooltip carries the whole name: the title is cut short with an ellipsis when the window is narrow.
   const titleTip = () => `Rename "${doc.name}"`;
   // A name in a right-to-left script is laid out that way, its number at its own end, as a cell is.
@@ -5762,32 +5606,10 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     el('div.topbar-actions', {}, searchBtn,
       // The Comments button beside Share: the sheet's comment threads in the Comments pane.
       el('button.icon-btn.desktop-only.topbar-comments', { type: 'button', html: icon('chat', 20), 'aria-label': 'Comments', title: 'Comments', onclick: () => run('toggleComments') }),
-      peopleBar?.el,
-      ...(P.canShare() ? [el('button.btn.share-btn.desktop-only', { type: 'button', title: 'Share this sheet', onclick: () => run('share') },
-      el('span', { html: icon('share', 16) }), el('span', {}, 'Share'))] : []), avatar));
+      avatar));
   const header = el('header.editor-header', {}, topbar);
 
   function refreshStatus() {
-    if (room) {
-      const [ic, label, title] = roomStatus(room);
-      status.disabled = true;
-      status.className = `save-status shared ${room.status.state}`;
-      status.replaceChildren(el('span', { html: icon(ic, 14, 2), className: ic === 'spinner' ? 'spin' : '' }), el('span.save-label', {}, label));
-      status.title = title;
-      return;
-    }
-    if (session.signedOut) {
-      // Nowhere to write yet: the pill invites the sign-in that saving needs. The edits are normally copied into
-      // this browser's draft meanwhile; when they could not be (the book outgrew local storage), it says so here
-      // too, since a closed tab would then lose them.
-      const noCopy = doc.status === 'unsaved' && doc.draftKept === false;
-      status.className = 'save-status signed-out';
-      status.disabled = false;
-      status.replaceChildren(el('span', { html: icon('cloudOff', 14, 2) }), el('span.save-label', {}, noCopy ? 'Sign in to save. This browser could not keep a copy' : 'Sign in to save'));
-      status.title = noCopy ? 'Not saved, and this browser could not keep a copy of the changes. Sign in to Puter to save this sheet to your own cloud' : 'Not saved. Sign in to Puter to save this sheet to your own cloud';
-      status.setAttribute('aria-label', noCopy ? 'Not saved, and this browser could not keep a copy. Sign in to Puter to save this sheet' : 'Not saved. Sign in to Puter to save this sheet');
-      return;
-    }
     status.disabled = true;
     status.removeAttribute('aria-label');
     const map = {
@@ -5847,7 +5669,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   const statusBar = createStatusBar(ctx);
   const watchWindow = createWatchWindow({ ...ctx, run, docName: () => doc.name, goTo: (sid, r, c) => selectLocation(sid, { r1: r, c1: c, r2: r, c2: c }) });
   // Review ▸ Check Accessibility: a finding goes to its cells, or selects its object.
-  // Review ▸ Thesaurus and Translate, answered by Puter's AI.
+  // Review ▸ Thesaurus and Translate, answered by the configured model.
   languagePane = createLanguagePane({ ...ctx, run,
     ai: P.canAI() ? (prompt) => P.aiChat(prompt, { feature: 'thesaurus' }) : null,
     translate: P.canAI() ? (text, from, to) => aiTranslate(translatePrompt(text, from || '', to || 'English')) : null });
@@ -5893,18 +5715,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   const quickAnalysis = createQuickAnalysis({ ...ctx, run });
   const errorTag = createErrorSmartTag({ ...ctx, run, focusFormulaBar: () => formulaBar.focusInput(), refreshErrorTag: () => errorTag.sync() });
   // Threaded comments: the card beside a cell and the Comments pane (Review ▸ Comments).
-  // @mentions: the people a comment can name, telling them when it is posted, and telling the user when a
-  // comment names them (ui/mention-notify.js).
-  const mentionNotifier = createMentionNotifier({ doc, wb, mailer, me: () => session.user });
-  const comments = createComments(ctx, { author: () => displayUserName(session.user?.username) || 'You', keepFocus: () => keepFocus(),
-    refused: (what) => refusedByProtection(what), onPaneToggle: () => notify(),
-    mentionPeople: () => mentionNotifier.candidates(),
-    onMentioned: (posted) => { mentionNotifier.notify(posted).catch((e) => console.error(e)); } });
-  const mentionAlerts = createMentionAlerts({
-    wb, me: () => session.user, fileKey: () => doc.uid || doc.path,
-    goTo: (sheetId, r, c) => { if (destroyed) return; if (selectLocation(sheetId, { r1: r, c1: c, r2: r, c2: c })) comments.run('showComment'); },
-  });
-  mentionAlerts.start();
   comments.attach();
   ctx.comments = comments;
   ctx.subscribe(() => comments.sync());
@@ -6169,18 +5979,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
     notify();
   };
   wb.addEventListener('change', onWbChange);
-  if (room) {
-    room.addEventListener('people', showPeople);
-    room.addEventListener('remote', onRoomRemote);
-    room.addEventListener('status', refreshStatus);
-    room.addEventListener('refused', onRoomRefused);
-    room.addEventListener('role', onRoomRole);
-    room.addEventListener('closed', onRoomClosed);
-    window.addEventListener('online', onRoomOnline);
-    document.addEventListener('visibilitychange', onRoomVisible);
-    ctx.subscribe(sharePresence);
-    setTimeout(() => { sharePresence(); showPeople(); }, 0);
-  }
   doc.addEventListener('status', refreshStatus);
   doc.addEventListener('draft', refreshStatus); // whether this browser holds a copy of the edits changed
   doc.addEventListener('path', refreshTitle);
@@ -6212,8 +6010,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   });
   const stopSheetFonts = installSheetFontLoading(wb, () => grid.sheetId);
   // Signing out with edits that cannot be saved is refused by the account menu; no leave dialog here.
-  const onSignOut = (e) => { e.detail?.waitUntil?.(flush({ leaving: false })); };
-  window.addEventListener('app:before-signout', onSignOut);
   // The file was written by another copy of the app since we last saved: the user decides whose version wins.
   let conflictOpen = false;
   const onConflict = async (e) => {
@@ -6356,7 +6152,7 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   refreshTitle();
   requestAnimationFrame(() => { fitColumnsOnOpen(); grid.refresh(); grid.focus(); });
 
-  // Edits made here that never reached Puter (a closed tab while offline, a
+  // Edits made here that never reached the disk (a closed tab while offline, a
   // save that failed) come back from the local draft, if wanted.
   let recoveryTimer = null;
   let keptDraftToast = null; // the offer to restore a draft dismissed without a decision: it goes with the editor
@@ -6370,8 +6166,8 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       const restore = await confirmDialog({
         title: 'Unsaved changes found',
         message: doc.recoverableMayBeOlder
-          ? `This sheet was edited here at ${stamp}, but those changes never reached Puter, and the file has been saved since. Restoring replaces what is in the file now with those older edits; discarding keeps the file as it is.`
-          : `This sheet was edited here at ${stamp}, but those changes never reached Puter. Restore them? Discarding keeps the file as it is now.`,
+          ? `This sheet was edited here at ${stamp}, but those changes never reached the disk, and the file has been saved since. Restoring replaces what is in the file now with those older edits; discarding keeps the file as it is.`
+          : `This sheet was edited here at ${stamp}, but those changes never reached the disk. Restore them? Discarding keeps the file as it is now.`,
         confirmLabel: 'Restore', cancelLabel: 'Discard', danger: false, dismissValue: null,
       });
       // The editor was left while the question was up (the router closes the dialog as dismissed after the
@@ -6394,22 +6190,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
   // Opened from a link with a range: land on those cells once the view is on screen.
   if (initialRange) setTimeout(() => followInternalLink(`#${initialRange}`), 0);
 
-  /**
-   * Someone else's sheets (its address starts with another user's name, as a shared one's does) may be
-   * shared with this user only to view. Puter says so only in the list of what is shared with them, and a save
-   * would be refused: the status says View only from the start, and a notice says how to keep changes.
-   */
-  async function checkViewOnly() {
-    const me = session.user?.username;
-    const owner = /^\/([^/]+)\//.exec(doc.path || '')?.[1];
-    if (!me || !owner || owner === me || !P.canShare()) return;
-    const mode = await P.sharedModeOf(doc).catch(() => null);
-    if (destroyed || !mode || P.canWriteMode(mode)) return;
-    doc.viewOnly = true;
-    refreshStatus();
-    toast(VIEW_ONLY, { icon: 'eye', duration: 7000 });
-  }
-  if (!session.signedOut) checkViewOnly();
 
   // A saved book with links to other workbooks: its Startup Prompt says whether opening it updates them, offers to, or leaves them.
   if (doc.path && wb.externalWorkbooks?.books?.some((b) => !b.kind) && wb.linkStartup !== 'none') {
@@ -6452,21 +6232,9 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       document.removeEventListener('cut', onNativeCut);
       document.removeEventListener('paste', onPasteEvent);
       optionButton.destroy();
-      window.removeEventListener('app:before-signout', onSignOut);
       doc.removeEventListener('conflict', onConflict);
       window.removeEventListener('app:locale', onLocale);
       wb.removeEventListener('change', onWbChange);
-      if (room) {
-        clearTimeout(flagTimer);
-        room.removeEventListener('people', showPeople);
-        room.removeEventListener('remote', onRoomRemote);
-        room.removeEventListener('status', refreshStatus);
-        room.removeEventListener('refused', onRoomRefused);
-        room.removeEventListener('role', onRoomRole);
-        room.removeEventListener('closed', onRoomClosed);
-        window.removeEventListener('online', onRoomOnline);
-        document.removeEventListener('visibilitychange', onRoomVisible);
-      }
       wb.removeEventListener('change', syncChartTheme);
       wb.removeEventListener('change', disarmCutOnChange);
       unsubscribePageView();
@@ -6493,7 +6261,6 @@ export function editorView({ doc, goHome, openPath, newDoc, templateDoc, importF
       automate?.destroy();
       chartUi.destroy();
       comments.destroy();
-      mentionAlerts.stop();
       findBar.destroy();
       aiPanel?.destroy();
       grid.destroy();

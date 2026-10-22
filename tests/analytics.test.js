@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { trackEvent, trackExport } from '../src/lib/analytics.js';
 import { Doc } from '../src/lib/doc.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import { installMockPuter } from './helpers/mock-puter.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 

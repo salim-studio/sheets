@@ -7,20 +7,20 @@ import { installMockPuter } from './helpers/mock-puter.js';
 // same version of the book (a retry after a failed write, a save forced after a conflict) sends the
 // bytes already built instead of building them again; a new version is built anew.
 let mock;
+let failing = false;
 beforeAll(async () => { await Doc.blank().toXlsxBlob(); });
-beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); });
+beforeEach(() => {
+  Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true });
+  failing = false;
+  mock = installMockPuter({ onWrite: (path) => { if (failing && !path.includes('/.versions/')) throw new Error('Storage quota exceeded'); } });
+});
 afterEach(() => { delete globalThis.puter; });
 
 it('sends the bytes already built when a save of the same version is tried again, and builds a new version anew', async () => {
   const doc = Doc.blank();
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'hello');
   const exports = vi.spyOn(doc.wb, 'spillEntries'); // asked once per sheet by every export
-  const write = puter.fs.write;
-  let failing = true;
-  puter.fs.write = async (path, ...rest) => {
-    if (failing && !path.includes('/.versions/')) throw new Error('Storage quota exceeded');
-    return write.call(puter.fs, path, ...rest);
-  };
+  failing = true;
   try {
     await expect(doc.save()).rejects.toThrow('Storage quota exceeded');
     const built = exports.mock.calls.length;

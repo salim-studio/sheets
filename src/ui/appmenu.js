@@ -1,7 +1,6 @@
 /**
- * The account menu shared by the home screen and the editor: theme,
- * shortcuts, about, and (outside the Puter desktop) sign in or out. Inside a
- * Puter app window the desktop owns the session, so neither is offered there.
+ * The app menu shared by the home screen and the editor: theme, regional
+ * format, options, shortcuts and about.
  */
 
 import { el } from './dom.js';
@@ -12,10 +11,7 @@ import { openShortcuts } from './shortcuts.js';
 import { openOptionsDialog } from './options-dialog.js';
 import { currentTheme } from './theme.js';
 import { session } from '../lib/session.js';
-import { toast } from './toast.js';
-import * as P from '../lib/puter.js';
 import { LOCALES, getLocale, formatValue, formatGeneral, formatDate, setLocale } from '../core/format.js';
-import { clearAccountStorage } from '../lib/account-storage.js';
 // Emit the full licenses as readable files alongside the production assets.
 import sheetjsLicenseUrl from '../vendor/SHEETJS-LICENSE.txt?url&no-inline';
 // Keep this copy of lucide/LICENSE in sync when updating Lucide.
@@ -47,7 +43,7 @@ export function openAppMenu(anchor, { onOptions = null } = {}) {
   // than a parenthesis nested in one; the spoken name carries both.
   const localeName = LOCALES.find(([c]) => c === getLocale())?.[1] || getLocale();
   const items = [
-    { header: session.signedOut ? 'Not signed in' : 'Signed in' },
+    { header: 'Sheets' },
     { custom: themeRow },
     { separator: true },
     { label: 'Regional format…', icon: 'monitor', shortcut: localeName, ariaLabel: `Regional format, ${localeName}`, onSelect: openLocaleDialog },
@@ -56,22 +52,16 @@ export function openAppMenu(anchor, { onOptions = null } = {}) {
     { label: 'Keyboard shortcuts…', icon: 'keyboard', onSelect: openShortcuts },
     { label: 'About…', icon: 'info', onSelect: openAbout },
   ];
-  if (!P.isApp()) {
-    items.push({ separator: true });
-    if (session.signedOut) items.push({ label: 'Sign in to Puter', icon: 'login', hint: 'Save sheets to your own cloud', onSelect: () => session.signIn() });
-    else items.push({ label: 'Sign out', icon: 'logout', onSelect: confirmSignOut });
-  }
-  openMenu({ anchor, items, align: 'end', label: 'Account', minWidth: 240 });
+  openMenu({ anchor, items, align: 'end', label: 'Menu', minWidth: 240 });
 }
 
 const accountButtons = new WeakMap();
 const accountFaceKey = () => `${session.state}:${session.user?.uuid || ''}`;
 
-/** The account button's face: always a plain figure, never a name or picture, so no account identity shows. */
+/** The menu button's face: a plain figure, never a name or picture. */
 export function renderAccountButton(button) {
-  const signedOut = session.signedOut;
-  button.title = signedOut ? 'Not signed in' : 'Account';
-  button.setAttribute('aria-label', signedOut ? 'Account menu. Not signed in' : 'Account menu');
+  button.title = 'Menu';
+  button.setAttribute('aria-label', 'App menu');
   const key = accountFaceKey();
   let face = accountButtons.get(button);
   if (face?.key !== key) {
@@ -80,30 +70,6 @@ export function renderAccountButton(button) {
     accountButtons.set(button, face);
     button.replaceChildren(avatar);
   }
-}
-
-export async function confirmSignOut() {
-  const ok = await confirmDialog({
-    title: 'Sign out?',
-    message: 'Your sheets stay in your Puter account. Anything unsaved in an open document is saved first, and the copies this browser kept are removed from this computer.',
-    confirmLabel: 'Sign out', danger: false,
-  });
-  if (!ok) return;
-  const pending = [];
-  window.dispatchEvent(new CustomEvent('app:before-signout', {
-    detail: { waitUntil: (operation) => pending.push(Promise.resolve(operation)) },
-  }));
-  const saved = await Promise.all(pending).then((results) => results.every((result) => result !== false), () => false);
-  if (!saved) {
-    toast('Changes could not be saved. You are still signed in', { icon: 'alert', duration: 5000 });
-    return;
-  }
-  // After the save, so a draft written by it goes too, and before the sign-out, while the account's scope
-  // is still the one its records are filed under.
-  clearAccountStorage();
-  await P.signOut();
-  location.hash = '';
-  location.reload();
 }
 
 /** Pick how numbers and dates are written and read; a sample line shows the effect. */
@@ -183,7 +149,7 @@ export function openAbout() {
         el('div.about-icon', { html: icon('brand', 80) }),
         el('p.about-name', {}, 'Sheets')),
       el('p.about-meta', {}, `Version ${APP_VERSION}`, el('span.about-dot', { 'aria-hidden': 'true' }, ' · '), `by ${COMPANY}`),
-      el('p.modal-text.about-tagline', {}, 'Sheets — a fast, private, AI-powered sheets app. Your work is saved as standard .xlsx files in your own cloud, ready to open anywhere.'),
+      el('p.modal-text.about-tagline', {}, 'Sheets — a fast, private, AI-powered sheets app. Your work is saved as standard .xlsx files on your device, ready to open anywhere.'),
       el('nav.about-links', { 'aria-label': 'Sheets' }, ABOUT_LINKS.map(([label, href]) =>
         el('a.about-link', { href, ...external, 'aria-label': `${label}, opens in a new tab` }, label, opensNew.cloneNode(true)))),
       credits,

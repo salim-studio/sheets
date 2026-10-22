@@ -1,10 +1,10 @@
-/** Local document data belongs to a Puter account, not to the browser origin. */
+/** Local document data is kept in one namespace on this device. */
 const anonymousScope = () => `session:${Array.from(crypto.getRandomValues(new Uint32Array(4)), (n) => n.toString(16).padStart(8, '0')).join('')}`;
 let scope = anonymousScope();
 
 export function setStorageUser(user) {
-  // Puter UUIDs survive username changes. A failed identity lookup must not
-  // fall back to a shared namespace or retain the previous account's data.
+  // An identity survives username changes. A failed lookup must not fall back
+  // to a shared namespace or retain another identity's data.
   scope = typeof user?.uuid === 'string' && user.uuid
     ? `uuid:${user.uuid}`
     : typeof user?.username === 'string' && user.username
@@ -65,7 +65,7 @@ export function adoptStorageFrom(fromScope, storage = null) {
 /**
  * An account is being left (a sign-out): every record this browser kept for it goes, the mirror
  * image of adoptStorageFrom. Drafts hold whole sheets, and the recent list holds names and
- * addresses from the drive, so on a shared computer signing out must leave none of it behind.
+ * addresses from the drive, so it must leave none of it behind when swept.
  * Only the named scope's records are swept: the guest's and any other account's stay, and so do
  * the records kept for this browser rather than for an account (the theme). Call it while that
  * scope is still the current one — signing out hands the app the guest scope. How many went.

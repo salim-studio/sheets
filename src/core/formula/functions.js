@@ -7685,13 +7685,13 @@ function correlation(s, correction = 0) {
 
 /** Sorted list of function names, for the insert-function menu. */
 /**
- * AI(prompt, [data]): a question for Puter's AI, with an optional range of
+ * AI(prompt, [data]): a question for the configured AI model, with an optional range of
  * data appended as a table. The answer is asked for once per distinct prompt
  * and cached; the cell shows #BUSY! until it arrives.
  */
 /**
  * TRANSLATE(text, [source_language], [target_language]) and
- * DETECTLANGUAGE(text): translation through Puter's AI, asked once per
+ * DETECTLANGUAGE(text): translation through the AI model, asked once per
  * distinct text and cached like AI(). Languages are codes ("fr") or names
  * ("French"); the target defaults to English.
  */
@@ -7851,7 +7851,7 @@ FUNCTIONS.IMPORTXML = {
 };
 
 /**
- * IMPORTRANGE(file, range): cells from another sheets on the Puter drive
+ * IMPORTRANGE(file, range): cells from another sheet in the app folder
  * ("Budget" for Sheets/Budget.xlsx, or a full path), spilled into place.
  * The file is read once per distinct call and remembered; F9 reads it again.
  */

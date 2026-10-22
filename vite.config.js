@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   // Note: upstream used a dev-only plugin from the everything monorepo
-  // (dev/puter-localhost.mjs) which is not part of this standalone copy.
+  // which is not part of this standalone copy.
   // Dev server still works on localhost:5173 without it.
   plugins: [],
   base: './',

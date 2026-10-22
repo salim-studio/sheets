@@ -1,9 +1,7 @@
 /**
  * Home: the list of sheets in the app folder, with new / import / open
- * actions. Rows open the editor; a per-row menu renames, shares, duplicates,
- * downloads, or deletes. Sheets other people shared with the user are
- * listed on their own. The list lives in the cloud, so without a
- * session the screen offers the sign-in instead of the list.
+ * actions. Rows open the editor; a per-row menu renames, duplicates,
+ * downloads, or deletes. Everything lives on this device.
  */
 
 import { el, clear, formatBytes, relativeTime } from '../ui/dom.js';
@@ -14,10 +12,9 @@ import { toast } from '../ui/toast.js';
 import { openAppMenu, renderAccountButton } from '../ui/appmenu.js';
 import { openTemplatePicker } from '../ui/templates.js';
 import { templateThumbnail } from '../ui/template-thumbnail.js';
-import { openShareDialog } from '../ui/share.js';
 import { TEMPLATES } from '../core/templates.js';
 import { session } from '../lib/session.js';
-import * as P from '../lib/puter.js';
+import * as P from '../lib/platform.js';
 import { stripExtension } from '../core/io.js';
 import { recentFiles, forgetRecent, refreshRecent } from '../lib/recent.js';
 import { listDrafts, clearDraft, draftKey, liveDraftKey, moveDraft, parkDraft } from '../lib/drafts.js';
@@ -31,7 +28,6 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   const ids = { start: `home-start-${n}`, files: `home-files-${n}` };
   const fromTemplate = () => openTemplatePicker({ onPick: templateDoc });
   let files = [];
-  let shared = []; // sheets other people shared with this user
   let query = '';
   let loading = true;
   let error = null;
@@ -169,7 +165,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
         el('span.home-drafts-icon', { html: icon('alert', 18), 'aria-hidden': 'true' }),
         el('div', {},
           el('h2.home-h2', { tabindex: -1 }, 'Unsaved sheets'),
-          el('p.small.muted', {}, 'Kept only on this device, never saved to your cloud. Open one to recover it.'))),
+          el('p.small.muted', {}, 'Kept only on this device. Open one to recover it.'))),
       el('div.recent-list', { role: 'list' }, ...drafts.map((draft) => el('div.recent-chip', { role: 'listitem', dataset: { focusKey: draft.key } },
         // The edits to a file that is gone open through its old address, where they become a new sheet.
         el('button.recent-open', {
@@ -222,82 +218,13 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     clearDraft(liveDraftKey(draft.key)); // edits made to the file while that draft awaited a decision were kept beside it, and go with it
     renderDrafts();
   }
-  /**
-   * Sheets other people shared with the user, at the masked addresses the drive gives them. Each
-   * says whose it is and whether it may be edited; the × leaves the share, which only its owner can undo.
-   */
-  const sharedWrap = el('section.home-recent.home-shared', { hidden: true, 'aria-label': 'Shared with you' });
-  // The newest few, as many as the files opened elsewhere keep: a long list would push the user's own far down.
-  const SHARED_SHOWN = 8;
-  let sharedAll = false;
-  function renderShared() {
-    keepingFocus(sharedWrap, () => sharedWrap.querySelector('.home-h2') || listHeading, paintShared);
-  }
-  function paintShared() {
-    sharedWrap.hidden = !shared.length;
-    if (!shared.length) { sharedWrap.replaceChildren(); return; }
-    const chips = shared.map((f) => {
-        const access = f.mode === 'write' || f.mode === 'manage' ? 'can edit' : 'view only';
-        const from = [f.owner && `From ${f.owner}`, access].filter(Boolean).join(' · ');
-        return el('div.recent-chip', { role: 'listitem', dataset: { focusKey: f.path } },
-          el('button.recent-open', { type: 'button', title: `${f.name} · ${from}`, 'aria-label': `Open ${stripExtension(f.name)}, ${from}`, onclick: () => openPath(f.path) },
-            el('span', { html: icon('users', 16) }), el('span.recent-name', { dir: 'auto' }, stripExtension(f.name)), el('span.recent-when', {}, from)),
-          el('button.icon-btn.recent-forget', { type: 'button', html: icon('x', 14), 'aria-label': `Leave ${stripExtension(f.name)}`, title: 'Remove this sheet from what is shared with you', onclick: () => leaveShared(f) }));
-    });
-    // Shown or hidden in place, not rebuilt, so the focus stays on the button that did it.
-    const more = shared.length > SHARED_SHOWN && el('button.btn.btn-ghost.btn-sm.home-shared-more', { type: 'button', onclick: () => { sharedAll = !sharedAll; fold(); } });
-    function fold() {
-      chips.forEach((chip, i) => { chip.hidden = !sharedAll && i >= SHARED_SHOWN; });
-      if (!more) return;
-      more.textContent = sharedAll ? 'Show fewer' : `Show all ${shared.length}`;
-      more.setAttribute('aria-expanded', String(sharedAll));
-    }
-    fold();
-    // The native replaceChildren writes `false` out as text; only a list long enough to fold has the button.
-    sharedWrap.replaceChildren(
-      el('h2.home-h2', { tabindex: -1 }, 'Shared with you'),
-      el('div.recent-list', { role: 'list' }, ...chips),
-      ...(more ? [more] : []));
-  }
-  async function loadShared(requestId) {
-    let next = [];
-    try { next = await P.listSharedWithMe(); } catch (e) { console.error(e); } // the list of one's own files does not wait on, nor fail with, this one
-    if (destroyed || requestId !== loadId) return;
-    shared = next;
-    renderShared();
-    renderRecent(); // a shared file opened before is listed here now, not as opened elsewhere
-  }
-  async function leaveShared(f) {
-    const ok = await confirmDialog({
-      title: `Leave "${stripExtension(f.name)}"?`,
-      message: `You will no longer be able to open this sheet${f.owner ? `. ${f.owner} can share it with you again` : ''}. The file itself is not deleted.`,
-      confirmLabel: 'Leave',
-    });
-    if (!ok || destroyed) return;
-    try {
-      // Nothing withdrawn while the file still opens: the access comes through a team the user is in, which
-      // a leave does not reach. Said so, the chip stays; gone meanwhile (the owner stopped sharing), it goes.
-      if (!await P.leaveShare(f.path) && await P.statFile(f.path).catch(() => null)) {
-        if (destroyed) return;
-        toast(`This sheet is shared with a team you are in, so it cannot be left here${f.owner ? `. Ask ${f.owner} to stop sharing it with the team` : ''}`, { icon: 'info', duration: 6000 });
-        return;
-      }
-      if (destroyed) return;
-      forgetRecent(f.path);
-      shared = shared.filter((s) => s.path !== f.path);
-      renderShared();
-      toast('Removed from shared with you', { icon: 'check' });
-    } catch (e) {
-      toast(e?.message || 'Could not leave the share', { icon: 'alert' });
-    }
-  }
   // Files opened from elsewhere on the drive (not in the app folder) are remembered on this device.
   const recentWrap = el('div.home-recent', { hidden: true });
   function renderRecent() {
     keepingFocus(recentWrap, () => recentWrap.querySelector('.home-h2') || listHeading, paintRecent);
   }
   function paintRecent() {
-    const listed = new Set([...files, ...shared].map((f) => f.path));
+    const listed = new Set(files.map((f) => f.path));
     const recent = recentFiles().filter((r) => !listed.has(r.path) && !P.inAppFolder(r.path));
     recentWrap.hidden = !recent.length;
     if (!recent.length) { recentWrap.replaceChildren(); return; }
@@ -352,7 +279,6 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
             el('button.btn.btn-outline.btn-sm', { type: 'button', html: icon('upload', 16), onclick: pickDevice }, el('span', {}, 'Import file')))),
         startTiles()),
       draftsWrap,
-      sharedWrap,
       recentWrap,
       el('section.home-files', { 'aria-labelledby': ids.files },
         el('div.home-list-head', {},
@@ -379,30 +305,12 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
       more > 0 && tile('.start-more', { name: 'All templates', sub: `${more} more`, glyph: icon('layers', 22), onclick: fromTemplate }));
   }
 
-  async function openFromPuter() {
-    if (session.signedOut && (!await session.signIn() || destroyed)) return;
-    const picked = await P.pickFile();
-    if (picked && !destroyed) openPath(picked.path);
-  }
-
   async function load() {
     if (destroyed) return;
     const requestId = ++loadId;
     loading = true;
     error = null;
-    if (session.signedOut) {
-      // Nothing to list without a session; the list area offers the sign-in.
-      files = [];
-      shared = [];
-      loading = false;
-      renderList();
-      renderDrafts();
-      renderShared();
-      renderRecent();
-      return;
-    }
     renderList();
-    loadShared(requestId);
     refreshRecent().then(() => { if (!destroyed && requestId === loadId) renderRecent(); }, () => {}); // files moved or renamed since are listed where they are now
     try {
       const nextFiles = await P.listFiles();
@@ -411,7 +319,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     } catch (e) {
       if (destroyed || requestId !== loadId) return;
       console.error(e);
-      error = navigator.onLine ? 'Could not load your files from Puter.' : 'You are offline. Connect to see your files.';
+      error = navigator.onLine ? 'Could not read your files from this device.' : 'This browser is offline, but your files are local: reload to try again.';
     }
     loading = false;
     renderList();
@@ -427,7 +335,6 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
         { label: 'Open', icon: 'sheet', onSelect: () => openPath(file.path) },
         // The ellipsis marks the items that open a dialog first: Rename asks for the name, Delete asks to be sure.
         { label: 'Rename…', icon: 'pencil', onSelect: () => rename(file) },
-        P.canShare() && { label: 'Share…', icon: 'share', onSelect: () => openShareDialog({ path: file.path, name: stripExtension(file.name), uid: file.uid }) },
         { label: 'Duplicate', icon: 'duplicate', onSelect: () => duplicate(file) },
         { label: 'Download', icon: 'download', onSelect: () => download(file) },
         { separator: true },
@@ -502,7 +409,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   }
 
   async function remove(file) {
-    const ok = await confirmDialog({ title: `Delete "${stripExtension(file.name)}"?`, message: 'The file is removed from your cloud. This cannot be undone.', confirmLabel: 'Delete' });
+    const ok = await confirmDialog({ title: `Delete "${stripExtension(file.name)}"?`, message: 'The file is removed from this device. This cannot be undone.', confirmLabel: 'Delete' });
     if (!ok) return;
     try {
       await P.deleteFile(file.path);
@@ -534,18 +441,6 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
     // Only rows of files make a list; a notice or a loading skeleton is not a list item.
     list.setAttribute('role', 'list');
     if (loading) list.setAttribute('aria-busy', 'true'); else list.removeAttribute('aria-busy');
-    if (session.signedOut) {
-      say('');
-      list.removeAttribute('role');
-      list.append(el('div.empty', {},
-        el('div.empty-icon', { html: icon('cloud', 26) }),
-        el('h3', {}, 'Sign in to see your sheets'),
-        el('p', {}, 'Sheets are saved as .xlsx files in your own cloud. Sign in to open them here, or start working without an account.'),
-        el('div.row', { style: { justifyContent: 'center', marginTop: '18px', flexWrap: 'wrap' } },
-          el('button.btn.btn-primary', { type: 'button', html: icon('login', 16, 2.2), onclick: () => session.signIn() }, el('span', {}, 'Sign in to Puter')),
-          el('button.btn.btn-outline', { type: 'button', html: icon('plus', 16, 2.2), onclick: newDoc }, el('span', {}, 'New sheets')))));
-      return;
-    }
     if (loading) {
       say('Loading your sheets…');
       list.removeAttribute('role');
@@ -611,13 +506,7 @@ export function homeView({ openPath, openFile, newDoc, sampleDoc, templateDoc, i
   renderDrafts();
   load();
 
-  let hadSession = !session.signedOut;
-  const onSession = () => {
-    renderAccountButton(avatar);
-    // Signing in brings the list; the sign-in state is replaced by the files.
-    if (!hadSession && !session.signedOut) load();
-    hadSession = !session.signedOut;
-  };
+  const onSession = () => { renderAccountButton(avatar); };
   session.addEventListener?.('change', onSession);
 
   return { el: root, reload: load, destroy() { destroyed = true; clearInterval(clock); document.removeEventListener('keydown', onSlash); session.removeEventListener?.('change', onSession); } };

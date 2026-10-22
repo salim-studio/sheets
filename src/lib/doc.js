@@ -1,13 +1,13 @@
 import { workbookPathUri } from '../core/workbook-location.js';
 import { sheetFilters } from '../core/sheet-filters.js';
 /**
- * The open document: a Workbook plus where it lives on Puter and whether
+ * The open document: a Workbook plus where it lives on this device and whether
  * what is on screen matches what is on disk.
  *
  * Saving writes a complete .xlsx to `path`. Edits autosave after a short
  * pause; a document that has never been saved gets a file the first time it
  * changes, so nothing typed is ever only in memory for long. Files opened
- * from outside the app folder (the Puter file picker, "Open with") save back
+ * from outside the app folder (the file picker, a dropped file) save back
  * to where they came from. A file that is not .xlsx (a CSV, say) is saved
  * as a new .xlsx beside it (in the app folder, when its own folder will not
  * take it) rather than overwritten with a format its extension does not match.
@@ -15,9 +15,6 @@ import { sheetFilters } from '../core/sheet-filters.js';
  * Unsaved edits are also copied to this browser's storage (see drafts.js);
  * a file opened while such a draft exists offers the draft back.
  *
- * Without a Puter session there is nowhere to write: autosaves wait (the
- * local draft still keeps the edits) and an explicit save fails with
- * SIGN_IN_TO_SAVE so the view can ask for a sign-in.
  *
  * status: 'saved' | 'unsaved' | 'saving' | 'error' | 'offline'
  */
@@ -27,7 +24,7 @@ import { formulaReachesOut } from '../core/reaches-out.js';
 import { recordStep } from '../core/change-history.js';
 import { isRangeSource } from '../core/validation.js';
 import { workbookToXlsx, workbookToOds, workbookFromFile, sheetToCsv, sheetToTsv, sheetToHtml, stripExtension, XLSX_MIME, CSV_MIME, TSV_MIME, HTML_MIME } from '../core/io.js';
-import * as P from './puter.js';
+import * as P from './platform.js';
 import { trackEvent } from './analytics.js';
 import { session } from './session.js';
 import { draftKey, liveDraftKey, draftRevision, saveDraft, loadDraft, clearDraft, moveDraft, parkDraft, isUnsavedDraftKey, sameBook, draftKeyForFile, readableDraft, uniqueId } from './drafts.js';
@@ -68,10 +65,9 @@ function rememberedExternal(path, scope) {
  * Whether a file may load outside content (IMPORT* formulas, AI, web images) is
  * decided once per file, whichever way it went: an import from elsewhere stays
  * blocked after its first save puts it in the app folder, and an allowed file
- * stays allowed. The decision is kept with the account in puter.kv under the
- * file's id, which survives renames and reaches every device; this browser keeps
- * a copy by path, with the file's id, which answers when the store cannot be
- * reached and is put in the store when found there alone. Another file dropped
+ * stays allowed. The decision is kept in this browser against the file's id,
+ * which survives renames; a copy by path answers when the record cannot be
+ * read and is put back when found alone. Another file dropped
  * at the address of an allowed one is a newcomer, not the file that was allowed:
  * a record that allows is trusted only for the file it was made for, or when
  * there is no way to tell. A record that blocks costs a question at most.
@@ -168,13 +164,10 @@ const draftMs = () => {
   return Number.isFinite(s) && s > 1 ? Math.min(s, 3600) * 1000 : 600;
 };
 export const UNTITLED = 'Untitled sheets';
-/** How long a shared workbook waits after its last change before its owner's browser writes the .xlsx file. */
-const SHARED_FILE_MS = 15_000;
-export const SIGN_IN_TO_SAVE = 'Sign in to Puter to save this sheet';
-/** Why a sheets shared with the user only to view is not saved. */
+/** Why a sheet that refuses writes is not saved. */
 export const VIEW_ONLY = 'You can view this sheet, but not change it. Use File > Save a copy to keep your changes';
 
-/** A Puter FSItem's modified time in milliseconds (the API gives seconds), or null. */
+/** A file record's modified time in milliseconds, or null. */
 function modifiedMs(item) {
   const m = item?.modified ?? item?.created;
   if (m == null) return null;
@@ -183,7 +176,7 @@ function modifiedMs(item) {
   return n < 1e12 ? n * 1000 : n;
 }
 
-/** A Puter FSItem's size in bytes, or null when it is not reported (a sheets file is never empty). */
+/** A file record's size in bytes, or null when it is not reported. */
 function sizeOf(item) {
   return Number.isFinite(item?.size) && item.size > 0 ? item.size : null;
 }
@@ -238,7 +231,7 @@ export class Doc extends EventTarget {
     this.name = name;
     this.path = path;
     this.uid = uid; // the file's id on the drive, the same whatever it is called
-    this.viewOnly = false; // someone else's file, shared with the user only to view: the editor finds out, as Puter refuses its saves
+    this.viewOnly = false; // a workbook the app may not write back to (imported read-only)
     this._storageScope = storageScope();
     // A document made here, or one the user already allowed, may load outside content.
     this.wb.setExternalAllowed(trusted);
@@ -325,7 +318,6 @@ export class Doc extends EventTarget {
   }
 
   destroy() {
-    if (this.collab) { this._leaveRoom(); return; }
     clearTimeout(this._timer);
     clearTimeout(this._draftTimer);
     if (!this.wb.dirty) clearDraft(this._ownDraftKey, this._draftRevision);
@@ -361,8 +353,6 @@ export class Doc extends EventTarget {
 
   /** Copy the unsaved book to local storage (no-op once it is clean). */
   writeDraft() {
-    // A shared workbook keeps unsent changes in its own outbox (see collab/outbox.js), not in a draft.
-    if (this.collab) return false;
     clearTimeout(this._draftTimer);
     if (!this.wb.dirty) { clearDraft(this._ownDraftKey, this._draftRevision); return false; }
     // Timestamps and workbook versions can coincide across tabs. Each write
@@ -445,7 +435,6 @@ export class Doc extends EventTarget {
 
   _changed(type) {
     if (type === 'active-sheet') return;
-    if (this.collab) { this._sharedChanged(type); return; }
     if (type === 'clean') {
       // The book was declared clean without a save (columns fitted on open, say): nothing is pending.
       if (!this.wb.dirty && this.status === 'unsaved') {
@@ -459,7 +448,7 @@ export class Doc extends EventTarget {
     this._setStatus('unsaved');
     clearTimeout(this._timer);
     // Signing in later saves the pending edits; the view asks for it.
-    if (!session.signedOut && autoSaveEnabled()) {
+    if (autoSaveEnabled()) {
       this._timer = setTimeout(() => this.save({ auto: true }).catch(() => {}), AUTOSAVE_MS);
       this._timerIsRetry = false;
     }
@@ -472,13 +461,12 @@ export class Doc extends EventTarget {
     setAutoSaveEnabled(!!on);
     // Off, an edit's AutoSave still waiting is dropped too; a retry of a failed save keeps going, as it does after Save.
     if (!on && !this._timerIsRetry) clearTimeout(this._timer);
-    if (on && this.wb.dirty && !session.signedOut) this.save({ auto: true }).catch(() => {});
+    if (on && this.wb.dirty) this.save({ auto: true }).catch(() => {});
     this.dispatchEvent(new CustomEvent('autosave', { detail: { on: !!on } }));
   }
 
   /** Save now. Returns true when the file was written. */
   save({ auto = false, retry = false } = {}) {
-    if (this.collab) return this._enqueueWrite(() => this._saveShared({ auto }));
     clearTimeout(this._timer);
     if (!retry) this._retryDelay = 0; // an edit, a save asked for, or coming back online starts the retries over
     return this._enqueueWrite(() => {
@@ -488,10 +476,6 @@ export class Doc extends EventTarget {
         // A stale error or offline status from an earlier attempt does not describe a clean book.
         if (this.status === 'error' || this.status === 'offline') this._setStatus('saved');
         return true;
-      }
-      if (session.signedOut) {
-        if (auto) return false;
-        return Promise.reject(new Error(SIGN_IN_TO_SAVE));
       }
       return this._doSave(auto);
     });
@@ -578,8 +562,7 @@ export class Doc extends EventTarget {
       try {
         written = await P.writeFile(target, blob, { dedupe: fresh });
       } catch (e) {
-        // A folder this user may not write in (someone else's, shared with them) refuses the file beside the
-        // source: the app folder takes it instead. Offline, neither would, and the retry tries beside it again.
+        // A folder that refuses the file (permissions, a removed folder) sends it to the app folder instead.
         if (dir === P.FOLDER || globalThis.navigator?.onLine === false) throw e;
         dir = P.FOLDER;
         target = `${P.FOLDER}/${await P.uniqueName(P.displayName(target))}`;
@@ -588,7 +571,7 @@ export class Doc extends EventTarget {
       this.uid = written?.uid || written?.id || this.uid;
       if (fresh) {
         oldKey = this.draftKey;
-        // The name storage chose, at the address it reports (see puter.js: one file, one address).
+        // The name storage chose, at the address it reports.
         this.path = P.canonicalPath(`${dir}/${written?.name || P.displayName(written?.path || target)}`, written);
         this.name = Doc.nameFor(this.path);
         this._moveDraft(oldKey);
@@ -619,7 +602,7 @@ export class Doc extends EventTarget {
       return true;
     } catch (e) {
       console.error(e);
-      // Shared with the user only to view (see viewOnly): Puter refuses the write, and asking again changes nothing.
+      // Read-only (see viewOnly): the write is refused, and asking again changes nothing.
       const refused = this.viewOnly && navigator.onLine;
       this._setStatus(navigator.onLine ? 'error' : 'offline', refused ? VIEW_ONLY : e?.message || String(e));
       // Try again later; a transient failure should not lose the edit. One that lasts (a full drive,
@@ -628,7 +611,7 @@ export class Doc extends EventTarget {
       // hands as well: it cleared the retry a failed autosave had scheduled, so without one of its own
       // nothing tried again until the next edit. The retry is an ordinary save, which checks the file
       // again and asks again if it is still changed or missing, never one forced over what landed since.
-      if (this.wb.dirty && !session.signedOut && !refused) {
+      if (this.wb.dirty && !refused) {
         this._retryDelay = Math.min(this._retryDelay ? this._retryDelay * 2 : RETRY_MS, RETRY_MAX_MS);
         this._timer = setTimeout(() => this.save({ auto: true, retry: true }).catch(() => {}), this._retryDelay);
         this._timerIsRetry = true;
@@ -890,78 +873,9 @@ export class Doc extends EventTarget {
 
   /* ---------- Constructors ---------- */
 
-  /** Recover a sheets that closed before its first cloud save. */
-  /* ---------- Shared workbooks (see collab/client.js) ---------- */
-
-  /**
-   * The document of a shared workbook: its changes go to everyone through the room as they are made, and
-   * saving writes a checkpoint and the .xlsx file (over the owner's file, so it still opens anywhere).
-   */
-  static forRoom(client, { path = null, uid = null } = {}) {
-    const doc = new Doc({ wb: client.wb, name: client.name || UNTITLED, path: client.file?.path ?? path, uid: client.file?.uid ?? uid });
-    doc.collab = client;
-    doc._onRoomStatus = () => doc._sharedChanged('room');
-    client.addEventListener('status', doc._onRoomStatus);
-    doc._setStatus(client.status.pending ? 'saving' : 'saved');
-    return doc;
-  }
-
-  get isOwner() {
-    return !!this.collab && this.collab.user?.uuid === this.collab.owner;
-  }
-
-  /** A change reached a shared workbook (here or from someone else): the status follows the room's, and the file is written once things settle. */
-  _sharedChanged(type) {
-    const { state, pending } = this.collab.status;
-    if (state === 'offline') this._setStatus('offline', this.collab.status.message);
-    else if (state === 'error') this._setStatus('error', this.collab.status.message);
-    else this._setStatus(pending ? 'saving' : 'saved');
-    if (type === 'room' || type === 'clean' || !this.wb.dirty) return;
-    // The owner's browser keeps the .xlsx current while it is open: a while after the last change, everyone's.
-    if (this.isOwner && autoSaveEnabled() && !session.signedOut) {
-      clearTimeout(this._timer);
-      this._timer = setTimeout(() => this.save({ auto: true }).catch(() => {}), SHARED_FILE_MS);
-    }
-  }
-
-  /** Deliver what is pending, then write a checkpoint and the .xlsx. */
-  async _saveShared({ auto = false } = {}) {
-    const client = this.collab;
-    clearTimeout(this._timer);
-    await client.flush();
-    await client.settled();
-    if (client.replica.pending.length) {
-      this._sharedChanged('room');
-      if (auto) return false;
-      throw new Error(client.status.message || 'Your changes are waiting to be sent. They are kept on this device until the connection returns.');
-    }
-    if (!client.canEdit) { this.wb.markClean(); return true; }
-    this._setStatus('saving');
-    try {
-      const res = await client.checkpoint({ file: true });
-      // The worker writes the owner's file when Puter lets it; the owner's own browser can always.
-      if (this.isOwner && this.path && this.isXlsxPath && !res?.wrote) await P.writeFile(this.path, await workbookToXlsx(this.wb), { overwrite: true });
-      this.lastSaved = Date.now();
-      this.wb.markClean();
-      this._setStatus('saved');
-      return true;
-    } catch (e) {
-      this._setStatus(client.status.state === 'offline' ? 'offline' : 'error', e?.message || 'Could not save');
-      if (auto) return false;
-      throw e;
-    }
-  }
-
-  _leaveRoom() {
-    clearTimeout(this._timer);
-    this.collab.removeEventListener('status', this._onRoomStatus);
-    this.wb.removeEventListener('change', this._onChange);
-    session.removeEventListener('change', this._onSession);
-    this.collab.leave().catch(() => {});
-  }
-
+  /** Recover a sheet that closed before its first save. */
   static fromDraft(key) {
-    // Only this account's drafts of sheets that have no file are recovered this way.
+    // Only drafts of sheets that have no file are recovered this way.
     const draft = isUnsavedDraftKey(key) ? loadDraft(key) : null;
     if (!draft) throw new Error('That unsaved sheets is no longer available');
     const doc = Doc._fromDraftRecord(draft);
@@ -969,7 +883,7 @@ export class Doc extends EventTarget {
     // fail the same way each time it is picked: it is dropped, and the failure put in words for the screen.
     if (!doc) { clearDraft(key, draftRevision(draft)); throw new Error('Could not read the unsaved sheets'); }
     // Keep the exact source key, including older title-only drafts, until
-    // this recovered document is renamed or gets a cloud path.
+    // this recovered document is renamed or gets a path.
     doc._recoveredDraftKey = key;
     return doc;
   }
@@ -989,7 +903,7 @@ export class Doc extends EventTarget {
 
   /**
    * A file is gone from its address, but this browser kept edits made to it that never reached
-   * Puter. When the draft names the file's id and the drive still has the file, moved or renamed
+   * the disk. When the draft names the file's id and the drive still has the file, moved or renamed
    * elsewhere, the file opens from where it is now, with the draft offered as usual. Otherwise the
    * edits open as a new sheet, so that they are not lost with the file. Null without such a draft.
    */
@@ -1034,7 +948,7 @@ export class Doc extends EventTarget {
     try {
       bytes = await P.readFile(path);
     } catch (e) {
-      // No such file, but perhaps a draft of edits made to it here that never reached Puter.
+      // No such file, but perhaps a draft of edits made to it here that never reached the disk.
       const lost = !st && P.isNotFound(e) ? await Doc._fromLostFile(canonical, scope) : null;
       if (!lost) throw e;
       return lost;
@@ -1054,7 +968,7 @@ export class Doc extends EventTarget {
     // The bytes just read are what the file holds: kept, when small enough, so that the first save can read
     // the file back and tell a rename away and back (or a trash restore) elsewhere from a change made there.
     doc._written = bytes.byteLength <= COMPARE_MAX_BYTES ? new Blob([bytes]) : null;
-    // A draft holds edits that never reached Puter; only one clearly from before the file's last save is dropped,
+    // A draft holds edits that never reached the disk; only one clearly from before the file's last save is dropped,
     // or one whose edits the file holds after all (the save landed, but the tab closed before the draft was cleared).
     const key = doc.draftKey;
     let book;

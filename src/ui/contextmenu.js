@@ -232,7 +232,6 @@ export function openCellContextMenu(ctx, { x, y, kind, chartId }) {
         { label: 'Date picker…', icon: 'calendar', onSelect: () => ctx.run('datePicker') },
         { label: 'Chart…', icon: 'chartColumn', onSelect: () => ctx.run('insertChart') },
         { label: 'Image…', icon: 'image', onSelect: () => ctx.run('insertImage') },
-        flags?.pick && { label: 'Image from Puter…', icon: 'folderOpen', onSelect: () => ctx.run('insertImagePuter') },
         { label: 'Image from URL…', icon: 'external', onSelect: () => ctx.run('insertImageUrl') },
         { label: 'Text box…', icon: 'textBox', onSelect: () => ctx.run('insertTextBox') },
         { label: 'Fill series…', icon: 'series', onSelect: () => ctx.run('fillSeries') },

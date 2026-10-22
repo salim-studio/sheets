@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it } from 'vitest';
-import { aiChat, aiChatStream } from '../src/lib/puter.js';
+import { aiChat, aiChatStream } from '../src/lib/platform.js';
 
 afterEach(() => { delete window.puter; });
 

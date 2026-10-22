@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 import { Doc, UNTITLED } from '../src/lib/doc.js';
-import { sanitizeName, ensureXlsx } from '../src/lib/puter.js';
+import { sanitizeName, ensureXlsx } from '../src/lib/platform.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 import { installMockPuter } from './helpers/mock-puter.js';
 

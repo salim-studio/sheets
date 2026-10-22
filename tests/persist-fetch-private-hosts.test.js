@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from 'vitest';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 
-afterEach(() => { delete window.puter; });
+afterEach(() => { vi.unstubAllGlobals(); });
 
 // This machine, the local network, link-local addresses (where cloud metadata services answer), the
 // names that resolve only there, and anything that is not a web address, in the spellings the URL
@@ -26,11 +26,11 @@ it('tells addresses on the public internet from those of this machine and privat
   for (const url of PUBLIC) expect(P.isPublicHttpUrl(url), url).toBe(true);
 });
 
-// IMPORT* formulas and the URL dialogs passed any address to Puter's fetch, which fetches on the
-// app's behalf: a formula could point it at what the browser itself could not reach.
+// IMPORT* formulas and the URL dialogs reach the web through the app: an address of this machine or
+// the local network must be refused before any request is made.
 it('refuses to fetch an address that is not on the public internet, before any request is made', async () => {
   const fetch = vi.fn(async () => ({ ok: true, async text() { return 'a,b'; } }));
-  window.puter = { net: { fetch } };
+  vi.stubGlobal('fetch', fetch);
   for (const url of NOT_PUBLIC.filter((u) => /^https?:/.test(u || ''))) await expect(P.fetchText(url), url).rejects.toMatchObject({ code: 'not-public' });
   await expect(P.fetchBytes('http://169.254.169.254/latest/meta-data/')).rejects.toMatchObject({ code: 'not-public', message: expect.stringContaining('169.254.169.254') });
   expect(fetch).not.toHaveBeenCalled();

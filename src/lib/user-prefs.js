@@ -1,18 +1,14 @@
 /**
- * Preferences that belong to the person, not to a sheets (AutoCorrect's lists, the custom dictionary):
- * kept in this browser under the signed-in account's scope, so each account on a shared browser has its own,
- * and copied to puter.kv where there is a session, so they follow the account to another device.
+ * Preferences that belong to the person, not to a sheet (AutoCorrect's lists, the custom dictionary):
+ * kept in this browser, so each person on a shared browser has their own.
  *
- * Reading is synchronous, from this browser; syncPref brings in the account's copy when it is newer.
+ * Reading is synchronous, from this browser; syncPref resolves to the value in force.
  */
 import { accountStorageKey } from './account-storage.js';
-import { kvGet, kvSet } from './puter.js';
+import { kvGet, kvSet } from './platform.js';
 
-/** The account's store is there: the SDK is loaded with its key-value store, and someone is signed in. */
-const canUseKv = () => {
-  const p = globalThis.puter;
-  try { return typeof p?.kv?.get === 'function' && p?.auth?.isSignedIn?.() !== false; } catch { return false; }
-};
+/** The store is these browser preferences; kv is the same storage the platform layer keeps. */
+const canUseKv = () => true;
 
 const storage = () => { try { return globalThis.localStorage || null; } catch { return null; } };
 const localKey = (name) => `${accountStorageKey(`sheets:pref-${name}`)}value`;
@@ -26,7 +22,7 @@ export function loadPref(name, fallback = null) {
   } catch { return fallback; }
 }
 
-/** Keep `value` here and, best effort, in the account's store. */
+/** Keep `value` here. */
 export function savePref(name, value) {
   const record = { at: Date.now(), value };
   try { storage()?.setItem(localKey(name), JSON.stringify(record)); } catch { /* storage unavailable */ }
@@ -34,7 +30,7 @@ export function savePref(name, value) {
   return value;
 }
 
-/** Take the account's copy when it is newer than this browser's; resolves to the value in force. */
+/** Keep the newest of the browser's copy and the store's; resolves to the value in force. */
 export async function syncPref(name, fallback = null) {
   if (!canUseKv()) return loadPref(name, fallback);
   let remote = null;

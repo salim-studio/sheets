@@ -1,5 +1,5 @@
 /**
- * IMPORTRANGE(file, range): values from another sheets on the Puter
+ * IMPORTRANGE(file, range): values from another sheet in the app
  * drive. The pure parts live here (which file, which cells, reading them out
  * of a loaded Workbook); the editor supplies the file reading.
  */

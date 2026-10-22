@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { homeView } from '../src/views/home.js';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import { closeMenu } from '../src/ui/menu.js';
+import { installMockPuter } from './helpers/mock-puter.js';
 
 vi.mock('../src/lib/session.js', () => ({ session: { settings: {}, username: 'Test user', signedOut: false, addEventListener() {}, removeEventListener() {} } }));
 vi.mock('../src/lib/recent.js', () => ({ refreshRecent: async () => [], recentFiles: () => [], forgetRecent() {} }));
@@ -50,30 +51,22 @@ describe('duplicating files from the home screen', () => {
   it.each(['xlsx', 'csv'])('does not overwrite a %s copy created after the list loaded', async (ext) => {
     const path = `Sheets/Budget.${ext}`;
     const racedPath = `Sheets/Budget copy.${ext}`;
-    const copyPath = `Sheets/Budget copy 2.${ext}`;
+    const copyPath = `Sheets/Budget copy (1).${ext}`;
     const otherFile = new Blob(['Keep this other workbook']);
-    const files = new Map();
+    const { fs } = installMockPuter();
+    fs.set(path, { blob: new Blob(['abc']), size: 3, modified: 1 });
     vi.spyOn(P, 'listFiles').mockResolvedValue([{ path, name: `Budget.${ext}`, size: 3, modified: 1 }]);
     vi.spyOn(P, 'readFile').mockImplementation(async () => {
-      files.set(racedPath, otherFile);
+      fs.set(racedPath, { blob: otherFile, size: otherFile.size });
       return new Uint8Array([1, 2, 3]);
     });
-    vi.stubGlobal('puter', { fs: {
-      mkdir: vi.fn(),
-      write: vi.fn(async (target, blob, options) => {
-        if (files.has(target) && options.dedupeName) target = copyPath;
-        else if (files.has(target) && !options.overwrite) throw new Error('Already exists');
-        files.set(target, blob);
-        return { path: target, name: target.split('/').pop() };
-      }),
-    } });
     const view = homeView({});
     document.body.append(view.el);
     await vi.advanceTimersByTimeAsync(0);
     view.el.querySelector('.file-menu-btn').click();
     [...document.querySelectorAll('.menu-item')].find((button) => button.textContent === 'Duplicate').click();
     await vi.advanceTimersByTimeAsync(0);
-    expect(files.get(racedPath)).toBe(otherFile);
-    expect(files.get(copyPath)?.size).toBe(3);
+    expect(fs.get(racedPath).blob).toBe(otherFile);
+    expect(fs.get(copyPath)?.size).toBe(3);
   });
 });

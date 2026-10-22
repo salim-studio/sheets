@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it } from 'vitest';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 
 // The fetch helpers refuse a response past their size cap with an error the
 // editor used to recognise by its wording. It now carries a code, so a server's

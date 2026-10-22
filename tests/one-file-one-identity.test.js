@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it } from 'vitest';
-import * as P from '../src/lib/puter.js';
+import * as P from '../src/lib/platform.js';
 import { Doc } from '../src/lib/doc.js';
 import { draftKey, saveDraft, loadDraft } from '../src/lib/drafts.js';
 import { listVersions, versionsFolder } from '../src/lib/versions.js';

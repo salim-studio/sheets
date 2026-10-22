@@ -5,24 +5,21 @@ import { toast } from './ui/toast.js';
 import { closeAllModals, openModal } from './ui/modal.js';
 import { closeMenu } from './ui/menu.js';
 import { session } from './lib/session.js';
-import * as P from './lib/puter.js';
+import * as P from './lib/platform.js';
 import { Doc } from './lib/doc.js';
 import { sampleWorkbook } from './core/sample.js';
 import { isSheetsFile } from './core/filetypes.js';
 import { templateById } from './core/templates.js';
 import { rememberRecent, forgetRecent } from './lib/recent.js';
-import { errorView, signInView } from './views/gate.js';
 import { homeView } from './views/home.js';
 import { editorView } from './views/editor.js';
 import { parseAppHash, editHash } from './lib/links.js';
-import { roomForFile, openRoom } from './collab/session.js';
 import { appOptions, appOption, syncAppOptions } from './lib/app-options.js';
 import { installAppOptions } from './lib/apply-options.js';
 
 const appRoot = document.getElementById('app');
 let current = null; // { kind: 'home' | 'editor' | 'gate', view }
 let leaving = null; // the editor being flushed on the way to another screen, while `current` is already cleared
-let launchedPath = null;
 
 /* ---------- Routing ---------- */
 
@@ -60,34 +57,21 @@ async function unmount() {
 }
 
 /**
- * Edits made without a session have nowhere to go when the editor closes:
- * 'stay', 'leave' (the local draft keeps them, unless this browser could not
- * keep one: `kept` false says so, since leaving then loses them), or 'sign-in'
- * to save them.
+ * Edits made without a file have nowhere to go when the editor closes:
+ * 'stay', or 'leave' (the local draft keeps them, unless this browser could
+ * not keep one: `kept` false says so, since leaving then loses them).
  */
 export function leaveWithoutSessionDialog({ kept = true } = {}) {
   return new Promise((resolve) => {
     const content = el('div', {},
       el('p.modal-text', {}, kept
-        ? 'This sheet is not saved to Puter yet. Sign in to save it to your own cloud, or leave: your edits stay on this device, and can be recovered from Unsaved sheets on the home screen.'
-        : 'This sheet is not saved anywhere yet, and this browser could not keep a copy of it either. Sign in to Puter to save it to your own cloud, or leave and lose it.'),
+        ? 'This sheet is not saved as a file yet. Leave and your edits stay on this device, where you can recover them from Unsaved sheets on the home screen.'
+        : 'This sheet is not saved anywhere yet, and this browser could not keep a copy of it either. Leave and lose it.'),
       el('div.row.row-end', { style: { flexWrap: 'wrap' } },
         el('button.btn.btn-ghost', { type: 'button', onclick: () => modal.close() }, 'Keep editing'),
-        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, 'Leave without saving'),
-        el('button.btn.btn-primary', { type: 'button', onclick: () => { resolve('sign-in'); modal.close(); } }, 'Sign in and save')));
+        el('button.btn.btn-danger', { type: 'button', onclick: () => { resolve('leave'); modal.close(); } }, 'Leave without saving')));
     const modal = openModal({ title: 'Save before leaving?', content, onClose: () => resolve('stay') });
   });
-}
-
-/** A cloud file was asked for without a session: offer the sign-in, or a new sheet. */
-function mountSignInGate(requestedHash) {
-  document.title = 'Sheets';
-  mount('gate', { el: signInView({
-    title: 'Sign in to open this sheet',
-    message: 'Sheets are saved in your own cloud. Sign in to open this one, or start a new sheet without an account.',
-    onSignIn: async () => { if (await session.signIn() && location.hash === requestedHash) route(); },
-    onSkip: () => go('#/'),
-  }) });
 }
 
 /** The offline strip, when shown, stays above whichever screen is mounted. */
@@ -128,16 +112,7 @@ const nav = {
   templateDoc: (id) => go(`#/template/${encodeURIComponent(id)}`),
   importFile: (file) => route({ file }),
   recoverDraft: (draftKey) => route({ draftKey }),
-  // A shared workbook (editing together): its room, and the owner's file when known.
-  openLive: ({ server, room, path = null, uid = null }) => {
-    liveFile = path ? { path, uid } : null;
-    const hash = `#/live/${encodeURIComponent(room)}?${new URLSearchParams({ server })}`;
-    history.replaceState(null, '', hash);
-    route({ reload: true });
-  },
 };
-/** The owner's file a shared workbook was opened from, while its room is being opened. */
-let liveFile = null;
 
 function openEditor(doc, initialRange = null) {
   const view = editorView({ doc, ...nav, initialRange, leaveDialog: () => leaveWithoutSessionDialog({ kept: doc.draftKept !== false }) });
@@ -223,29 +198,8 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
       openEditor(doc);
       return;
     }
-    // Reading a file without a session would pop the SDK's dialog by itself; ask first, in place.
-    if (session.signedOut) { mountSignInGate(location.hash); return; }
-    if (r === 'live') {
-      showLoading('Joining the shared workbook…');
-      const { room, server, token } = parseHash();
-      try {
-        const doc = await openRoom({ server, room, token, ...(liveFile || {}) });
-        liveFile = null;
-        // The invitation was used: the address left behind opens the workbook for members, without it.
-        if (token) history.replaceState(null, '', `#/live/${encodeURIComponent(room)}?${new URLSearchParams({ server })}`);
-        openEditor(doc);
-        if (token) toast(`You joined "${doc.name}". Everyone here sees changes as they happen`, { icon: 'people', duration: 4000 });
-      } catch (e) {
-        console.error(e);
-        liveFile = null;
-        toast(e?.message || 'Could not open the shared workbook', { icon: 'alert', duration: 6000 });
-        go(HOME);
-      }
-      return;
-    }
     if (r === 'file') {
-      // A shared sheets's link names the file by its id: whoever follows it finds it at the
-      // address their own drive shows for it (a shared one's masked path), and opens it there.
+      // A link may name a file by its id: it is looked up wherever it lives now.
       showLoading();
       let found;
       try { found = await P.statByUid(id); }
@@ -262,7 +216,7 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
         }
       }
       if (!found?.path || found.is_dir || P.inTrash(found.path)) {
-        toast('That sheets does not exist, or has not been shared with you', { icon: 'alert', duration: 5000 });
+        toast('That sheet does not exist', { icon: 'alert', duration: 5000 });
         go(HOME);
         return;
       }
@@ -274,24 +228,11 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
     try {
       const doc = await Doc.fromPath(path);
       if (!doc.path) {
-        // The file is gone, but edits made to it here never reached Puter: they open as a new sheet.
+        // The file is gone, but edits kept on this device open as a new sheet.
         forgetRecent(path);
         history.replaceState(null, '', '#/new');
         toast('That file no longer exists. Unsaved changes kept on this device were opened as a new sheet', { icon: 'info', duration: 6000 });
       } else if (!P.samePath(doc.path, path)) forgetRecent(path); // the file was found where the drive keeps it now
-      // A file its owner shares for editing together opens as the shared workbook, which may be ahead of the file.
-      const shared = doc.path ? await roomForFile(doc.file) : null;
-      if (shared) {
-        try {
-          const live = await openRoom({ ...shared, path: doc.path, uid: doc.uid });
-          doc.destroy();
-          openEditor(live, range);
-          return;
-        } catch (e) {
-          console.warn('The shared workbook could not be opened; opening the file instead', e);
-          toast('This sheet is shared for editing together, but the shared copy could not be reached. Opening the file', { icon: 'info', duration: 5000 });
-        }
-      }
       openEditor(doc, range);
     } catch (e) {
       console.error(e);
@@ -314,112 +255,23 @@ async function route({ reload = false, file = null, draftKey = null } = {}) {
 
 /* ---------- Boot ---------- */
 
-/**
- * Nobody has to sign in to work: the app opens straight into the editor.
- * Puter is asked for a sign-in at the first action that needs the cloud.
- */
+/** The app opens straight into a new sheet. Files live on this device. */
 async function start() {
-  if (!P.hasSDK()) {
-    show(errorView('Could not reach Puter', 'Puter could not be loaded. Check your connection and try again.', () => location.reload()));
-    return;
-  }
   setupFileDrop();
-  // Double-click or "Open with" on the Puter desktop: the SDK answers from the launch address as soon as this is registered.
-  P.onLaunchedWithItems(openDriveItems);
-  P.onWindowClose(closeWindow);
   await boot();
-}
-
-/**
- * The Puter desktop window's close button, which waits for this: the sheet
- * saves what the autosave has not sent yet (a cell still being typed in
- * included), and asks, as leaving it for another screen would, when that save
- * cannot go through. Without this the window went at once, taking those edits.
- */
-let closing = null;
-function closeWindow() {
-  const view = current?.kind === 'editor' ? current.view : leaving;
-  if (closing) {
-    // Pressed again while the save is still under way, with no question up: the flush wrote the edits to this
-    // device before saving, to be recovered from the home screen, so a write that will not finish cannot keep
-    // the window open. Where this browser could not keep them, it waits.
-    if (!document.body.classList.contains('modal-open') && view?.doc?.draftKept !== false) P.exitApp();
-    return;
-  }
-  closing = (async () => {
-    try {
-      if (view && !await view.flush()) return; // kept editing, or the save failed and the user stays
-    } catch (e) {
-      console.error(e);
-      return;
-    }
-    P.exitApp();
-  })().finally(() => { closing = null; });
-}
-
-/**
- * Files on the drive handed to the app by the Puter desktop: the one it was
- * launched with (double-click, "Open with"), or those dragged onto the window.
- * A sheets opens where it lives, so that its edits go back to it; an
- * image goes on the open sheet, as one dropped from the device does.
- */
-function openDriveItems(items) {
-  const item = items.find((it) => it?.path && !P.isDirItem(it));
-  if (!item) {
-    if (items.some((it) => P.isDirItem(it))) toast('Cannot open a folder. Drop a sheets (.xlsx, .csv, .ods, …)', { icon: 'info', duration: 3200 });
-    return;
-  }
-  const name = item.name || P.displayName(item.path);
-  const sheets = isSheetsFile(name);
-  if (!booted) {
-    // Before the app is up only a sheets can wait: it becomes the first screen.
-    if (sheets) launchedPath = item.path;
-    else toast(`Cannot open ${name}. Open a sheets (.xlsx, .csv, .ods, …)`, { icon: 'info', duration: 4000 });
-    return;
-  }
-  // The drop is a deliberate move on the app itself and outranks whatever is over it.
-  closeMenu();
-  closeAllModals();
-  if (sheets) { nav.openPath(item.path); return; }
-  const type = imageType(name);
-  const view = current?.view;
-  if (!type || !view?.acceptDrop) {
-    toast(`Cannot open ${name}. Drop a sheets (.xlsx, .csv, .ods, …)${view?.acceptDrop ? ' or an image' : ''}`, { icon: 'info', duration: 3200 });
-    return;
-  }
-  P.readFile(item.path).then((bytes) => {
-    // The sheet it was dropped on may have been left while the picture was read.
-    if (current?.view === view) view.acceptDrop(new File([bytes], name, { type }));
-  }, (e) => {
-    console.error(e);
-    if (current?.view === view) toast(`Could not read ${name}`, { icon: 'alert' });
-  });
-}
-
-const IMAGE_TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', svg: 'image/svg+xml' };
-/** The image type a drive file's name says it is (the drive hands over no type of its own), or null. */
-function imageType(name) {
-  return IMAGE_TYPES[/\.([^.]+)$/.exec(String(name).toLowerCase())?.[1]] || null;
 }
 
 let booted = false;
 async function boot() {
   showLoading('Loading…');
   await session.init();
-  // The SDK signs the user in on its own before an AI request; the views follow.
-  P.onAuth((user) => session.signedInAs(user));
-  // The person's options (File ▸ Options), with the account's copy when it arrives quickly enough to matter.
+  // The person's options (File ▸ Options).
   installAppOptions();
-  if (session.signedIn) await Promise.race([syncAppOptions().catch(() => {}), new Promise((resolve) => setTimeout(resolve, 800))]);
+  await Promise.race([syncAppOptions().catch(() => {}), new Promise((resolve) => setTimeout(resolve, 800))]);
   // Opened with no address, the app lands on a new workbook, or on the start screen when the options ask for it.
-  if (!launchedPath && appOption('startScreen') && /^#?\/?$/.test(location.hash)) history.replaceState(null, '', HOME);
+  if (appOption('startScreen') && /^#?\/?$/.test(location.hash)) history.replaceState(null, '', HOME);
   booted = true;
   window.addEventListener('hashchange', route);
-  if (launchedPath) {
-    const p = launchedPath;
-    launchedPath = null;
-    location.hash = `#/edit/${encodeURIComponent(p)}`;
-  }
   // A file dropped on the loading screen opens now that there is somewhere to open it.
   const dropped = droppedFile;
   droppedFile = null;
@@ -456,13 +308,6 @@ function setupFileDrop() {
   window.addEventListener('dragleave', (e) => { if (!e.relatedTarget) unhighlight(); });
   window.addEventListener('dragend', unhighlight);
   window.addEventListener('drop', (e) => {
-    // Files dragged in from the Puter desktop or one of its folder windows do not come the browser's way:
-    // the SDK dispatches a drop of its own, with the drive's entries in its detail and no dataTransfer.
-    if (!e.dataTransfer && Array.isArray(e.detail?.items)) {
-      e.preventDefault();
-      openDriveItems(e.detail.items);
-      return;
-    }
     if (!carriesFile(e)) return;
     e.preventDefault();
     unhighlight();
