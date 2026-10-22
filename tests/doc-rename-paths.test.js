@@ -7,6 +7,7 @@ beforeEach(() => { mock = installMockPuter(); });
 afterEach(() => { delete globalThis.puter; });
 
 it('renames a file that has no extension without inventing one', async () => {
+  await puter.fs.write('Desktop/data', new Blob(['x']));
   const doc = new Doc({ name: 'data', path: 'Desktop/data' });
   expect(await doc.rename('renamed')).toBe(null);
   expect(mock.calls.filter(([op]) => op === 'rename')).toEqual([['rename', 'Desktop/data', 'renamed']]);
@@ -15,6 +16,9 @@ it('renames a file that has no extension without inventing one', async () => {
 });
 
 it('keeps the extension of other files and handles dotted folders', async () => {
+  await puter.fs.write('My.Files/data.csv', new Blob(['x']));
+  await puter.fs.write('v1.2/notes', new Blob(['x']));
+  await puter.fs.write('Sheets/Budget.xlsx', new Blob(['x']));
   const csv = new Doc({ name: 'data', path: 'My.Files/data.csv' });
   await csv.rename('renamed');
   expect(csv.path).toBe('My.Files/renamed.csv');

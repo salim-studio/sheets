@@ -3,32 +3,10 @@ import { versionsFolder, versionFileName, parseVersionName, listVersions, saveVe
 import { Doc } from '../src/lib/doc.js';
 import { Workbook } from '../src/core/workbook.js';
 import { workbookToXlsx } from '../src/core/io.js';
+import { installMockPuter } from './helpers/mock-puter.js';
 
-function installMockPuter() {
-  const fs = new Map();
-  const dirs = new Set();
-  const notFound = (p) => Object.assign(new Error(`${p} does not exist`), { code: 'subject_does_not_exist' });
-  const item = (path, f) => ({ path, name: path.split('/').pop(), is_dir: !f, size: f?.size ?? null, modified: f?.modified ?? 1 });
-  globalThis.puter = {
-    env: 'web',
-    auth: { isSignedIn: () => true, getUser: async () => ({ username: 'demo' }) },
-    kv: { get: async () => null, set: async () => true },
-    fs: {
-      async mkdir(p) { dirs.add(p); return item(p); },
-      async readdir(p) {
-        const out = [...fs.entries()].filter(([k]) => k.startsWith(`${p}/`) && !k.slice(p.length + 1).includes('/')).map(([k, f]) => item(k, f));
-        if (!out.length && !dirs.has(p)) throw notFound(p);
-        return out;
-      },
-      async read(p) { const f = fs.get(p); if (!f) throw notFound(p); return f.blob; },
-      async write(p, blob) { fs.set(p, { blob, size: blob.size, modified: Date.now() / 1000 }); return item(p, fs.get(p)); },
-      async delete(p) { fs.delete(p); },
-      async stat(p) { if (fs.has(p)) return item(p, fs.get(p)); throw notFound(p); },
-    },
-    ui: {},
-  };
-  return fs;
-}
+// SheetJS is loaded on first use with a real dynamic import; warm it up so no test waits on it.
+beforeAll(async () => { await workbookToXlsx(new Workbook()); });
 
 describe('version names and folders', () => {
   it('preserves subsecond timestamps in newly named versions while reading older names', () => {
@@ -55,7 +33,7 @@ describe('version names and folders', () => {
 describe('snapshots on the drive', () => {
   let fs;
   beforeAll(async () => { await workbookToXlsx(new Workbook()); });
-  beforeEach(() => { fs = installMockPuter(); });
+  beforeEach(() => { ({ fs } = installMockPuter()); });
   afterEach(() => { delete globalThis.puter; });
 
   it('lists and retains the newest snapshot when several were saved within one second', async () => {
@@ -98,7 +76,7 @@ describe('snapshots on the drive', () => {
     expect(left.some((v) => v.label === 'keep me')).toBe(true);
     expect(left.filter((v) => !v.label).length).toBe(2);
     expect(await listVersions('Sheets/Nothing.xlsx')).toEqual([]);
-    expect([...fs.keys()].every((k) => k.startsWith('Sheets/.versions/Plan/'))).toBe(true);
+    expect([...fs.keys()].filter((k) => !fs.get(k)?.dir).every((k) => k.startsWith('Sheets/.versions/Plan'))).toBe(true);
   });
 
   it('is written by the document after a save when due, and a restore brings the old contents back', async () => {

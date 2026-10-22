@@ -6,6 +6,7 @@ import * as P from '../src/lib/platform.js';
 import { openCopySheetDialog } from '../src/ui/copysheet.js';
 import { closeAllModals } from '../src/ui/modal.js';
 import { toast } from '../src/ui/toast.js';
+import { installMockPuter } from './helpers/mock-puter.js';
 
 vi.mock('../src/ui/toast.js', () => ({ toast: vi.fn() }));
 
@@ -27,33 +28,26 @@ afterEach(() => {
 
 describe('copying a sheet to a new file', () => {
   it.each([false, true])('preserves other files if a name collision arrives during serialization (%s)', async (collision) => {
+    const { fs } = installMockPuter();
     const wb = new Workbook({ sheets: [{ name: 'Budget' }] });
     const originalPath = 'Sheets/Budget.xlsx';
-    const files = new Map();
-    const original = new Blob(['Another tab\'s workbook']);
+    const original = new Blob(["Another tab's workbook"]);
     const copy = new Blob(['Copied sheet']);
     vi.spyOn(P, 'uniqueName').mockResolvedValue('Budget.xlsx');
     vi.spyOn(IO, 'workbookToXlsx').mockImplementation(async () => {
-      if (collision) files.set(originalPath, original);
+      if (collision) fs.set(originalPath, { blob: original, size: original.size });
       return copy;
     });
-    const write = vi.fn(async (path, blob, opts) => {
-      if (files.has(path) && opts.dedupeName) path = 'Sheets/Budget 2.xlsx';
-      else if (files.has(path) && !opts.overwrite) throw new Error('Already exists');
-      files.set(path, blob);
-      return { path: `/user/${path}`, name: path.split('/').pop() };
-    });
-    vi.stubGlobal('puter', { fs: { mkdir: vi.fn(), write } });
+    const savedPath = collision ? 'Sheets/Budget (1).xlsx' : originalPath;
     const run = vi.fn();
     const modal = openCopySheetDialog({ wb, grid: { focus() {} }, run }, wb.activeSheetId);
     modal.panel.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await vi.advanceTimersByTimeAsync(0);
-    const savedPath = collision ? 'Sheets/Budget 2.xlsx' : originalPath;
-    if (collision) expect(files.get(originalPath)).toBe(original);
-    expect(files.get(savedPath)).toBe(copy);
-    expect(toast.mock.lastCall[0]).toBe(`Copied Budget to ${collision ? 'Budget 2' : 'Budget'}`);
+    if (collision) expect(fs.get(originalPath).blob).toBe(original);
+    expect(fs.get(savedPath).blob).toBe(copy);
+    expect(toast.mock.lastCall[0]).toBe(`Copied Budget to ${collision ? 'Budget (1)' : 'Budget'}`);
     toast.mock.lastCall[1].action.onClick();
-    expect(run).toHaveBeenCalledWith('openFile', `/user/${savedPath}`); // the address the drive reports for the new file
+    expect(run).toHaveBeenCalledWith('openFile', savedPath); // the address the app lists the new file under
   });
 });
 

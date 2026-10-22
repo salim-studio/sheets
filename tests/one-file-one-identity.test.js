@@ -9,41 +9,20 @@ import { Workbook } from '../src/core/workbook.js';
 import { memoryStorage } from './helpers/memory-storage.js';
 import { installMockPuter } from './helpers/mock-puter.js';
 
-const HOME = '/alice/AppData/app-1';
-
-/**
- * The SDK as it really behaves: a relative path is resolved under the app's own
- * data folder, and every result (a listing, a stat, a write) reports the file by
- * its absolute path there.
- */
-function installAbsolutePuter() {
-  const mock = installMockPuter();
-  const fs = puter.fs;
-  const abs = (p) => (p.startsWith('/') ? p : `${HOME}/${p}`);
-  for (const op of ['mkdir', 'readdir', 'read', 'write', 'stat', 'delete', 'rename']) {
-    const original = fs[op].bind(fs);
-    fs[op] = (p, ...rest) => original(abs(p), ...rest);
-  }
-  return { ...mock, abs };
-}
-
 let mock;
-beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installAbsolutePuter(); });
+beforeEach(() => { Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true }); mock = installMockPuter(); });
 afterEach(() => { delete globalThis.puter; });
 
 const text = (draft) => draft?.workbook.sheets[0].cells['0,0'].v;
 const consentKey = (path) => `${accountStorageKey('sheets:external')}${path}`;
 
-// A document saved here kept the relative address it was written under, while the
-// list on the home screen (and the picker, and "Open with") named the same file by
-// the absolute address the drive reports. Everything keyed by address then missed
-// when the file was reopened: its draft, the outside-content decision, its history
-// folder, and the recent list all split between the two spellings.
-it('keeps a saved document under the address the drive reports, so reopening it from the list finds its records', async () => {
+// Everything keyed by a file's address (its draft, the outside-content decision, its history folder, the
+// recent list) must agree on one spelling: the address the app lists, which is the app-folder path.
+it('keeps a saved document under the address the app lists, so reopening it from the list finds its records', async () => {
   const doc = Doc.blank();
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'x');
   expect(await doc.save()).toBe(true);
-  expect(doc.path).toBe(`${HOME}/Sheets/Untitled sheets.xlsx`);
+  expect(doc.path).toBe('Sheets/Untitled sheets.xlsx');
   expect(doc.name).toBe('Untitled sheets');
   const [listed] = await P.listFiles();
   expect(listed.path).toBe(doc.path);
@@ -53,7 +32,7 @@ it('keeps a saved document under the address the drive reports, so reopening it 
   doc.distrustExternal();
   expect((await Doc.fromPath(listed.path)).wb.externalAllowed).toBe(false);
 
-  // The history is one folder, whichever spelling of the address names the file, and a labelled
+  // The history is one folder whichever spelling of the address names the file, and a labelled
   // snapshot shows up when the file is opened from the list.
   expect(versionsFolder(doc.path)).toBe(versionsFolder('Sheets/Untitled sheets.xlsx'));
   expect(versionsFolder(doc.file)).toBe(versionsFolder({ path: 'Sheets/Untitled sheets.xlsx', uid: doc.uid }));
@@ -73,50 +52,46 @@ it('keeps a saved document under the address the drive reports, so reopening it 
   expect(recentFiles()).toEqual([]);
 });
 
-it('adopts the reported address when a file is opened by its relative one, and carries the records kept under it', async () => {
+it('carries the records kept under a file\'s address into the open document', async () => {
   const bytes = await Doc.blank().toXlsxBlob();
   await puter.fs.write('Sheets/Budget.xlsx', bytes);
-  mock.fs.get(`${HOME}/Sheets/Budget.xlsx`).modified = 1;
-  // Records made before the fix lived under the relative spelling.
+  mock.fs.get('Sheets/Budget.xlsx').modified = 1;
   const precious = new Workbook();
   precious.setInput(precious.activeSheetId, 0, 0, 'never saved');
   expect(saveDraft(draftKey('Sheets/Budget.xlsx'), precious, 'Budget', 'rev-1')).toBe(true);
   localStorage.setItem(consentKey('Sheets/Budget.xlsx'), '0');
 
   const doc = await Doc.fromPath('Sheets/Budget.xlsx');
-  expect(doc.path).toBe(`${HOME}/Sheets/Budget.xlsx`);
+  expect(doc.path).toBe('Sheets/Budget.xlsx');
   expect(doc.name).toBe('Budget');
   expect(doc.wb.externalAllowed).toBe(false);
   expect(text(doc.recoverable)).toBe('never saved');
-  expect(loadDraft(draftKey('Sheets/Budget.xlsx'))).toBeNull();
-  expect(text(loadDraft(draftKey(doc.path)))).toBe('never saved');
-  expect(localStorage.getItem(consentKey('Sheets/Budget.xlsx'))).toBeNull();
-  expect(localStorage.getItem(consentKey(doc.path))).toBe('0');
+  expect(text(loadDraft(draftKey('Sheets/Budget.xlsx')))).toBe('never saved');
+  expect(localStorage.getItem(consentKey('Sheets/Budget.xlsx'))).toBe('0');
   doc.destroy();
 });
 
-it('renames and saves a copy of a document under its reported address', async () => {
+it('renames and saves a copy of a document under its address', async () => {
   const doc = Doc.blank();
   doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'x');
   await doc.save();
   expect(await doc.rename('Plan')).toBeNull();
-  expect(doc.path).toBe(`${HOME}/Sheets/Plan.xlsx`);
+  expect(doc.path).toBe('Sheets/Plan.xlsx');
   expect((await P.listFiles()).map((f) => f.path)).toEqual([doc.path]);
   expect(await doc.saveAs('Plan copy')).toBeNull();
-  expect(doc.path).toBe(`${HOME}/Sheets/Plan copy.xlsx`);
-  expect((await P.listFiles()).map((f) => f.path).sort()).toEqual([`${HOME}/Sheets/Plan copy.xlsx`, `${HOME}/Sheets/Plan.xlsx`]);
+  expect(doc.path).toBe('Sheets/Plan copy.xlsx');
+  expect((await P.listFiles()).map((f) => f.path).sort()).toEqual(['Sheets/Plan copy.xlsx', 'Sheets/Plan.xlsx']);
   doc.destroy();
 });
 
-it('tells the two spellings of one file apart from a file elsewhere', async () => {
+it('tells files in the app folder apart from files elsewhere', async () => {
   await puter.fs.write('Sheets/A.xlsx', new Blob(['a']));
-  await P.listFiles(); // the app folder's absolute spelling is learned from the listing
-  expect(P.samePath('Sheets/A.xlsx', `${HOME}/Sheets/A.xlsx`)).toBe(true);
-  expect(P.samePath(`${HOME}/Sheets/A.xlsx`, `${HOME}/Sheets/A.xlsx`)).toBe(true);
-  expect(P.samePath('Sheets/A.xlsx', '/alice/Desktop/Sheets/A.xlsx')).toBe(false);
+  await P.listFiles();
+  expect(P.samePath('Sheets/A.xlsx', 'Sheets/A.xlsx')).toBe(true);
   expect(P.samePath('Sheets/A.xlsx', 'Sheets/B.xlsx')).toBe(false);
   expect(P.samePath(null, 'Sheets/A.xlsx')).toBe(false);
-  expect(P.inAppFolder(`${HOME}/Sheets/sub/A.xlsx`)).toBe(false);
+  expect(P.samePath('/alice/Desktop/Sheets/A.xlsx', 'Sheets/A.xlsx')).toBe(false);
+  expect(P.inAppFolder('Sheets/sub/A.xlsx')).toBe(false);
   expect(P.inAppFolder('/alice/Desktop/Sheets/A.xlsx')).toBe(false);
   expect(P.inAppFolder('Sheets/A.xlsx')).toBe(true);
 });

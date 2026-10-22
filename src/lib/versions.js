@@ -90,12 +90,25 @@ async function strayedFolders(of) {
     .map((it) => `${P.FOLDER}/${VERSIONS_DIR}/${it.name}`);
 }
 
+/**
+ * Folders kept under this name and an id's tag, for a reader that has only the path: a snapshot is
+ * written in the folder the writer's id names, and whoever reads the history later may hold the
+ * address alone. One name belongs to one file, so every such folder is this file's history.
+ */
+async function taggedFolders(of) {
+  const name = P.displayName(of.name);
+  return (await P.listDir(`${P.FOLDER}/${VERSIONS_DIR}`))
+    .filter((it) => it.is_dir && it.name.startsWith(`${name} ~`))
+    .map((it) => `${P.FOLDER}/${VERSIONS_DIR}/${it.name}`);
+}
+
 /** Every folder this file's snapshots are read from: the one its name and id make, the older spellings, and any the file strayed from under an older name. */
 async function foldersOf(file) {
   const of = spellings(file);
   const here = [of.uid || of.name, of.name, of.path].filter(Boolean);
+  const tagged = of.uid ? [] : await taggedFolders(of);
   const strayed = of.uid && !(await P.fileExists(of.uid)) ? await strayedFolders(of) : [];
-  return [...new Set([...here, ...strayed])];
+  return [...new Set([...here, ...tagged, ...strayed])];
 }
 
 /**

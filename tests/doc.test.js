@@ -3,43 +3,7 @@ import { Doc, UNTITLED } from '../src/lib/doc.js';
 import { Workbook } from '../src/core/workbook.js';
 import { workbookFromFile, workbookToXlsx } from '../src/core/io.js';
 import { listVersions, versionsFolder } from '../src/lib/versions.js';
-
-/** Minimal in-memory Puter for the document controller. */
-function installMockPuter() {
-  const fs = new Map();
-  const kv = new Map();
-  const notFound = (p) => Object.assign(new Error(`${p} does not exist`), { code: 'subject_does_not_exist' });
-  const item = (path, f) => ({ path, name: path.split('/').pop(), is_dir: !f, size: f?.size ?? null, modified: f?.modified ?? 1 });
-  globalThis.puter = {
-    env: 'web',
-    auth: { isSignedIn: () => true, getUser: async () => ({ username: 'demo' }), signIn: async () => true, signOut() {} },
-    kv: { get: async (k) => kv.get(k) ?? null, set: async (k, v) => { kv.set(k, v); return true; } },
-    fs: {
-      async mkdir(p) { return item(p); },
-      async readdir(p) {
-        const out = [...fs.entries()].filter(([k]) => k.startsWith(`${p}/`)).map(([k, f]) => item(k, f));
-        if (!out.length) throw notFound(p);
-        return out;
-      },
-      async read(p) { const f = fs.get(p); if (!f) throw notFound(p); return f.blob; },
-      async write(p, blob, { overwrite = true, dedupeName = false } = {}) {
-        if (fs.has(p) && !overwrite) {
-          if (!dedupeName) throw new Error('A file with that name already exists');
-          const stem = p.replace(/\.xlsx$/i, '');
-          let n = 1;
-          while (fs.has(p)) p = `${stem} (${n++}).xlsx`;
-        }
-        fs.set(p, { blob, size: blob.size, modified: Date.now() / 1000 });
-        return item(p, fs.get(p));
-      },
-      async delete(p) { fs.delete(p); },
-      async rename(p, name) { const f = fs.get(p); if (!f) throw notFound(p); fs.delete(p); const t = `${p.split('/').slice(0, -1).join('/')}/${name}`; fs.set(t, f); return item(t, f); },
-      async stat(p) { if (fs.has(p)) return item(p, fs.get(p)); throw notFound(p); },
-    },
-    ui: {},
-  };
-  return { fs, kv };
-}
+import { installMockPuter } from './helpers/mock-puter.js';
 
 function deferred() {
   let resolve;
@@ -180,7 +144,7 @@ describe('Doc', () => {
     doc.wb.setInput(doc.wb.sheets[0].id, 0, 1, 'world');
     await doc.save();
     expect(doc.path).toBe('Sheets/Notes.xlsx');
-    expect([...mock.fs.keys()].filter((k) => !k.includes('/.versions/')).length).toBe(1); // the save itself (a version snapshot may sit beside it)
+    expect([...mock.fs.keys()].filter((k) => !k.includes('/.versions/') && !mock.fs.get(k)?.dir).length).toBe(1); // the save itself (a version snapshot may sit beside it)
     doc.destroy();
   });
 
@@ -240,9 +204,9 @@ describe('Doc', () => {
     const entered = deferred();
     const release = deferred();
     const readdir = globalThis.puter.fs.readdir;
-    const originalFolder = versionsFolder(`Sheets/${UNTITLED}.xlsx`);
+    const originalFolder = () => versionsFolder(doc.file);
     globalThis.puter.fs.readdir = async (path) => {
-      if (path === originalFolder) { entered.resolve(); await release.promise; }
+      if (path === originalFolder()) { entered.resolve(); await release.promise; }
       return readdir(path);
     };
     try {
@@ -279,7 +243,7 @@ describe('Doc', () => {
       release.resolve();
       expect(await renaming).toBeNull();
       const saved = await snapshot;
-      expect(saved.path.startsWith(versionsFolder(doc.path) + '/')).toBe(true);
+      expect(saved.path.startsWith(versionsFolder(doc.file) + '/')).toBe(true);
       const restored = await workbookFromFile(mock.fs.get(saved.path).blob, 'version.xlsx');
       expect(restored.getValue(restored.activeSheetId, 0, 0)).toBe('content');
     } finally { release.resolve(); doc.destroy(); }
@@ -291,7 +255,7 @@ describe('Doc', () => {
       doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'first snapshot');
       const saved = await doc.saveVersion('Initial');
       expect(doc.path).toMatch(/\.xlsx$/);
-      expect(saved.path.startsWith(versionsFolder(doc.path) + '/')).toBe(true);
+      expect(saved.path.startsWith(versionsFolder(doc.file) + '/')).toBe(true);
       const wb = await workbookFromFile(mock.fs.get(saved.path).blob, 'version.xlsx');
       expect(wb.getValue(wb.activeSheetId, 0, 0)).toBe('first snapshot');
       expect(await doc.rename('After snapshot')).toBeNull();

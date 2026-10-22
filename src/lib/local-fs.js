@@ -123,9 +123,9 @@ const getNode = async (path) => {
   return rawGet(path);
 };
 
-const putNode = async (node) => {
+const putNode = async (node, options = {}) => {
   const d = drive();
-  if (d) { await d.put(node); return; }
+  if (d) { await d.put(node, options); return; }
   await rawPut(node);
 };
 
@@ -162,9 +162,12 @@ export async function mkdir(path) {
 
 export async function readdir(path) {
   const clean = normalizePath(path);
+  const d = drive();
+  if (d.readdir) return d.readdir(clean);
   const folder = clean ? await getNode(clean) : { dir: true };
-  if (!folder) throw notFound(clean);
-  if (!folder.dir) throw Object.assign(new Error(`${clean} is a file`), { code: 'not_a_directory' });
+  // A folder's own record is a convenience: its children are the truth (a store seeded with
+  // files only, as tests do, still lists them).
+  if (folder && !folder.dir) throw Object.assign(new Error(`${clean} is a file`), { code: 'not_a_directory' });
   const rows = await childrenOf(clean);
   if (!rows.length) throw notFound(clean);
   return rows.map(itemOf);
@@ -172,10 +175,34 @@ export async function readdir(path) {
 
 export async function read(path) {
   const clean = normalizePath(path);
+  const d = drive();
+  if (d.read) return d.read(clean);
   const node = await getNode(clean);
   if (!node) throw notFound(clean);
   if (node.dir) throw Object.assign(new Error(`${clean} is a folder`), { code: 'is_a_directory' });
   return node.blob ?? new Blob([]);
+}
+
+// Two saves of two new files can choose the same available name at the same moment: choosing a
+// name for a de-duplicated write is one step, and the name stays claimed until the write lands.
+let naming = Promise.resolve();
+const claimed = new Set();
+
+function claim(clean) {
+  const next = naming.then(() => uniqueName(clean), () => uniqueName(clean));
+  naming = next.then(() => {}, () => {});
+  return next;
+}
+
+async function uniqueName(clean) {
+  const dot = nameOf(clean).lastIndexOf('.');
+  const stem = dot > 0 ? clean.slice(0, clean.length - nameOf(clean).length + dot) : clean;
+  const ext = dot > 0 ? clean.slice(stem.length) : '';
+  let candidate = clean;
+  let n = 1;
+  while (claimed.has(candidate) || await getNode(candidate)) candidate = `${stem} (${n++})${ext}`;
+  claimed.add(candidate);
+  return candidate;
 }
 
 export async function write(path, blob, { overwrite = true, dedupeName = false, createMissingParents = true } = {}) {
@@ -184,14 +211,24 @@ export async function write(path, blob, { overwrite = true, dedupeName = false, 
   if (createMissingParents) await ensureParents(clean, true);
   let existing = await getNode(clean);
   if (existing?.dir) throw Object.assign(new Error(`${clean} is a folder`), { code: 'is_a_directory' });
-  if (existing && !overwrite) {
-    if (!dedupeName) throw exists(clean);
-    const dot = nameOf(clean).lastIndexOf('.');
-    const stem = dot > 0 ? clean.slice(0, clean.length - nameOf(clean).length + dot) : clean;
-    const ext = dot > 0 ? clean.slice(stem.length) : '';
-    let n = 1;
-    while (existing) { clean = `${stem} (${n++})${ext}`; existing = await getNode(clean); }
+  if (dedupeName) {
+    if (existing && !overwrite) {
+      clean = await claim(clean);
+      existing = null;
+    } else if (!existing) {
+      clean = await claim(clean);
+    }
+  } else if (existing && !overwrite) {
+    throw exists(clean);
   }
+  try {
+    return await putFile(clean, blob, existing, overwrite);
+  } finally {
+    claimed.delete(clean);
+  }
+}
+
+async function putFile(clean, blob, existing, overwrite) {
   const node = {
     path: clean,
     name: nameOf(clean),
@@ -203,7 +240,7 @@ export async function write(path, blob, { overwrite = true, dedupeName = false, 
     created: existing?.created ?? now(),
     modified: now(),
   };
-  await putNode(node);
+  await putNode(node, { overwrite });
   return itemOf(node);
 }
 
@@ -247,6 +284,8 @@ export async function rename(path, newName) {
   if (!name) throw new Error('A file needs a name');
   const target = parentOf(clean) ? `${parentOf(clean)}/${name}` : name;
   if (target === clean) return itemOf(node);
+  const d = drive();
+  if (d?.rename) return d.rename(clean, name);
   if (await getNode(target)) throw exists(target);
   // A folder takes its whole subtree with it, keeping each child's id and timestamps.
   const subtree = [];

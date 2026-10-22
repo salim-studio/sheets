@@ -138,16 +138,19 @@ export function installMockPuter({ onWrite } = {}) {
         throw e;
       }
     },
-    put: async (n) => {
+    read: async (p) => await facade.fs.read(clean(p)),
+    readdir: async (p) => await facade.fs.readdir(clean(p)),
+    put: async (n, { overwrite = true } = {}) => {
       if (n.dir) {
         if (!nodes.has(n.path)) await facade.fs.mkdir(n.path);
       } else {
-        await facade.fs.write(n.path, n.blob, { overwrite: true });
+        await facade.fs.write(n.path, n.blob, { overwrite });
       }
       nodes.set(n.path, { ...n, parent: parentOf(n.path) });
     },
     delete: async (p) => { await facade.fs.delete(p); },
     children: async (p) => children(clean(p)),
+    rename: async (p, newName) => await facade.fs.rename(p, newName),
     getByUid: async (u) => byUid(u),
     paths: async () => [...nodes.keys()],
   });
@@ -162,6 +165,7 @@ export function installMockPuter({ onWrite } = {}) {
     has: (p) => nodes.has(clean(p)),
     delete: (p) => nodes.delete(clean(p)),
     keys: () => [...nodes.keys()],
+    entries: () => nodes.entries(),
     get size() { return nodes.size; },
   };
   return { fs: map, calls, kv };

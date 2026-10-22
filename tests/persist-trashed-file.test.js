@@ -21,12 +21,12 @@ async function openDocument() {
   return doc;
 }
 
-/** Delete a file the way the Puter desktop does: moved into ~/Trash under its bare id, its name kept in metadata. */
+/** Delete a file the way a desktop would: moved into the trash under its bare id, its name kept in metadata. */
 function trash(path) {
   const f = mock.fs.get(path);
   mock.fs.delete(path);
-  mock.fs.set(`/nj/Trash/${f.uid}`, f);
-  return `/nj/Trash/${f.uid}`;
+  mock.fs.set(`nj/Trash/${f.uid}`, f);
+  return `nj/Trash/${f.uid}`;
 }
 
 // A file deleted on the desktop while open was found again by its id in the trash and followed there:
@@ -48,7 +48,7 @@ it('asks what to do with the edits when the open file is put in the trash elsewh
     expect(doc.status).toBe('conflict');
     expect(doc.path).toBe(path);
     expect(doc.name).toBe('Budget');
-    expect([...mock.fs.keys()].filter((k) => !k.includes('/.versions/'))).toEqual([trashed]);
+    expect([...mock.fs.keys()].filter((k) => !k.includes('/.versions/') && !mock.fs.get(k)?.dir)).toEqual([trashed]);
     // Saving anyway puts the file back where it was, as for any file deleted elsewhere.
     expect(await doc.forceSave()).toBe(true);
     expect(doc.path).toBe(path);

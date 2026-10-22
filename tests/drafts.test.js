@@ -3,6 +3,7 @@ import { draftKey, saveDraft, loadDraft, clearDraft, moveDraft, listDrafts } fro
 import { Doc } from '../src/lib/doc.js';
 import { Workbook } from '../src/core/workbook.js';
 import { workbookToXlsx } from '../src/core/io.js';
+import { installMockPuter } from './helpers/mock-puter.js';
 
 // Node ships a placeholder localStorage that jsdom does not replace; use a real in-memory one.
 function memoryStorage() {
@@ -17,30 +18,6 @@ function memoryStorage() {
   };
 }
 Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage(), configurable: true });
-
-function installMockPuter() {
-  const fs = new Map();
-  const notFound = (p) => Object.assign(new Error(`${p} does not exist`), { code: 'subject_does_not_exist' });
-  const item = (path, f) => ({ path, name: path.split('/').pop(), is_dir: !f, size: f?.size ?? null, modified: f?.modified ?? 1 });
-  globalThis.puter = {
-    env: 'web',
-    auth: { isSignedIn: () => true, getUser: async () => ({ username: 'demo' }) },
-    kv: { get: async () => null, set: async () => true },
-    fs: {
-      async mkdir(p) { return item(p); },
-      async readdir(p) {
-        const out = [...fs.entries()].filter(([k]) => k.startsWith(`${p}/`)).map(([k, f]) => item(k, f));
-        if (!out.length) throw notFound(p);
-        return out;
-      },
-      async read(p) { const f = fs.get(p); if (!f) throw notFound(p); return f.blob; },
-      async write(p, blob) { fs.set(p, { blob, size: blob.size, modified: Date.now() / 1000 }); return item(p, fs.get(p)); },
-      async stat(p) { if (fs.has(p)) return item(p, fs.get(p)); throw notFound(p); },
-    },
-    ui: {},
-  };
-  return fs;
-}
 
 describe('local drafts', () => {
   beforeEach(() => localStorage.clear());
@@ -78,7 +55,7 @@ describe('local drafts', () => {
 describe('the document keeps a draft until the file holds the edits', () => {
   let fs;
   beforeAll(async () => { await workbookToXlsx(new Workbook()); });
-  beforeEach(() => { localStorage.clear(); fs = installMockPuter(); vi.useFakeTimers(); });
+  beforeEach(() => { localStorage.clear(); ({ fs } = installMockPuter()); vi.useFakeTimers(); });
   afterEach(() => { vi.useRealTimers(); delete globalThis.puter; });
 
   it('recovers each unsaved workbook independently when several have the same name', async () => {
