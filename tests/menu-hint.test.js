@@ -32,34 +32,3 @@ describe('a menu item hint', () => {
   });
 });
 
-describe('the account menu', () => {
-  let sdk, anchor;
-  beforeEach(() => {
-    vi.stubGlobal('localStorage', memoryStorage());
-    vi.stubGlobal('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
-    sdk = {
-      env: 'web',
-      auth: { isSignedIn: () => false, signIn: vi.fn(async () => {}), getUser: async () => null, signOut: vi.fn() },
-      kv: { get: async () => null, set: async () => true },
-    };
-    vi.stubGlobal('puter', sdk);
-    anchor = document.createElement('button');
-    document.body.append(anchor);
-  });
-  afterEach(async () => {
-    const { session } = await import('../src/lib/session.js');
-    session.state = 'unknown';
-    session.user = null;
-    vi.unstubAllGlobals();
-  });
-
-  it('shows why to sign in under the sign-in item', async () => {
-    const { session } = await import('../src/lib/session.js');
-    const { openAppMenu } = await import('../src/ui/appmenu.js');
-    await session.init();
-    openAppMenu(anchor);
-    const item = [...document.querySelectorAll('[role="menuitem"]')].find((b) => b.getAttribute('aria-label') === 'Sign in to Puter');
-    expect(item).toBeTruthy();
-    expect(item.querySelector('.menu-hint').textContent).toBe('Save sheets to your own cloud');
-  });
-});

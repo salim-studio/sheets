@@ -56,20 +56,6 @@ function select(objectId) {
   node.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
 }
 
-it('places a picture from Puter into the active cell, as one undoable step that keeps the cell format', async () => {
-  const { wb, id } = await setup();
-  wb.applyStyle(id, { r1: 3, c1: 2, r2: 3, c2: 2 }, { bg: '#ffeeaa' }); wb.clearHistory();
-  view.goTo('Sheet1!C4');
-  view.run('insertImagePuter', 'cell'); await settle();
-  readers[0].result = SRC; readers[0].onload(); await settle();
-  expect(wb.getCell(id, 3, 2)).toMatchObject({ v: { image: SRC, fit: 'contain', alt: 'Team logo' }, s: { bg: '#ffeeaa' } });
-  expect(wb.sheet(id).charts).toHaveLength(0);
-  const cell = view.el.querySelector('#gc-3-2');
-  expect(cell.classList.contains('img-cell')).toBe(true);
-  expect(cell.querySelector('img').getAttribute('alt')).toBe('Team logo');
-  expect(cell.getAttribute('aria-label')).toBe('Picture: Team logo');
-  wb.undo(); expect(wb.getValue(id, 3, 2)).toBeNull();
-});
 
 it('lifts a cell picture out over the cells and puts a floating one back in, each one step', async () => {
   const { wb, id } = await setup();

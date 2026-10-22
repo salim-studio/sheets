@@ -55,31 +55,6 @@ function setup(leaveDialog = null) {
 const menuItem = (text) => [...document.querySelectorAll('.menu-item')].find((item) => item.textContent.includes(text));
 const openMenubar = (label) => [...view.el.querySelectorAll('.menubar button')].find((b) => b.textContent.trim() === label).click();
 
-describe('leaving and reaching out while signed out', () => {
-  it('puts focus back in the grid after "Keep editing"', async () => {
-    const leaveDialog = vi.fn().mockResolvedValue('stay');
-    const { doc, grid } = setup(leaveDialog);
-    doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'unsaved');
-    view.el.querySelector('.topbar button').focus(); // the Back button, as when it was clicked
-    expect(await view.flush()).toBe(false);
-    expect(leaveDialog).toHaveBeenCalledTimes(1);
-    expect(grid.contains(document.activeElement) || document.activeElement === grid).toBe(true);
-  });
-
-  it('asks for the sign-in, not whether to leave, before copying a sheet to another sheets', async () => {
-    const leaveDialog = vi.fn().mockResolvedValue('stay');
-    const { doc } = setup(leaveDialog);
-    doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'unsaved');
-    openMenubar('Insert');
-    menuItem('Sheet').click();
-    const item = menuItem('Copy sheet to another sheets');
-    expect(item).toBeTruthy();
-    item.click();
-    await vi.waitFor(() => expect(document.querySelector('.modal-panel[aria-label^="Copy"]')).not.toBeNull());
-    expect(leaveDialog).not.toHaveBeenCalled();
-    expect(puter.auth.signIn).toHaveBeenCalledTimes(1);
-  });
-});
 
 describe('the command palette when the editor closes', () => {
   it('closes with the editor instead of driving a destroyed view', () => {

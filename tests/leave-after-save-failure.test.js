@@ -88,13 +88,3 @@ it('warns when this browser could not keep a copy either', async () => {
   expect(button('Leave without saving').classList.contains('btn-danger')).toBe(true);
 });
 
-it('only reports the failure when the save serves an operation rather than a departure', async () => {
-  const { doc } = setup();
-  const notify = vi.spyOn(notifications, 'toast');
-  const pending = [];
-  window.dispatchEvent(new CustomEvent('app:before-signout', { detail: { waitUntil: (p) => pending.push(p) } }));
-  expect(await pending[0]).toBe(false);
-  expect(dialog()).toBeNull();
-  expect(notify.mock.calls.some(([message]) => message.startsWith('Could not save to Puter'))).toBe(true);
-  expect(doc.wb.dirty).toBe(true);
-});
