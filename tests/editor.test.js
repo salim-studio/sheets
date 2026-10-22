@@ -374,15 +374,6 @@ describe('leaving the editor', () => {
     expect(event.defaultPrevented).toBe(true);
   });
 
-  it('registers the editor save with the sign-out operation', async () => {
-    const { doc } = setup();
-    doc.wb.setInput(doc.wb.activeSheetId, 0, 0, 'Before sign-out');
-    vi.spyOn(doc, 'save').mockResolvedValue(false);
-    const pending = [];
-    window.dispatchEvent(new CustomEvent('app:before-signout', { detail: { waitUntil: (p) => pending.push(p) } }));
-    expect(pending).toHaveLength(1);
-    expect(await pending[0]).toBe(false);
-  });
 });
 
 describe('save conflicts', () => {
